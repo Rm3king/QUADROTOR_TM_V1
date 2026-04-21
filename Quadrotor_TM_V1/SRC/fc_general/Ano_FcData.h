@@ -50,7 +50,7 @@ enum
  AUX2 ,
  AUX3 ,
  AUX4 ,
- CH_NUM,//8
+ CH_NUM,
 };
 
 enum
@@ -111,14 +111,14 @@ enum _power_alarm
 
 enum _flight_mode
 {
-	ATT_STAB = 0,//Attitude stabilization
+	ATT_STAB = 0,
 	LOC_HOLD,
 	RETURN_HOME,
 	SUDDEN_STOP,
 	
 };
 
-//thr_mode
+/* 油门模式。 */
 enum
 {
   THR_MANUAL = 0,
@@ -144,7 +144,7 @@ extern _save_st save;
 /* 飞控运行时标志位，覆盖传感器、控制与飞行状态。 */
 typedef struct
 {
-	//基本状态/传感器
+	/* 基本状态与传感器状态。 */
 	u8 start_ok;
 	u8 sensor_imu_ok;
 	u8 mems_temperature_ok;
@@ -158,20 +158,20 @@ typedef struct
 	u8 gps_ok;	
 
 	
-	//控制状态
+	/* 控制相关状态。 */
 	u8 manual_locked;
 	u8 unlock_err;
 	u8 unlock_cmd;
-	u8 unlock_sta;//unlocked
+	u8 unlock_sta;
 	u8 thr_low;
 	u8 locking;
-	u8 taking_off; //起飞
+	u8 taking_off;
 	u8 set_yaw;
 	u8 ct_loc_hold;
 	u8 ct_alt_hold;
 
 	
-	//飞行状态
+	/* 飞行过程状态。 */
 	u8 flying;
 	u8 auto_take_off_land;
 	u8 home_location_ok;	
@@ -194,7 +194,7 @@ typedef struct
 	float vel_limit_z_p;
 	float vel_limit_z_n;
 	float yaw_pal_limit;
-}_fc_sta_var_st; //state variable
+}_fc_sta_var_st;
 extern _fc_sta_var_st fc_stv;
 	
 /* 外设开关状态。 */
@@ -225,7 +225,7 @@ typedef struct
 	u8 of_ok;
 	u8 of_df_ok;
 	
-} _sensor_hd_check_st; //Hardware
+} _sensor_hd_check_st;
 extern _sensor_hd_check_st sens_hd_check;
 /* 触发参数延时保存。 */
 void data_save(void);

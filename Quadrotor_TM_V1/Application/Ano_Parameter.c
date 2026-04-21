@@ -24,7 +24,7 @@ _parameter_state_st para_sta;
 /* �ָ�Ĭ�� PID ������ */
 void PID_Rest()
 {
-//---	姿态控制角速度环PID参数
+/* ��̬���ƽ��ٶȻ� PID ������ */
 	Ano_Parame.set.pid_att_1level[ROL][KP] = 4.0f; //姿态控制角速度环PID参数
 	Ano_Parame.set.pid_att_1level[ROL][KI] = 3.0f; //姿态控制角速度环PID参数
 	Ano_Parame.set.pid_att_1level[ROL][KD] = 0.15f; //姿态控制角速度环PID参数
@@ -36,7 +36,7 @@ void PID_Rest()
 	Ano_Parame.set.pid_att_1level[YAW][KP] = 6.0f; //姿态控制角速度环PID参数
 	Ano_Parame.set.pid_att_1level[YAW][KI] = 0.5f; //姿态控制角速度环PID参数
 	Ano_Parame.set.pid_att_1level[YAW][KD] = 0.0f; //姿态控制角速度环PID参数
-//---	姿态控制角度环PID参数
+/* ��̬���ƽǶȻ� PID ������ */
 	Ano_Parame.set.pid_att_2level[ROL][KP] = 7.0f; //姿态控制角度环PID参数
 	Ano_Parame.set.pid_att_2level[ROL][KI] = 0.0f; //姿态控制角度环PID参数
 	Ano_Parame.set.pid_att_2level[ROL][KD] = 0.00f; //姿态控制角度环PID参数
@@ -48,27 +48,27 @@ void PID_Rest()
 	Ano_Parame.set.pid_att_2level[YAW][KP] = 5.0f; //姿态控制角度环PID参数
 	Ano_Parame.set.pid_att_2level[YAW][KI] = 0.0f; //姿态控制角度环PID参数
 	Ano_Parame.set.pid_att_2level[YAW][KD] = 0.5; //姿态控制角度环PID参数	
-//---	高度控制高度速度环PID参数	
+/* �߶ȿ����ٶȻ� PID ������ */
 	Ano_Parame.set.pid_alt_1level[KP] = 2.0f;          //高度控制高度速度环PID参数
 	Ano_Parame.set.pid_alt_1level[KI] = 1.0f;          //高度控制高度速度环PID参数
 	Ano_Parame.set.pid_alt_1level[KD] = 0.05f;          //高度控制高度速度环PID参数
-//---	高度控制高度环PID参数
+/* �߶ȿ��Ƹ߶Ȼ� PID ������ */
 	Ano_Parame.set.pid_alt_2level[KP] = 1.0f;           //高度控制高度环PID参数
 	Ano_Parame.set.pid_alt_2level[KI] = 0;           //高度控制高度环PID参数(NULL)
 	Ano_Parame.set.pid_alt_2level[KD] = 0;           //高度控制高度环PID参数(NULL)
-//---	位置控制位置速度环PID参数	
+/* λ�ÿ����ٶȻ� PID ������ */
 	Ano_Parame.set.pid_loc_1level[KP] = 0.15f;          //位置控制位置速度环PID参数
 	Ano_Parame.set.pid_loc_1level[KI] = 0.10f;          //位置控制位置速度环PID参数
 	Ano_Parame.set.pid_loc_1level[KD] = 0.00f;          //位置控制位置速度环PID参数
-//---	位置控制位置环PID参数
+/* λ�ÿ���λ�û� PID ������ */
 	Ano_Parame.set.pid_loc_2level[KP] = 0;           //位置控制位置环PID参数(NULL)
 	Ano_Parame.set.pid_loc_2level[KI] = 0;           //位置控制位置环PID参数(NULL)
 	Ano_Parame.set.pid_loc_2level[KD] = 0;           //位置控制位置环PID参数(NULL)
-//---	GPS位置控制位置速度环PID参数	
+/* GPS λ�ÿ����ٶȻ� PID ������ */
 	Ano_Parame.set.pid_gps_loc_1level[KP] = 0.15f;          //位置控制位置速度环PID参数
 	Ano_Parame.set.pid_gps_loc_1level[KI] = 0.10f;          //位置控制位置速度环PID参数
 	Ano_Parame.set.pid_gps_loc_1level[KD] = 0.00f;          //位置控制位置速度环PID参数
-//---	GPS位置控制位置环PID参数
+/* GPS λ�ÿ���λ�û� PID ������ */
 	Ano_Parame.set.pid_gps_loc_2level[KP] = 0.3f;           //位置控制位置环PID参数
 	Ano_Parame.set.pid_gps_loc_2level[KI] = 0;           //位置控制位置环PID参数(NULL)
 	Ano_Parame.set.pid_gps_loc_2level[KD] = 0;           //位置控制位置环PID参数(NULL)
@@ -104,7 +104,6 @@ static void Parame_Copy_Fc2para()
 		Ano_Parame.set.mag_gain[i]		=	save.mag_gain[i];   
 			
 		
-		//center_pos参数不需要反向赋�?
 	}
 }
 
@@ -114,17 +113,17 @@ static void Parame_Copy_Fc2para()
 void Parame_Reset(void)
 {
 	//参数初始�?
-	Ano_Parame.set.pwmInMode = SBUS; // 原来是ppm
+	Ano_Parame.set.pwmInMode = SBUS;
 	Ano_Parame.set.heatSwitch = 0;
 	Ano_Parame.set.warn_power_voltage = 3.50f *3;
 	Ano_Parame.set.return_home_power_voltage = 3.7f *3;
 	Ano_Parame.set.lowest_power_voltage = 3.4f *3;
 	
-	Ano_Parame.set.auto_take_off_height = 60;//cm
+	Ano_Parame.set.auto_take_off_height = 60;	/* cm */
 	Ano_Parame.set.auto_take_off_speed = 80;
 	Ano_Parame.set.auto_landing_speed = 60;
 	
-	Ano_Parame.set.idle_speed_pwm = 20;//20%
+	Ano_Parame.set.idle_speed_pwm = 20;	/* 20% */
 	
 	for(u8 i = 0;i<3;i++)
 	{
@@ -172,7 +171,10 @@ void Ano_Parame_Read(void)
 }
 
 
-/* ������ʱ�������񣬱������������д�� Flash�� */
+/*
+ * ������ʱ�������񣬱������������д�� Flash��
+ * ˵����������������ʱ������ʱ��ʱ�������в�ֱ��д���������
+ */
 void Ano_Parame_Write_task(u16 dT_ms)
 {
 	//因为写入flash耗时较长，我们飞控做了一个特殊逻辑，在解锁后，是不进行参数写入的，此时会置一个需要写入标志位，等飞机降落锁定后，再写入参数，提升飞行安全�?
@@ -215,4 +217,4 @@ void Ano_Parame_Write_task(u16 dT_ms)
 	}
 }
 
-/******************* (C) COPYRIGHT 2014 ANO TECH *****END OF FILE************/
+
