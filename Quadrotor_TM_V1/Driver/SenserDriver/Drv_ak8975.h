@@ -3,6 +3,11 @@
 
 #include "sysconfig.h"
 
+/*
+ * 模块名称：Drv_ak8975
+ * 模块职责：提供 AK8975 磁力计的寄存器定义与驱动接口。
+ */
+
 #define AK8975_WIA_REG          0X00 
 #define AK8975_INFO_REG         0X01 
 #define AK8975_ST1_REG          0X02 

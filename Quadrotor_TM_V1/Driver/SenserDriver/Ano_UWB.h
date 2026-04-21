@@ -1,9 +1,12 @@
 #ifndef _ANO_UWB_H_
 #define _ANO_UWB_H_
 
-//==引用
+/*
+ * 模块名称：Ano_UWB
+ * 模块职责：定义 UWB 定位数据、融合状态和对外处理接口。
+ * 使用约束：仅整理接口说明，不改变定位数据含义和融合流程。
+ */
 
-//
 #include "Ano_Filter.h"
 #include "Ano_Math.h"
 #include "Ano_Imu.h"
