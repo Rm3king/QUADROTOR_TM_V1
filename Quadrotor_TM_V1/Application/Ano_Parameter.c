@@ -19,59 +19,57 @@ union Parameter Ano_Parame;
 _parameter_state_st para_sta;
 
 /* ע�⣺���ﶨ����ǲ�����Ĭ��ֵ���޸Ĵ������δ����д�룬�洢���еľ�ֵ�����Զ����¡� */
-
-//注意这些仅仅是初始化存储区的默认参数，直接修改代码后，若没有触发写入对应存储区，参数不会生效�?
 /* �ָ�Ĭ�� PID ������ */
 void PID_Rest()
 {
 /* ��̬���ƽ��ٶȻ� PID ������ */
-	Ano_Parame.set.pid_att_1level[ROL][KP] = 4.0f; //姿态控制角速度环PID参数
-	Ano_Parame.set.pid_att_1level[ROL][KI] = 3.0f; //姿态控制角速度环PID参数
-	Ano_Parame.set.pid_att_1level[ROL][KD] = 0.15f; //姿态控制角速度环PID参数
+	Ano_Parame.set.pid_att_1level[ROL][KP] = 4.0f;
+	Ano_Parame.set.pid_att_1level[ROL][KI] = 3.0f;
+	Ano_Parame.set.pid_att_1level[ROL][KD] = 0.15f;
 	
-	Ano_Parame.set.pid_att_1level[PIT][KP] = 4.0f; //姿态控制角速度环PID参数
-	Ano_Parame.set.pid_att_1level[PIT][KI] = 3.0f; //姿态控制角速度环PID参数
-	Ano_Parame.set.pid_att_1level[PIT][KD] = 0.15f; //姿态控制角速度环PID参数
+	Ano_Parame.set.pid_att_1level[PIT][KP] = 4.0f;
+	Ano_Parame.set.pid_att_1level[PIT][KI] = 3.0f;
+	Ano_Parame.set.pid_att_1level[PIT][KD] = 0.15f;
 	
-	Ano_Parame.set.pid_att_1level[YAW][KP] = 6.0f; //姿态控制角速度环PID参数
-	Ano_Parame.set.pid_att_1level[YAW][KI] = 0.5f; //姿态控制角速度环PID参数
-	Ano_Parame.set.pid_att_1level[YAW][KD] = 0.0f; //姿态控制角速度环PID参数
+	Ano_Parame.set.pid_att_1level[YAW][KP] = 6.0f;
+	Ano_Parame.set.pid_att_1level[YAW][KI] = 0.5f;
+	Ano_Parame.set.pid_att_1level[YAW][KD] = 0.0f;
 /* ��̬���ƽǶȻ� PID ������ */
-	Ano_Parame.set.pid_att_2level[ROL][KP] = 7.0f; //姿态控制角度环PID参数
-	Ano_Parame.set.pid_att_2level[ROL][KI] = 0.0f; //姿态控制角度环PID参数
-	Ano_Parame.set.pid_att_2level[ROL][KD] = 0.00f; //姿态控制角度环PID参数
+	Ano_Parame.set.pid_att_2level[ROL][KP] = 7.0f;
+	Ano_Parame.set.pid_att_2level[ROL][KI] = 0.0f;
+	Ano_Parame.set.pid_att_2level[ROL][KD] = 0.00f;
 	
-	Ano_Parame.set.pid_att_2level[PIT][KP] = 7.0f; //姿态控制角度环PID参数
-	Ano_Parame.set.pid_att_2level[PIT][KI] = 0.0f; //姿态控制角度环PID参数
-	Ano_Parame.set.pid_att_2level[PIT][KD] = 0.00f; //姿态控制角度环PID参数
+	Ano_Parame.set.pid_att_2level[PIT][KP] = 7.0f;
+	Ano_Parame.set.pid_att_2level[PIT][KI] = 0.0f;
+	Ano_Parame.set.pid_att_2level[PIT][KD] = 0.00f;
 	
-	Ano_Parame.set.pid_att_2level[YAW][KP] = 5.0f; //姿态控制角度环PID参数
-	Ano_Parame.set.pid_att_2level[YAW][KI] = 0.0f; //姿态控制角度环PID参数
-	Ano_Parame.set.pid_att_2level[YAW][KD] = 0.5; //姿态控制角度环PID参数	
+	Ano_Parame.set.pid_att_2level[YAW][KP] = 5.0f;
+	Ano_Parame.set.pid_att_2level[YAW][KI] = 0.0f;
+	Ano_Parame.set.pid_att_2level[YAW][KD] = 0.5;
 /* �߶ȿ����ٶȻ� PID ������ */
-	Ano_Parame.set.pid_alt_1level[KP] = 2.0f;          //高度控制高度速度环PID参数
-	Ano_Parame.set.pid_alt_1level[KI] = 1.0f;          //高度控制高度速度环PID参数
-	Ano_Parame.set.pid_alt_1level[KD] = 0.05f;          //高度控制高度速度环PID参数
+	Ano_Parame.set.pid_alt_1level[KP] = 2.0f;
+	Ano_Parame.set.pid_alt_1level[KI] = 1.0f;
+	Ano_Parame.set.pid_alt_1level[KD] = 0.05f;
 /* �߶ȿ��Ƹ߶Ȼ� PID ������ */
-	Ano_Parame.set.pid_alt_2level[KP] = 1.0f;           //高度控制高度环PID参数
-	Ano_Parame.set.pid_alt_2level[KI] = 0;           //高度控制高度环PID参数(NULL)
-	Ano_Parame.set.pid_alt_2level[KD] = 0;           //高度控制高度环PID参数(NULL)
+	Ano_Parame.set.pid_alt_2level[KP] = 1.0f;
+	Ano_Parame.set.pid_alt_2level[KI] = 0;
+	Ano_Parame.set.pid_alt_2level[KD] = 0;
 /* λ�ÿ����ٶȻ� PID ������ */
-	Ano_Parame.set.pid_loc_1level[KP] = 0.15f;          //位置控制位置速度环PID参数
-	Ano_Parame.set.pid_loc_1level[KI] = 0.10f;          //位置控制位置速度环PID参数
-	Ano_Parame.set.pid_loc_1level[KD] = 0.00f;          //位置控制位置速度环PID参数
+	Ano_Parame.set.pid_loc_1level[KP] = 0.15f;
+	Ano_Parame.set.pid_loc_1level[KI] = 0.10f;
+	Ano_Parame.set.pid_loc_1level[KD] = 0.00f;
 /* λ�ÿ���λ�û� PID ������ */
-	Ano_Parame.set.pid_loc_2level[KP] = 0;           //位置控制位置环PID参数(NULL)
-	Ano_Parame.set.pid_loc_2level[KI] = 0;           //位置控制位置环PID参数(NULL)
-	Ano_Parame.set.pid_loc_2level[KD] = 0;           //位置控制位置环PID参数(NULL)
+	Ano_Parame.set.pid_loc_2level[KP] = 0;
+	Ano_Parame.set.pid_loc_2level[KI] = 0;
+	Ano_Parame.set.pid_loc_2level[KD] = 0;
 /* GPS λ�ÿ����ٶȻ� PID ������ */
-	Ano_Parame.set.pid_gps_loc_1level[KP] = 0.15f;          //位置控制位置速度环PID参数
-	Ano_Parame.set.pid_gps_loc_1level[KI] = 0.10f;          //位置控制位置速度环PID参数
-	Ano_Parame.set.pid_gps_loc_1level[KD] = 0.00f;          //位置控制位置速度环PID参数
+	Ano_Parame.set.pid_gps_loc_1level[KP] = 0.15f;
+	Ano_Parame.set.pid_gps_loc_1level[KI] = 0.10f;
+	Ano_Parame.set.pid_gps_loc_1level[KD] = 0.00f;
 /* GPS λ�ÿ���λ�û� PID ������ */
-	Ano_Parame.set.pid_gps_loc_2level[KP] = 0.3f;           //位置控制位置环PID参数
-	Ano_Parame.set.pid_gps_loc_2level[KI] = 0;           //位置控制位置环PID参数(NULL)
-	Ano_Parame.set.pid_gps_loc_2level[KD] = 0;           //位置控制位置环PID参数(NULL)
+	Ano_Parame.set.pid_gps_loc_2level[KP] = 0.3f;
+	Ano_Parame.set.pid_gps_loc_2level[KI] = 0;
+	Ano_Parame.set.pid_gps_loc_2level[KD] = 0;
 	
 	ANO_DT_SendString("PID reset!");
 }
@@ -106,13 +104,9 @@ static void Parame_Copy_Fc2para()
 		
 	}
 }
-
-
-//注意这些仅仅是初始化存储区的默认参数，直接修改代码后，若没有触发写入对应存储区，参数不会生效�?
 /* �ָ�Ĭ�Ϸɿز����� */
 void Parame_Reset(void)
 {
-	//参数初始�?
 	Ano_Parame.set.pwmInMode = SBUS;
 	Ano_Parame.set.heatSwitch = 0;
 	Ano_Parame.set.warn_power_voltage = 3.50f *3;
@@ -158,7 +152,7 @@ void Ano_Parame_Read(void)
 {
 	Dvr_ParamterRead();
 	
-	if(Ano_Parame.set.frist_init != SOFT_VER)	//内容没有被初始化，则进行参数初始化工�?
+	if(Ano_Parame.set.frist_init != SOFT_VER)
 	{		
 		Parame_Reset();
 		PID_Rest();
@@ -177,29 +171,28 @@ void Ano_Parame_Read(void)
  */
 void Ano_Parame_Write_task(u16 dT_ms)
 {
-	//因为写入flash耗时较长，我们飞控做了一个特殊逻辑，在解锁后，是不进行参数写入的，此时会置一个需要写入标志位，等飞机降落锁定后，再写入参数，提升飞行安全�?
-	//为了避免连续更新两个参数，造成flash写入两次，我们飞控加入一个延时逻辑，参数改变后三秒，才进行写入操作，可以一次写入多项参数，降低flash擦写次数
-	if(para_sta.save_en )				//允许存储
+	if(para_sta.save_en )
 	{
-		if(para_sta.save_trig == 1) 	//如果触发存储标记1
+		if(para_sta.save_trig == 1)
 		{
+			/* �յ�����������Ƚ�����ʱ�ȴ��� */
 			LED_STA.saving = 1;
 			
-			para_sta.time_delay = 0;  	//计时复位
-			para_sta.save_trig = 2;   	//触发存储标记2
+			para_sta.time_delay = 0;
+			para_sta.save_trig = 2;
 		}
 		
-		if(para_sta.save_trig == 2) 	//如果触发存储标记2
+		if(para_sta.save_trig == 2)
 		{
-			if(para_sta.time_delay<3000) //计时小于3000ms
+			if(para_sta.time_delay<3000)
 			{
-				para_sta.time_delay += dT_ms; //计时
+				para_sta.time_delay += dT_ms;
 			}
 			else
 			{
-				
-				para_sta.save_trig = 0;  //存储标记复位
-				Ano_Parame_Write();      //执行存储
+				/* ��ʱ�����������д��������� */
+				para_sta.save_trig = 0;
+				Ano_Parame_Write();
 				ANO_DT_SendString("Set save OK!");
 				LED_STA.saving = 0;
 			}

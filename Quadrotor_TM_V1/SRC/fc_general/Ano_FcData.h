@@ -12,6 +12,7 @@
 #define TRUE 1
 #define FALSE 0 
 
+/* 自动起飞与降落状态。 */
 enum
 {
 	AUTO_TAKE_OFF_NULL = 0,
@@ -20,6 +21,7 @@ enum
 	AUTO_LAND,
 };
 
+/* 遥控输入模式。 */
 enum pwminmode_e
 {
 	PWM = 0,
@@ -27,6 +29,7 @@ enum pwminmode_e
 	SBUS,
 };
 
+/* IMU 原始数据索引。 */
 enum
 {
  A_X = 0,
@@ -40,6 +43,7 @@ enum
 };
 
 	
+/* 遥控通道索引。 */
 enum
 {
  CH_ROL = 0,
@@ -53,6 +57,7 @@ enum
  CH_NUM,
 };
 
+/* 电机索引。 */
 enum
 {
 	m1=0,
@@ -66,6 +71,7 @@ enum
 
 };
 
+/* IMU 器件实例索引。 */
 enum
 {
 	MPU_6050_0 = 0,
@@ -73,6 +79,7 @@ enum
 	
 };
 
+/* 三轴向量索引。 */
 enum
 {
 	X = 0,
@@ -81,6 +88,7 @@ enum
 	VEC_XYZ,
 };
 
+/* 姿态轴索引。 */
 enum
 {
 	ROL = 0,
@@ -89,6 +97,7 @@ enum
 	VEC_RPY,
 };
 
+/* PID 参数索引。 */
 enum
 {
 	KP = 0,
@@ -97,6 +106,7 @@ enum
 	PID,
 };
 
+/* 电压报警等级。 */
 enum _power_alarm
 {
 
@@ -109,6 +119,7 @@ enum _power_alarm
 };
 
 
+/* 飞行模式。 */
 enum _flight_mode
 {
 	ATT_STAB = 0,
