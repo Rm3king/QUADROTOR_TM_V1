@@ -32,6 +32,19 @@
 
 #include "Ano_LocCtrl.h"
 #include "Ano_FlyCtrl.h"
+#include "Ano_OPMV_CBTracking_Ctrl.h"
+#include "Ano_OF_DecoFusion.h"
+
+/*
+ * 模块说明：
+ * 1. 负责匿名上位机协议的数据打包、发送、接收与解析。
+ * 2. 负责参数列表与飞控参数结构之间的双向映射。
+ * 3. 该模块由 1ms 周期任务轮询调用，不参与姿态与控制算法计算。
+ *
+ * 重构约束：
+ * 1. 不修改协议帧格式、功能码、发送顺序与参数含义。
+ * 2. 仅做文件内结构整理、重复逻辑收敛与中文注释补充。
+ */
 
 /////////////////////////////////////////////////////////////////////////////////////
 //数据拆分宏定义，在发送大于1字节的数据类型时，比如int16、float等，需要把数据拆分成单独字节进行发送
@@ -42,13 +55,58 @@
 
 #define MYHWADDR	0x05
 #define SWJADDR		0xAF
+#define ANO_DT_PARAM_COUNT		100
+#define ANO_DT_TX_BUFFER_SIZE	50
+#define ANO_DT_RX_BUFFER_SIZE	100
+#define ANO_DT_FRAME_HEAD		0xAA
+#define ANO_DT_FRAME_LEN_INDEX	4
+#define ANO_DT_FRAME_DATA_INDEX	5
 
-#define PARNUM		100
+#define PARNUM		ANO_DT_PARAM_COUNT
 s32 ParValList[100];		//参数列表
 
 dt_flag_t f;					//需要发送数据的标志
 u8 data_to_send[50];	//发送数据缓存
 u8 checkdata_to_send,checksum_to_send;
+
+void ANO_DT_Send_Data(u8 *dataToSend , u8 length);
+static u8 ANO_DT_FrameStart(u8 dest, u8 msg_id);
+static u8 ANO_DT_AppendChecksum(u8 *buffer, u8 frame_len);
+static void ANO_DT_FrameSend(u8 frame_len);
+static void ANO_DT_UpdatePeriodFlags(u16 cnt, u8 *flag_send_omv);
+
+static u8 ANO_DT_FrameStart(u8 dest, u8 msg_id)
+{
+	u8 frame_len = 0;
+
+	data_to_send[frame_len++] = ANO_DT_FRAME_HEAD;
+	data_to_send[frame_len++] = MYHWADDR;
+	data_to_send[frame_len++] = dest;
+	data_to_send[frame_len++] = msg_id;
+	data_to_send[frame_len++] = 0;
+
+	return frame_len;
+}
+
+static u8 ANO_DT_AppendChecksum(u8 *buffer, u8 frame_len)
+{
+	u8 sum = 0;
+
+	for(u8 i = 0; i < frame_len; i++)
+	{
+		sum += buffer[i];
+	}
+
+	buffer[frame_len++] = sum;
+	return frame_len;
+}
+
+static void ANO_DT_FrameSend(u8 frame_len)
+{
+	data_to_send[ANO_DT_FRAME_LEN_INDEX] = frame_len - ANO_DT_FRAME_DATA_INDEX;
+	frame_len = ANO_DT_AppendChecksum(data_to_send, frame_len);
+	ANO_DT_Send_Data(data_to_send, frame_len);
+}
 
 /////////////////////////////////////////////////////////////////////////////////////
 //Send_Data函数是协议中所有发送数据功能使用到的发送函数
@@ -66,10 +124,8 @@ void ANO_DT_Send_Data(u8 *dataToSend , u8 length)
 /////////////////////////////////////////////////////////////////////////////////////
 //Data_Exchange函数处理各种数据发送请求，比如想实现每5ms发送一次传感器数据至上位机，即在此函数内实现
 //此函数应由用户每1ms调用一次	
-extern float ultra_dis_lpf;
-void ANO_DT_Data_Exchange(void)
+static void ANO_DT_UpdatePeriodFlags(u16 cnt, u8 *flag_send_omv)
 {
-	static u16 cnt = 0;
 	static u16 senser_cnt 	= 10;
 	static u16 senser2_cnt 	= 50;
 	static u16 user_cnt 	= 10;
@@ -81,49 +137,51 @@ void ANO_DT_Data_Exchange(void)
 	static u16 sensorsta_cnt = 500;
 	static u16 omv_cnt = 100;
 	static u16 location_cnt = 500;
-	static u8	flag_send_omv = 0;
 
-		
-	if((cnt % senser_cnt) == (senser_cnt-1))
+	if((cnt % senser_cnt) == (senser_cnt - 1))
 		f.send_senser = 1;
 
-	if((cnt % senser2_cnt) == (senser2_cnt-1))
-		f.send_senser2 = 1;	
+	if((cnt % senser2_cnt) == (senser2_cnt - 1))
+		f.send_senser2 = 1;
 
-	if((cnt % user_cnt) == (user_cnt-2))
+	if((cnt % user_cnt) == (user_cnt - 2))
 		f.send_user = 1;
+
+	if((cnt % status_cnt) == (status_cnt - 1))
+		f.send_status = 1;
+
+	if((cnt % rcdata_cnt) == (rcdata_cnt - 1))
+		f.send_rcdata = 1;
+
+	if((cnt % motopwm_cnt) == (motopwm_cnt - 2))
+		f.send_motopwm = 1;
+
+	if((cnt % power_cnt) == (power_cnt - 2))
+		f.send_power = 1;
+
+	if((cnt % speed_cnt) == (speed_cnt - 3))
+		f.send_speed = 1;
+
+	if((cnt % sensorsta_cnt) == (sensorsta_cnt - 2))
+		f.send_sensorsta = 1;
+
+	if((cnt % omv_cnt) == (omv_cnt - 2))
+		*flag_send_omv = 1;
+
+	if((cnt % location_cnt) == (location_cnt - 3))
+		f.send_location = 1;
+}
+
+extern float ultra_dis_lpf;
+void ANO_DT_Data_Exchange(void)
+{
+	static u16 cnt = 0;
+	static u8	flag_send_omv = 0;
+
+	ANO_DT_UpdatePeriodFlags(cnt, &flag_send_omv);
 	
-	if((cnt % status_cnt) == (status_cnt-1))
-		f.send_status = 1;	
-	
-	if((cnt % rcdata_cnt) == (rcdata_cnt-1))
-		f.send_rcdata = 1;	
-	
-	if((cnt % motopwm_cnt) == (motopwm_cnt-2))
-		f.send_motopwm = 1;	
-	
-	if((cnt % power_cnt) == (power_cnt-2))
-		f.send_power = 1;		
-	
-	if((cnt % speed_cnt) == (speed_cnt-3))
-		f.send_speed = 1;		
-	
-	if((cnt % sensorsta_cnt) == (sensorsta_cnt-2))
-	{
-		f.send_sensorsta = 1;		
-	}	
-	
-	if((cnt % omv_cnt) == (omv_cnt-2))
-	{
-		flag_send_omv = 1;		
-	}	
-	
-	if((cnt % location_cnt) == (location_cnt-3))
-	{
-		f.send_location = 1;		
-	}
-	
-	if(++cnt>1000) cnt = 0;
+	if(++cnt > 1000)
+		cnt = 0;
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_version)
 	{
@@ -373,7 +431,6 @@ void ANO_DT_Data_Receive_Anl_Task()
 //Data_Receive_Anl函数是协议数据解析函数，函数参数是符合协议格式的一个数据帧，该函数会首先对协议数据进行校验
 //校验通过后对数据进行解析，实现相应功能
 //此函数可以不用用户自行调用，由函数Data_Receive_Prepare自动调用
-u16 flash_save_en_cnt = 0;
 void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 {
 	u8 sum = 0;
@@ -441,12 +498,8 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 }
 void ANO_DT_SendCmd(u8 dest, u8 fun, u16 cmd1, u16 cmd2, u16 cmd3, u16 cmd4, u16 cmd5)
 {
-	u8 _cnt=0;
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=dest;
-	data_to_send[_cnt++]=0xE0;
-	data_to_send[_cnt++]=0;
+	u8 _cnt = ANO_DT_FrameStart(dest, 0xE0);
+
 	data_to_send[_cnt++]=fun;
 	data_to_send[_cnt++]=BYTE1(cmd1);
 	data_to_send[_cnt++]=BYTE0(cmd1);
@@ -458,46 +511,25 @@ void ANO_DT_SendCmd(u8 dest, u8 fun, u16 cmd1, u16 cmd2, u16 cmd3, u16 cmd4, u16
 	data_to_send[_cnt++]=BYTE0(cmd4);
 	data_to_send[_cnt++]=BYTE1(cmd5);
 	data_to_send[_cnt++]=BYTE0(cmd5);
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	
-	data_to_send[_cnt++]=sum;
 
-	ANO_DT_Send_Data(data_to_send, _cnt);
+	ANO_DT_FrameSend(_cnt);
 }
 void ANO_DT_SendParame(u16 num)
 {
-	u8 _cnt=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0xE1);
 	int32_t data;
 	if(num > PARNUM)
 		return;
 	ANO_DT_ParUsedToParList();
 	data = ParValList[num];
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0xE1;
-	data_to_send[_cnt++]=0;
 	data_to_send[_cnt++]=BYTE1(num);
 	data_to_send[_cnt++]=BYTE0(num);
 	data_to_send[_cnt++]=BYTE3(data);
 	data_to_send[_cnt++]=BYTE2(data);
 	data_to_send[_cnt++]=BYTE1(data);
 	data_to_send[_cnt++]=BYTE0(data);
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	
-	data_to_send[_cnt++]=sum;
 
-	ANO_DT_Send_Data(data_to_send, _cnt);
+	ANO_DT_FrameSend(_cnt);
 }
 void ANO_DT_GetParame(u16 num,s32 data)
 {
@@ -653,23 +685,15 @@ void ANO_DT_Send_VER(void)
 	temp[10] = PT_VER%256;
 	temp[11] = BL_VER/256;
 	temp[12] = BL_VER%256;
-	u8 check_sum = 0;
-	for(u8 i=0;i<13;i++)
-		check_sum += temp[i];
-	temp[13] = check_sum;
+	ANO_DT_AppendChecksum(temp, 13);
 	
 	ANO_DT_Send_Data(temp,14);
 }
 
 void ANO_DT_Send_Version(u8 hardware_type, u16 hardware_ver,u16 software_ver,u16 protocol_ver,u16 bootloader_ver)
 {
-	u8 _cnt=0;
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x00;
-	data_to_send[_cnt++]=0;
-	
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x00);
+
 	data_to_send[_cnt++]=hardware_type;
 	data_to_send[_cnt++]=BYTE1(hardware_ver);
 	data_to_send[_cnt++]=BYTE0(hardware_ver);
@@ -679,27 +703,14 @@ void ANO_DT_Send_Version(u8 hardware_type, u16 hardware_ver,u16 software_ver,u16
 	data_to_send[_cnt++]=BYTE0(protocol_ver);
 	data_to_send[_cnt++]=BYTE1(bootloader_ver);
 	data_to_send[_cnt++]=BYTE0(bootloader_ver);
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	data_to_send[_cnt++]=sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+
+	ANO_DT_FrameSend(_cnt);
 }
 
 void ANO_DT_Send_Speed(float x_s,float y_s,float z_s)
 {
-	u8 _cnt=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x0B);
 	s16 _temp;
-	
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x0B;
-	data_to_send[_cnt++]=0;
 	
 	_temp = (int)(0.1f *x_s);
 	data_to_send[_cnt++]=BYTE1(_temp);
@@ -710,32 +721,18 @@ void ANO_DT_Send_Speed(float x_s,float y_s,float z_s)
 	_temp = (int)(0.1f *z_s);
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	data_to_send[_cnt++]=sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+
+	ANO_DT_FrameSend(_cnt);
 
 }
 
 void ANO_DT_Send_Location(u8 state,u8 sat_num,s32 lon,s32 lat,float back_home_angle,float back_home_dist)
 {
-	u8 _cnt=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x04);
 	s16 _temp;
 	s32 _temp2;
 	u16 _temp3;
-	
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x04;
-	data_to_send[_cnt++]=0;
-	
+
 	data_to_send[_cnt++]=state;
 	data_to_send[_cnt++]=sat_num;
 	
@@ -759,32 +756,18 @@ void ANO_DT_Send_Location(u8 state,u8 sat_num,s32 lon,s32 lat,float back_home_an
 	_temp3 = (u16)(back_home_dist);
 	data_to_send[_cnt++]=BYTE1(_temp3);
 	data_to_send[_cnt++]=BYTE0(_temp3);
-	
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	data_to_send[_cnt++]=sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+
+	ANO_DT_FrameSend(_cnt);
 
 }
 
 
 void ANO_DT_Send_Status(float angle_rol, float angle_pit, float angle_yaw, s32 alt, u8 fly_model, u8 armed)
 {
-	u8 _cnt=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x01);
 	s16 _temp;
 	s32 _temp2 = alt;
-	
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x01;
-	data_to_send[_cnt++]=0;
-	
+
 	_temp = (int)(angle_rol*100);
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
@@ -803,27 +786,14 @@ void ANO_DT_Send_Status(float angle_rol, float angle_pit, float angle_yaw, s32 a
 	data_to_send[_cnt++] = fly_model;
 	
 	data_to_send[_cnt++] = armed;
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	data_to_send[_cnt++]=sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+
+	ANO_DT_FrameSend(_cnt);
 }
 void ANO_DT_Send_Senser(s16 a_x,s16 a_y,s16 a_z,s16 g_x,s16 g_y,s16 g_z,s16 m_x,s16 m_y,s16 m_z)
 {
-	u8 _cnt=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x02);
 	s16 _temp;
-	
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x02;
-	data_to_send[_cnt++]=0;
-	
+
 	_temp = a_x;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
@@ -853,25 +823,12 @@ void ANO_DT_Send_Senser(s16 a_x,s16 a_y,s16 a_z,s16 g_x,s16 g_y,s16 g_z,s16 m_x,
 	_temp = m_z;	
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	data_to_send[_cnt++] = sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+
+	ANO_DT_FrameSend(_cnt);
 }
 void ANO_DT_Send_Senser2(s32 bar_alt,s32 csb_alt, s16 sensertmp)
 {
-	u8 _cnt=0;
-	
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x07;
-	data_to_send[_cnt++]=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x07);
 	
 	data_to_send[_cnt++]=BYTE3(bar_alt);
 	data_to_send[_cnt++]=BYTE2(bar_alt);
@@ -885,25 +842,13 @@ void ANO_DT_Send_Senser2(s32 bar_alt,s32 csb_alt, s16 sensertmp)
 	
 	data_to_send[_cnt++]=BYTE1(sensertmp);
 	data_to_send[_cnt++]=BYTE0(sensertmp);
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	data_to_send[_cnt++] = sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+
+	ANO_DT_FrameSend(_cnt);
 }
 void ANO_DT_Send_RCData(u16 thr,u16 yaw,u16 rol,u16 pit,u16 aux1,u16 aux2,u16 aux3,u16 aux4,u16 aux5,u16 aux6)
 {
-	u8 _cnt=0;
-	
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x03;
-	data_to_send[_cnt++]=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x03);
+
 	data_to_send[_cnt++]=BYTE1(thr);
 	data_to_send[_cnt++]=BYTE0(thr);
 	data_to_send[_cnt++]=BYTE1(yaw);
@@ -925,53 +870,25 @@ void ANO_DT_Send_RCData(u16 thr,u16 yaw,u16 rol,u16 pit,u16 aux1,u16 aux2,u16 au
 	data_to_send[_cnt++]=BYTE1(aux6);
 	data_to_send[_cnt++]=BYTE0(aux6);
 
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	
-	data_to_send[_cnt++]=sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+	ANO_DT_FrameSend(_cnt);
 }
 void ANO_DT_Send_Power(u16 votage, u16 current)
 {
-	u8 _cnt=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x05);
 	u16 temp;
-	
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x05;
-	data_to_send[_cnt++]=0;
-	
+
 	temp = votage;
 	data_to_send[_cnt++]=BYTE1(temp);
 	data_to_send[_cnt++]=BYTE0(temp);
 	temp = current;
 	data_to_send[_cnt++]=BYTE1(temp);
 	data_to_send[_cnt++]=BYTE0(temp);
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	
-	data_to_send[_cnt++]=sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+
+	ANO_DT_FrameSend(_cnt);
 }
 void ANO_DT_Send_MotoPWM(u16 m_1,u16 m_2,u16 m_3,u16 m_4,u16 m_5,u16 m_6,u16 m_7,u16 m_8)
 {
-	u8 _cnt=0;
-	
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x06;
-	data_to_send[_cnt++]=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x06);
 	
 	data_to_send[_cnt++]=BYTE1(m_1);
 	data_to_send[_cnt++]=BYTE0(m_1);
@@ -989,26 +906,13 @@ void ANO_DT_Send_MotoPWM(u16 m_1,u16 m_2,u16 m_3,u16 m_4,u16 m_5,u16 m_6,u16 m_7
 	data_to_send[_cnt++]=BYTE0(m_7);
 	data_to_send[_cnt++]=BYTE1(m_8);
 	data_to_send[_cnt++]=BYTE0(m_8);
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	
-	data_to_send[_cnt++]=sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+
+	ANO_DT_FrameSend(_cnt);
 }
 
 void ANO_DT_SendString(const char *str)
 {
-	u8 _cnt=0;
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0xA0;
-	data_to_send[_cnt++]=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0xA0);
 	u8 i = 0;
 	while(*(str+i) != '\0')
 	{
@@ -1016,25 +920,12 @@ void ANO_DT_SendString(const char *str)
 		if(_cnt > 50)
 			break;
 	}
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	
-	data_to_send[_cnt++]=sum;
 
-	ANO_DT_Send_Data(data_to_send, _cnt);
+	ANO_DT_FrameSend(_cnt);
 }
 void ANO_DT_SendStrVal(const char *str, s32 val)
 {
-	u8 _cnt=0;
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0xA1;
-	data_to_send[_cnt++]=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0xA1);
 	data_to_send[_cnt++]=BYTE3(val);
 	data_to_send[_cnt++]=BYTE2(val);
 	data_to_send[_cnt++]=BYTE1(val);
@@ -1046,27 +937,13 @@ void ANO_DT_SendStrVal(const char *str, s32 val)
 		if(_cnt > 50)
 			break;
 	}
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	
-	data_to_send[_cnt++]=sum;
 
-	ANO_DT_Send_Data(data_to_send, _cnt);
+	ANO_DT_FrameSend(_cnt);
 }
 
 void ANO_DT_SendSensorSta(u8 of_sta,u8 gps_sta,u8 opmv_sta,u8 uwb_sta,u8 altadd_sta)
 {
-	u8 _cnt=0;
-	
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x08;
-	data_to_send[_cnt++]=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x08);
 	
 	data_to_send[_cnt++]=of_sta;
 	data_to_send[_cnt++]=gps_sta;
@@ -1074,28 +951,12 @@ void ANO_DT_SendSensorSta(u8 of_sta,u8 gps_sta,u8 opmv_sta,u8 uwb_sta,u8 altadd_
 	data_to_send[_cnt++]=uwb_sta;
 	data_to_send[_cnt++]=altadd_sta;
 
-
-	
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	
-	data_to_send[_cnt++]=sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+	ANO_DT_FrameSend(_cnt);
 }
 
 void ANO_DT_SendOmvCt(u8 color, u8 sta, s16 x, s16 y, u8 d_tim)
 {
-	u8 _cnt=0;
-	
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x41;
-	data_to_send[_cnt++]=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x41);
 	
 	data_to_send[_cnt++]=color;
 	data_to_send[_cnt++]=sta;
@@ -1105,26 +966,12 @@ void ANO_DT_SendOmvCt(u8 color, u8 sta, s16 x, s16 y, u8 d_tim)
 	data_to_send[_cnt++]=BYTE0(y);
 	data_to_send[_cnt++]=d_tim;
 
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	
-	data_to_send[_cnt++]=sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+	ANO_DT_FrameSend(_cnt);
 }
 
 void ANO_DT_SendOmvLt(u8 sta, s16 angle, s16 offset, u8 pflag, s16 x, s16 y, u8 d_tim)
 {
-	u8 _cnt=0;
-	
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=MYHWADDR;
-	data_to_send[_cnt++]=SWJADDR;
-	data_to_send[_cnt++]=0x42;
-	data_to_send[_cnt++]=0;
+	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x42);
 	
 	data_to_send[_cnt++]=sta;
 	data_to_send[_cnt++]=BYTE1(angle);
@@ -1138,31 +985,19 @@ void ANO_DT_SendOmvLt(u8 sta, s16 angle, s16 offset, u8 pflag, s16 x, s16 y, u8 
 	data_to_send[_cnt++]=BYTE0(y);
 	data_to_send[_cnt++]=d_tim;
 
-	data_to_send[4] = _cnt-5;
-	
-	u8 sum = 0;
-	for(u8 i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	
-	data_to_send[_cnt++]=sum;
-	
-	ANO_DT_Send_Data(data_to_send, _cnt);
+	ANO_DT_FrameSend(_cnt);
 }
 
 
 //用户自定义数据发送
-#include "Ano_MotionCal.h"
-#include "Ano_OPMV_CBTracking_Ctrl.h"
-#include "Drv_OpenMV.h"
-#include "Ano_OF_DecoFusion.h"
 void ANO_DT_Send_User()
 {
-	u8 _cnt=0;
+	u8 _cnt = 0;
 	s16 _temp;
-	
-	data_to_send[_cnt++]=0xAA; 
+	data_to_send[_cnt++]=0xAA;
 	data_to_send[_cnt++]=MYHWADDR;
 	data_to_send[_cnt++]=SWJADDR;
+	
 	data_to_send[_cnt++]=0xf1; //用户数据
 	data_to_send[_cnt++]=0;
 ////////////////////////////////////////	
