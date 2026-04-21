@@ -1,11 +1,8 @@
-/******************** (C) COPYRIGHT 2016 ANO Tech ***************************
- * 作者		 ：匿名科创
- * 文件名  ：ANO_filter.c
- * 描述    ：滤波函数
- * 官网    ：www.anotc.com
- * 淘宝    ：anotc.taobao.com
- * 技术Q群 ：190169595
-*****************************************************************************/
+/*
+ * 模块：滤波工具
+ * 职责：提供飞控使用的低通、限幅、窗口和向量变换辅助函数
+ * 说明：不改变现有滤波算法，只统一注释和文件头风格。
+ */
 #include "Ano_Filter.h"
 #include "Ano_Math.h"
 
@@ -366,6 +363,3 @@ void vec_3dh_transition_matrix(float ref[VEC_XYZ],float wh_matrix[VEC_XYZ][VEC_X
 //}
 
 
-
-
-/******************* (C) COPYRIGHT 2016 ANO TECH *****END OF FILE************/

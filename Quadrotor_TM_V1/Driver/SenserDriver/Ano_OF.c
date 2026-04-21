@@ -1,10 +1,8 @@
-/******************** (C) COPYRIGHT 2017 ANO Tech ********************************
-  * 作者   ：匿名科创
- * 官网    ：www.anotc.com
- * 淘宝    ：anotc.taobao.com
- * 技术Q群 ：190169595
- * 描述    ：光流数据解析
-**********************************************************************************/
+/*
+ * 模块：光流数据解析
+ * 职责：解析下位机光流协议并更新质量、高度与速度数据
+ * 说明：保持原有报文格式和字段含义不变。
+ */
 #include "Ano_OF.h"
 #include "Ano_FcData.h"
 #include "Drv_Bsp.h"
@@ -34,7 +32,6 @@ void AnoOF_DataAnl(uint8_t *data_buf,uint8_t num);
 
 static uint8_t _datatemp[50];
 static u8 _data_cnt = 0;
-static u8 anoof_data_ok;
 
 void AnoOF_DataAnl_Task(u8 dT_ms)
 {

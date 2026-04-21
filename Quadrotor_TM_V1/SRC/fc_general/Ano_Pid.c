@@ -1,11 +1,8 @@
-/******************** (C) COPYRIGHT 2016 ANO Tech ***************************
- * 作者		 ：匿名科创
- * 文件名  ：ANO_PID.c
- * 描述    ：PID函数
- * 官网    ：www.anotc.com
- * 淘宝    ：anotc.taobao.com
- * 技术Q群 ：190169595
-*****************************************************************************/
+/*
+ * 模块：PID控制工具
+ * 职责：提供通用 PID 计算与积分限幅处理
+ * 说明：保持原有 PID 公式和输出定义不变。
+ */
 #include "Ano_Pid.h"
 #include "Ano_Math.h"
 #include "Ano_Filter.h"
@@ -63,7 +60,5 @@ float PID_calculate( float dT_s,            //周期（单位：秒）
 
 
 
-
-/******************* (C) COPYRIGHT 2016 ANO TECH *****END OF FILE************/
 
 
