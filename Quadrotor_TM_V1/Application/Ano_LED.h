@@ -1,7 +1,7 @@
 #ifndef __ANO_LED_H
 #define __ANO_LED_H
 
-//==引用
+/* LED 状态指示接口，仅暴露实际使用中的公共入口。 */
 #include "sysconfig.h"
 
 
@@ -50,15 +50,7 @@ typedef struct
 extern _led_sta LED_STA;
 
 //==函数声明
-
-//static
-
-
-//public
-void Drv_LED_Init(void);
 void LED_1ms_DRV(void );
-void LED_Task(u8);
-void LED_Task(u8 dT_ms);
 void LED_Task2(u8 dT_ms);
 
 
