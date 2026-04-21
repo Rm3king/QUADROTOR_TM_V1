@@ -43,6 +43,13 @@
 #include "Ano_Sensor_Basic.h"
 #include "Drv_laser.h"
 
+static void ANO_OF_Data_Get(float *dT_s, u8 *of_data_buf);
+static void OF_INS_Get(float *dT_s, float rad_ps_x, float rad_ps_y, float acc_wx, float acc_wy);
+static void ANO_OF_Decouple(u8 *dT_ms);
+static void ANO_OF_Fusion(u8 *dT_ms, s32 ref_height_cm);
+static void OF_State(void);
+static void OF_INS_Reset(void);
+
 //需要调用引用的外部变量：
 #define LASER_ONLINE              (LASER_LINKOK)
 #define BUF_UPDATE_CNT            (of_buf_update_cnt)
