@@ -31,11 +31,11 @@ void Remote_Control_Init()
 	//
 	if(RC_IN_MODE == SBUS)
 	{
-		Drv_SbusInit();
+		Drv_RcSbus_Init();
 	}
 	else
 	{
-		Drv_PpmInit();
+		Drv_RcPpm_Init();
 //		PWM_IN_Init(RC_IN_MODE);
 	}
 }

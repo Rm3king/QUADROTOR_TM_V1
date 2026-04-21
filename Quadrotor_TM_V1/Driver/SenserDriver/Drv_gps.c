@@ -51,7 +51,7 @@ static void UART_Write_D(const unsigned char *send_buff, unsigned char len)
 //		USART_SendData(GPS_UART,send_buff[i]);
 //	}
 	//
-	Drv_Uart1SendBuf((u8 *)send_buff, len);
+	Drv_UartGps_SendBuf((u8 *)send_buff, len);
 }
 
 
@@ -151,11 +151,11 @@ float wcy_acc_use;
 void Drv_GpsPin_Init(void)
 {
 	Delay_ms(200);
-	Drv_Uart1Init(9600);
+	Drv_UartGps_Init(9600);
 	gps_baudrate_config();
-	Drv_Uart1Init(38400);
+	Drv_UartGps_Init(38400);
 	gps_baudrate_config();
-	Drv_Uart1Init(115200);
+	Drv_UartGps_Init(115200);
 	gps_config();
 }
 

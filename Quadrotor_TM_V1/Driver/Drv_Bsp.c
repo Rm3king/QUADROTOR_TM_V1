@@ -70,7 +70,7 @@ void Drv_BspInit(void)
 	//板载USB虚拟串口初始化
 	AnoUsbCdcInit();	
 	//先初始化数传串口，以便通信
-	Drv_Uart2Init(500000);	//接数传
+	Drv_UartDt_Init(500000);	//接数传
 	//数据初始化
 	Dvr_ParamterInit();
 	//读取初始数据
@@ -98,14 +98,14 @@ void Drv_BspInit(void)
 	SysTick_Init();	
 	//串口初始化
 	//
-	Drv_Uart3Init(500000);  //接OPMV
+	Drv_UartOpenMv_Init(500000);  //接OPMV
 	Drv_GpsPin_Init();//
 	
-	//Drv_Uart4Init(500000);	//接匿名光流
-	Drv_Uart4Init(115200);	//接新光流
+	//Drv_UartOpticalFlow_Init(500000);	//接匿名光流
+	Drv_UartOpticalFlow_Init(115200);	//接新光流
 	//	
-//	Drv_Uart4Init(19200);	//接优像光流
-//	Drv_Uart5Init(115200);//接大功率激光	
+//	Drv_UartOpticalFlow_Init(19200);	//接优像光流
+//	Drv_UartLaser_Init(115200);//接大功率激光	
 ////	MyDelayMs(200);	
 //	//优像光流初始化
 //	of_init_type = (Drv_OFInit()==0)?0:2;
@@ -116,7 +116,7 @@ void Drv_BspInit(void)
 //	}
 //	else if(of_init_type==0)//优像光流初始化失败
 //	{
-//		Drv_Uart4Init(500000);	//接匿名光流
+//		Drv_UartOpticalFlow_Init(500000);	//接匿名光流
 //	}
 
 

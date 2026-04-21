@@ -117,7 +117,7 @@ void ANO_DT_Send_Data(u8 *dataToSend , u8 length)
 	AnoUsbCdcSend( dataToSend , length );//USB数据发送
 #endif
 #ifdef ANO_DT_USE_USART2
-	Drv_Uart2SendBuf(data_to_send, length);
+	Drv_UartDt_SendBuf(data_to_send, length);
 #endif
 }
 

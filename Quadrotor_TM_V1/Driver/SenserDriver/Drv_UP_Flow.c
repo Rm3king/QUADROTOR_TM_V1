@@ -187,7 +187,7 @@ u8 Drv_OFInit(void)
 	
 	//
 	send_buffer[0] = 0xAA;
-	Drv_Uart4SendBuf(send_buffer, 1);
+	Drv_UartOpticalFlow_SendBuf(send_buffer, 1);
 
 	send_buffer[0] = 0xAB;
 	send_buffer[1] = 0x96;
@@ -195,7 +195,7 @@ u8 Drv_OFInit(void)
 	send_buffer[3] = 0xbc;
 	send_buffer[4] = 0x50;
 	send_buffer[5] = 0x5c;
-	Drv_Uart4SendBuf(send_buffer, 6);
+	Drv_UartOpticalFlow_SendBuf(send_buffer, 6);
 
 	//check_ack
 	delay_ms(10);
@@ -225,7 +225,7 @@ u8 Drv_OFInit(void)
 		send_buffer[2] = Sensor_cfg[i];
 		send_buffer[3] = Sensor_cfg[i+1];
 		send_buffer[4] = (0xdc^send_buffer[2]^send_buffer[3]);
-		Drv_Uart4SendBuf(send_buffer, 5);
+		Drv_UartOpticalFlow_SendBuf(send_buffer, 5);
 
 		//check_ack
 		delay_ms(10);
@@ -252,7 +252,7 @@ u8 Drv_OFInit(void)
 	
 	send_buffer[0] = 0xDD;
 	//
-	Drv_Uart4SendBuf(send_buffer, 1);
+	Drv_UartOpticalFlow_SendBuf(send_buffer, 1);
 
 	
 	
