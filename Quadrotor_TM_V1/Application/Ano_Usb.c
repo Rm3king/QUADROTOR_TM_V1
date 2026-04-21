@@ -10,9 +10,9 @@
 #include "usb_serial_structs.h"
 
 /*
- * 模块说明：
- * 1. 封装 TM4C USB CDC 设备模式的初始化与收发接口。
- * 2. 本轮仅整理无用声明与接口说明，不改变 USB 事件处理流程。
+ * 模块名称：Ano_Usb
+ * 模块职责：封装 TM4C USB CDC 设备模式下的初始化、接收与发送接口。
+ * 使用约束：本轮仅整理接口说明与无用声明，不改变 USB 事件处理流程。
  */
 
 static tLineCoding usb_linecoding = 

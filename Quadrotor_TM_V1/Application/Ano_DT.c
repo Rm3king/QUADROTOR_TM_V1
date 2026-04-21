@@ -1,17 +1,16 @@
-/******************** (C) COPYRIGHT 2017 ANO Tech ********************************
- * ä½œè€…    ï¼šåŒ¿åç§‘åˆ›
- * å®˜ç½‘    ï¼šwww.anotc.com
- * æ·˜å®    ï¼šanotc.taobao.com
- * æŠ€æœ¯Qç¾¤ ï¼š190169595
- * æè¿°    ï¼šæ•°æ®ä¼ è¾“
-**********************************************************************************/
-/*============================================================================
-æ›´æ–°ï¼š
-201907272159-Jyounï¼šå¢åŠ é£æ§çŠ¶æ€ç•Œé¢ä¼ æ„Ÿå™¨çŠ¶æ€æ•°æ®å‘é€ã€‚
-201908031126-èŒ¶ä¸æ€ï¼šå¢åŠ mvç›¸å…³æ•°æ®å‘é€ï¼Œå¯åœ¨ä¸Šä½æœºæŸ¥çœ‹mvå¯»è‰²å—æ•°æ®ã€‚
+/*
+ * Ä£¿éÃû³Æ£ºAno_DT
+ * Ä£¿éÖ°Ôğ£º
+ * 1. ¸ºÔğÄäÃûÉÏÎ»»úĞ­ÒéµÄÊı¾İ´ò°ü¡¢·¢ËÍ¡¢½ÓÊÕÓë½âÎö¡£
+ * 2. ¸ºÔğ²ÎÊıÁĞ±íÓë·É¿Ø²ÎÊı½á¹¹Ö®¼äµÄË«ÏòÓ³Éä¡£
+ * 3. ¸ºÔğÖÜÆÚĞÔ·¢ËÍ×´Ì¬¡¢´«¸ĞÆ÷¡¢Ò£¿Ø¡¢¹¦ÂÊºÍÀ©Õ¹µ÷ÊÔÊı¾İ¡£
+ *
+ * Ê¹ÓÃÔ¼Êø£º
+ * 1. ±¾Ä£¿éÓÉµ÷¶ÈÆ÷ÖÜÆÚµ÷ÓÃ£¬²»²ÎÓë×ËÌ¬½âËãÓë¿ØÖÆËã·¨¼ÆËã¡£
+ * 2. ÖØ¹¹Ê±²»µÃĞŞ¸ÄĞ­ÒéÖ¡¸ñÊ½¡¢¹¦ÄÜÂë¡¢·¢ËÍÓÅÏÈ¼¶ºÍ²ÎÊıÓïÒå¡£
+ * 3. ±¾ÎÄ¼şÔÊĞí×ö½á¹¹ÕûÀí¡¢×¢ÊÍÍ³Ò»ºÍÖØ¸´Âß¼­ÊÕÁ²£¬²»ÔÊĞí¸Ä±äÍâ²¿ĞĞÎª¡£
+ */
 
-
-===========================================================================*/
 
 #include "Ano_DT.h"
 #include "Drv_Uart.h"
@@ -35,19 +34,7 @@
 #include "Ano_OPMV_CBTracking_Ctrl.h"
 #include "Ano_OF_DecoFusion.h"
 
-/*
- * æ¨¡å—è¯´æ˜ï¼š
- * 1. è´Ÿè´£åŒ¿åä¸Šä½æœºåè®®çš„æ•°æ®æ‰“åŒ…ã€å‘é€ã€æ¥æ”¶ä¸è§£æã€‚
- * 2. è´Ÿè´£å‚æ•°åˆ—è¡¨ä¸é£æ§å‚æ•°ç»“æ„ä¹‹é—´çš„åŒå‘æ˜ å°„ã€‚
- * 3. è¯¥æ¨¡å—ç”± 1ms å‘¨æœŸä»»åŠ¡è½®è¯¢è°ƒç”¨ï¼Œä¸å‚ä¸å§¿æ€ä¸æ§åˆ¶ç®—æ³•è®¡ç®—ã€‚
- *
- * é‡æ„çº¦æŸï¼š
- * 1. ä¸ä¿®æ”¹åè®®å¸§æ ¼å¼ã€åŠŸèƒ½ç ã€å‘é€é¡ºåºä¸å‚æ•°å«ä¹‰ã€‚
- * 2. ä»…åšæ–‡ä»¶å†…ç»“æ„æ•´ç†ã€é‡å¤é€»è¾‘æ”¶æ•›ä¸ä¸­æ–‡æ³¨é‡Šè¡¥å……ã€‚
- */
-
-/////////////////////////////////////////////////////////////////////////////////////
-//æ•°æ®æ‹†åˆ†å®å®šä¹‰ï¼Œåœ¨å‘é€å¤§äº1å­—èŠ‚çš„æ•°æ®ç±»å‹æ—¶ï¼Œæ¯”å¦‚int16ã€floatç­‰ï¼Œéœ€è¦æŠŠæ•°æ®æ‹†åˆ†æˆå•ç‹¬å­—èŠ‚è¿›è¡Œå‘é€
+/* ¶à×Ö½ÚÊı¾İ²ğ·Öºê£¬ÓÃÓÚĞ­Òé·¢ËÍÊ±°´×Ö½ÚĞ´Èë»º³åÇø¡£ */
 #define BYTE0(dwTemp)       ( *( (char *)(&dwTemp)		) )
 #define BYTE1(dwTemp)       ( *( (char *)(&dwTemp) + 1) )
 #define BYTE2(dwTemp)       ( *( (char *)(&dwTemp) + 2) )
@@ -63,10 +50,10 @@
 #define ANO_DT_FRAME_DATA_INDEX	5
 
 #define PARNUM		ANO_DT_PARAM_COUNT
-s32 ParValList[100];		//å‚æ•°åˆ—è¡¨
+s32 ParValList[100];		/* ²ÎÊıÁĞ±í»º´æ¡£ */
 
-dt_flag_t f;					//éœ€è¦å‘é€æ•°æ®çš„æ ‡å¿—
-u8 data_to_send[50];	//å‘é€æ•°æ®ç¼“å­˜
+dt_flag_t f;					/* ¸÷ÀàÊı¾İÖ¡µÄ·¢ËÍÇëÇó±êÖ¾¡£ */
+u8 data_to_send[50];	/* ¹«¹²·¢ËÍ»º³åÇø¡£ */
 u8 checkdata_to_send,checksum_to_send;
 
 void ANO_DT_Send_Data(u8 *dataToSend , u8 length);
@@ -75,6 +62,7 @@ static u8 ANO_DT_AppendChecksum(u8 *buffer, u8 frame_len);
 static void ANO_DT_FrameSend(u8 frame_len);
 static void ANO_DT_UpdatePeriodFlags(u16 cnt, u8 *flag_send_omv);
 
+/* ×éÖ¡Èë¿Ú£ºĞ´ÈëĞ­ÒéÍ·¡¢Ä¿±êµØÖ·ºÍÏûÏ¢±àºÅ£¬²¢Ô¤Áô³¤¶ÈÎ»¡£ */
 static u8 ANO_DT_FrameStart(u8 dest, u8 msg_id)
 {
 	u8 frame_len = 0;
@@ -88,6 +76,7 @@ static u8 ANO_DT_FrameStart(u8 dest, u8 msg_id)
 	return frame_len;
 }
 
+/* ¼ÆËã²¢×·¼Óµ¥×Ö½ÚĞ£ÑéºÍ¡£ */
 static u8 ANO_DT_AppendChecksum(u8 *buffer, u8 frame_len)
 {
 	u8 sum = 0;
@@ -101,6 +90,7 @@ static u8 ANO_DT_AppendChecksum(u8 *buffer, u8 frame_len)
 	return frame_len;
 }
 
+/* Ğ´»ØÓĞĞ§ÔØºÉ³¤¶ÈºóÍ³Ò»·¢ËÍ¡£ */
 static void ANO_DT_FrameSend(u8 frame_len)
 {
 	data_to_send[ANO_DT_FRAME_LEN_INDEX] = frame_len - ANO_DT_FRAME_DATA_INDEX;
@@ -108,22 +98,24 @@ static void ANO_DT_FrameSend(u8 frame_len)
 	ANO_DT_Send_Data(data_to_send, frame_len);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-//Send_Dataå‡½æ•°æ˜¯åè®®ä¸­æ‰€æœ‰å‘é€æ•°æ®åŠŸèƒ½ä½¿ç”¨åˆ°çš„å‘é€å‡½æ•°
-//ç§»æ¤æ—¶ï¼Œç”¨æˆ·åº”æ ¹æ®è‡ªèº«åº”ç”¨çš„æƒ…å†µï¼Œæ ¹æ®ä½¿ç”¨çš„é€šä¿¡æ–¹å¼ï¼Œå®ç°æ­¤å‡½æ•°
+/*
+ * ¹¦ÄÜ£º·¢ËÍÒÑ¾­Íê³É×éÖ¡µÄÊı¾İ¡£
+ * ËµÃ÷£º±¾º¯ÊıÊÇĞ­Òé²ãÍ³Ò»·¢ËÍ³ö¿Ú£¬µ×²ã¿ÉÇĞ»»Îª USB »ò´®¿Ú¡£
+ */
 void ANO_DT_Send_Data(u8 *dataToSend , u8 length)
 {
 #ifdef ANO_DT_USE_USB
-	AnoUsbCdcSend( dataToSend , length );//USBæ•°æ®å‘é€
+    AnoUsbCdcSend( dataToSend , length );  /* USB Êı¾İ·¢ËÍ¡£ */
 #endif
 #ifdef ANO_DT_USE_USART2
 	Drv_UartDt_SendBuf(data_to_send, length);
 #endif
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-//Data_Exchangeå‡½æ•°å¤„ç†å„ç§æ•°æ®å‘é€è¯·æ±‚ï¼Œæ¯”å¦‚æƒ³å®ç°æ¯5mså‘é€ä¸€æ¬¡ä¼ æ„Ÿå™¨æ•°æ®è‡³ä¸Šä½æœºï¼Œå³åœ¨æ­¤å‡½æ•°å†…å®ç°
-//æ­¤å‡½æ•°åº”ç”±ç”¨æˆ·æ¯1msè°ƒç”¨ä¸€æ¬¡	
+/*
+ * ¹¦ÄÜ£º¸ù¾İ¼ÆÊıÆ÷¸üĞÂ¸÷ÀàÖÜÆÚ·¢ËÍ±êÖ¾¡£
+ * ËµÃ÷£º½ö¸ºÔğÖÃÎ»ÇëÇó£¬²»Ö±½ÓÖ´ĞĞ·¢ËÍ¡£
+ */
 static void ANO_DT_UpdatePeriodFlags(u16 cnt, u8 *flag_send_omv)
 {
 	static u16 senser_cnt 	= 10;
@@ -173,6 +165,11 @@ static void ANO_DT_UpdatePeriodFlags(u16 cnt, u8 *flag_send_omv)
 }
 
 extern float ultra_dis_lpf;
+/*
+ * ¹¦ÄÜ£ºĞ­ÒéÊı¾İÂÖÑ¯·¢ËÍÈÎÎñ¡£
+ * µ÷ÓÃÖÜÆÚ£º1ms¡£
+ * ËµÃ÷£º°´ÕÕ¼ÈÓĞÓÅÏÈ¼¶Á´ÖğÏî·¢ËÍ£¬·¢ËÍË³Ğò²»¿ÉËæÒâµ÷Õû¡£
+ */
 void ANO_DT_Data_Exchange(void)
 {
 	static u16 cnt = 0;
@@ -182,7 +179,6 @@ void ANO_DT_Data_Exchange(void)
 	
 	if(++cnt > 1000)
 		cnt = 0;
-/////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_version)
 	{
 		f.send_version = 0;
@@ -193,37 +189,31 @@ void ANO_DT_Data_Exchange(void)
 		ANO_DT_SendParame(f.paraToSend);
 		f.paraToSend = 0xffff;
 	}
-///////////////////////////////////////////////////////////////////////////////////////
 	else if(f.send_status)
 	{
 		f.send_status = 0;
 		ANO_DT_Send_Status(imu_data.rol,imu_data.pit,imu_data.yaw,wcz_hei_fus.out,(flag.flight_mode+1),flag.unlock_sta);	
 	}	
-///////////////////////////////////////////////////////////////////////////////////////
 	else if(f.send_speed)
 	{
 		f.send_speed = 0;
 		ANO_DT_Send_Speed(loc_ctrl_1.fb[Y],loc_ctrl_1.fb[X],loc_ctrl_1.fb[Z]);
 	}
-///////////////////////////////////////////////////////////////////////////////////////
 	else if(f.send_user)
 	{
 		f.send_user = 0;
 		ANO_DT_Send_User();
 	}
-///////////////////////////////////////////////////////////////////////////////////////
 	else if(f.send_senser)
 	{
 		f.send_senser = 0;
 		ANO_DT_Send_Senser(sensor.Acc[X],sensor.Acc[Y],sensor.Acc[Z],sensor.Gyro[X],sensor.Gyro[Y],sensor.Gyro[Z],mag.val[X],mag.val[Y],mag.val[Z]);
 	}	
-/////////////////////////////////////////////////////////////////////////////////////
 	else if(f.send_senser2)
 	{
 		f.send_senser2 = 0;
-		ANO_DT_Send_Senser2(baro_height,ref_tof_height,sensor.Tempreature_C*10);//åŸå§‹æ•°æ®
+        ANO_DT_Send_Senser2(baro_height,ref_tof_height,sensor.Tempreature_C*10); /* Ô­Ê¼²¹³ä´«¸ĞÆ÷Êı¾İ¡£ */
 	}	
-/////////////////////////////////////////////////////////////////////////////////////
 	else if(flag_send_omv)
 	{
 		flag_send_omv = 0;
@@ -238,7 +228,6 @@ void ANO_DT_Data_Exchange(void)
 			ANO_DT_SendOmvLt(opmv.lt.sta, opmv.lt.angle, opmv.lt.deviation, opmv.lt.p_flag, opmv.lt.pos_x, opmv.lt.pos_y, opmv.lt.dT_ms);
 		}
 	}
-/////////////////////////////////////////////////////////////////////////////////////
 	else if(f.send_rcdata)
 	{
 		f.send_rcdata = 0;
@@ -246,7 +235,7 @@ void ANO_DT_Data_Exchange(void)
 		
 		for(u8 i=0;i<CH_NUM;i++)
 		{
-			if((chn_en_bit & (1<<i)))//(Rc_Pwm_In[i]!=0 || Rc_Ppm_In[i] !=0  )//è¯¥é€šé“æœ‰å€¼
+            if((chn_en_bit & (1<<i))) /* ½ö·¢ËÍµ±Ç°ÒÑÊ¹ÄÜÍ¨µÀ¡£ */
 			{
 				CH_GCS[i] = CH_N[i] + 1500;
 			}
@@ -257,7 +246,6 @@ void ANO_DT_Data_Exchange(void)
 		}
 		ANO_DT_Send_RCData(CH_GCS[2],CH_GCS[3],CH_GCS[0],CH_GCS[1],CH_GCS[4],CH_GCS[5],CH_GCS[6],CH_GCS[7],0,0);
 	}	
-/////////////////////////////////////////////////////////////////////////////////////	
 	else if(f.send_motopwm)
 	{
 		f.send_motopwm = 0;
@@ -271,7 +259,6 @@ void ANO_DT_Data_Exchange(void)
 		
 #endif
 	}	
-/////////////////////////////////////////////////////////////////////////////////////
 	else if(f.send_power)
 	{
 		f.send_power = 0;
@@ -293,49 +280,44 @@ void ANO_DT_Data_Exchange(void)
 		ANO_DT_Send_VER();
 		f.send_vef = 0;
 	}
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
 	ANO_DT_Data_Receive_Anl_Task();
-/////////////////////////////////////////////////////////////////////////////////////
-//	Usb_Hid_Send();					
-/////////////////////////////////////////////////////////////////////////////////////
 }
 
 
 
-/////////////////////////////////////////////////////////////////////////////////////
-//Data_Receive_Prepareå‡½æ•°æ˜¯åè®®é¢„è§£æï¼Œæ ¹æ®åè®®çš„æ ¼å¼ï¼Œå°†æ”¶åˆ°çš„æ•°æ®è¿›è¡Œä¸€æ¬¡æ ¼å¼æ€§è§£æï¼Œæ ¼å¼æ­£ç¡®çš„è¯å†è¿›è¡Œæ•°æ®è§£æ
-//ç§»æ¤æ—¶ï¼Œæ­¤å‡½æ•°åº”ç”±ç”¨æˆ·æ ¹æ®è‡ªèº«ä½¿ç”¨çš„é€šä¿¡æ–¹å¼è‡ªè¡Œè°ƒç”¨ï¼Œæ¯”å¦‚ä¸²å£æ¯æ”¶åˆ°ä¸€å­—èŠ‚æ•°æ®ï¼Œåˆ™è°ƒç”¨æ­¤å‡½æ•°ä¸€æ¬¡
-//æ­¤å‡½æ•°è§£æå‡ºç¬¦åˆæ ¼å¼çš„æ•°æ®å¸§åï¼Œä¼šè‡ªè¡Œè°ƒç”¨æ•°æ®è§£æå‡½æ•°
+/* ´®¿ÚºÍ USB ½ÓÊÕ»º³åÇø£¬°´Ğ­Òé×´Ì¬»úÖğ×Ö½Ú×°Ö¡¡£ */
 static u8 DT_RxBuffer[100],DT_data_cnt = 0,ano_dt_data_ok;
 static u8 DT_RxBuffer_USB[100],DT_data_cnt_USB = 0,ano_dt_data_ok_USB;
+/*
+ * ¹¦ÄÜ£º´®¿Ú½ÓÊÕ×´Ì¬»ú¡£
+ * ËµÃ÷£º°´×Ö½ÚÍÆ½øĞ­ÒéÖ¡Æ´½Ó£¬½ÓÊÕÍê³ÉºóÖÃÎ»½âÎö±êÖ¾¡£
+ */
 void ANO_DT_Data_Receive_Prepare(u8 data)
 {
 	static u8 _data_len = 0;
 	static u8 state = 0;
 	
-	if(state==0&&data==0xAA)	//å¸§å¤´0xAA
+	if(state==0&&data==0xAA)	/* Ö¡Í·ÆğÊ¼×Ö½Ú¡£ */
 	{
 		state=1;
 		DT_RxBuffer[0]=data;
 	}
-	else if(state==1&&data==0xAF)	//æ•°æ®æºï¼Œ0xAFè¡¨ç¤ºæ•°æ®æ¥è‡ªä¸Šä½æœº
+	else if(state==1&&data==0xAF)	/* Êı¾İÔ´£¬0xAF ±íÊ¾ÉÏÎ»»ú¡£ */
 	{
 		state=2;
 		DT_RxBuffer[1]=data;
 	}
-	else if(state==2)		//æ•°æ®ç›®çš„åœ°
+	else if(state==2)		/* Ä¿±êµØÖ·¡£ */
 	{
 		state=3;
 		DT_RxBuffer[2]=data;
 	}
-	else if(state==3)		//åŠŸèƒ½å­—
+	else if(state==3)		/* ¹¦ÄÜÂë¡£ */
 	{
 		state=4;
 		DT_RxBuffer[3]=data;
 	}
-	else if(state==4)		//æ•°æ®é•¿åº¦
+	else if(state==4)		/* Êı¾İ³¤¶È¡£ */
 	{
 		state = 5;
 		DT_RxBuffer[4]=data;
@@ -353,37 +335,41 @@ void ANO_DT_Data_Receive_Prepare(u8 data)
 	{
 		state = 0;
 		DT_RxBuffer[5+DT_data_cnt]=data;
-		ano_dt_data_ok = 1;//ANO_DT_Data_Receive_Anl(DT_RxBuffer,DT_data_cnt+5);
+		ano_dt_data_ok = 1;
 	}
 	else
 		state = 0;
 }
+/*
+ * ¹¦ÄÜ£ºUSB ½ÓÊÕ×´Ì¬»ú¡£
+ * ËµÃ÷£ºÂß¼­Óë´®¿Ú½ÓÊÕÒ»ÖÂ£¬½ö»º³åÇø¶ÀÁ¢¡£
+ */
 void ANO_DT_Data_Receive_Prepare_USB(u8 data)
 {
 	static u8 _data_len = 0;
 	static u8 state = 0;
 	
-	if(state==0&&data==0xAA)	//å¸§å¤´0xAA
+	if(state==0&&data==0xAA)	/* Ö¡Í·ÆğÊ¼×Ö½Ú¡£ */
 	{
 		state=1;
 		DT_RxBuffer_USB[0]=data;
 	}
-	else if(state==1&&data==0xAF)	//æ•°æ®æºï¼Œ0xAFè¡¨ç¤ºæ•°æ®æ¥è‡ªä¸Šä½æœº
+	else if(state==1&&data==0xAF)	/* Êı¾İÔ´£¬0xAF ±íÊ¾ÉÏÎ»»ú¡£ */
 	{
 		state=2;
 		DT_RxBuffer_USB[1]=data;
 	}
-	else if(state==2)		//æ•°æ®ç›®çš„åœ°
+	else if(state==2)		/* Ä¿±êµØÖ·¡£ */
 	{
 		state=3;
 		DT_RxBuffer_USB[2]=data;
 	}
-	else if(state==3)		//åŠŸèƒ½å­—
+	else if(state==3)		/* ¹¦ÄÜÂë¡£ */
 	{
 		state=4;
 		DT_RxBuffer_USB[3]=data;
 	}
-	else if(state==4)		//æ•°æ®é•¿åº¦
+	else if(state==4)		/* Êı¾İ³¤¶È¡£ */
 	{
 		state = 5;
 		DT_RxBuffer_USB[4]=data;
@@ -406,6 +392,10 @@ void ANO_DT_Data_Receive_Prepare_USB(u8 data)
 	else
 		state = 0;
 }
+/*
+ * ¹¦ÄÜ£ºÂÖÑ¯½ÓÊÕ»º³åÇø²¢´¥·¢Ğ­Òé½âÎö¡£
+ * ËµÃ÷£º´®¿ÚºÍ USB ¹²ÓÃÍ¬Ò»Ì×½âÎöº¯Êı¡£
+ */
 void ANO_DT_Data_Receive_Anl_Task()
 {
 	static u8 usbdatarxbuf[100];
@@ -427,23 +417,23 @@ void ANO_DT_Data_Receive_Anl_Task()
 		ano_dt_data_ok_USB = 0;
 	}
 }
-/////////////////////////////////////////////////////////////////////////////////////
-//Data_Receive_Anlå‡½æ•°æ˜¯åè®®æ•°æ®è§£æå‡½æ•°ï¼Œå‡½æ•°å‚æ•°æ˜¯ç¬¦åˆåè®®æ ¼å¼çš„ä¸€ä¸ªæ•°æ®å¸§ï¼Œè¯¥å‡½æ•°ä¼šé¦–å…ˆå¯¹åè®®æ•°æ®è¿›è¡Œæ ¡éªŒ
-//æ ¡éªŒé€šè¿‡åå¯¹æ•°æ®è¿›è¡Œè§£æï¼Œå®ç°ç›¸åº”åŠŸèƒ½
-//æ­¤å‡½æ•°å¯ä»¥ä¸ç”¨ç”¨æˆ·è‡ªè¡Œè°ƒç”¨ï¼Œç”±å‡½æ•°Data_Receive_Prepareè‡ªåŠ¨è°ƒç”¨
+/*
+ * ¹¦ÄÜ£º½âÎöµ¥Ö¡Ğ­ÒéÊı¾İ¡£
+ * ËµÃ÷£ºÏÈ×öÖ¡Í·ºÍĞ£Ñé¼ì²é£¬ÔÙ·Ö·¢ÃüÁî»ò²ÎÊıĞ´ÈëÇëÇó¡£
+ */
 void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 {
 	u8 sum = 0;
 	for(u8 i=0;i<(num-1);i++)
 		sum += *(data_buf+i);
-	if(!(sum==*(data_buf+num-1)))		return;		//åˆ¤æ–­sum
-	if(!(*(data_buf)==0xAA && *(data_buf+1)==0xAF))		return;		//åˆ¤æ–­å¸§å¤´
+	if(!(sum==*(data_buf+num-1)))		return;		/* Ğ£ÑéºÍ´íÎó¡£ */
+	if(!(*(data_buf)==0xAA && *(data_buf+1)==0xAF))		return;		/* Ö¡Í·´íÎó¡£ */
 	
 	if(*(data_buf+2)==MYHWADDR)
 	{
-		if(*(data_buf+3)==0XE0)			//å‘½ä»¤E0
+		if(*(data_buf+3)==0XE0)			/* ÃüÁîÖ¡¡£ */
 		{
-			switch(*(data_buf+5))		//FUN
+			switch(*(data_buf+5))		/* ¹¦ÄÜ×Ö¡£ */
 			{
 				case 0x01:
 					if(*(data_buf+6)==0x00 && *(data_buf+7)==0x01)
@@ -452,22 +442,22 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 						sensor.gyr_CALIBRATE = 1;
 					if(*(data_buf+6)==0x00 && *(data_buf+7)==0x04)
 						mag.mag_CALIBRATE = 1;
-					if(*(data_buf+6)==0x00 && *(data_buf+7)==0xB0)//è¯»å–ç‰ˆæœ¬ä¿¡æ¯
+					if(*(data_buf+6)==0x00 && *(data_buf+7)==0xB0)	/* ¶ÁÈ¡°æ±¾ĞÅÏ¢¡£ */
 						f.send_version = 1;
 					break;
 				case 0x02:
-					if(*(data_buf+6)==0x00 && *(data_buf+7)==0xAA)	//æ¢å¤é»˜è®¤PID
+					if(*(data_buf+6)==0x00 && *(data_buf+7)==0xAA)	/* »Ö¸´Ä¬ÈÏ PID¡£ */
 					{
 						PID_Rest();
 						All_PID_Init();
 						data_save();
 					}
-					if(*(data_buf+6)==0x00 && *(data_buf+7)==0xAB)	//æ¢å¤é»˜è®¤å‚æ•°
+					if(*(data_buf+6)==0x00 && *(data_buf+7)==0xAB)	/* »Ö¸´Ä¬ÈÏ²ÎÊı¡£ */
 					{
 						Parame_Reset();
 						data_save();
 					}
-					if(*(data_buf+6)==0x00 && *(data_buf+7)==0xAF)	//æ¢å¤æ‰€æœ‰å‚æ•°
+					if(*(data_buf+6)==0x00 && *(data_buf+7)==0xAF)	/* »Ö¸´ËùÓĞ²ÎÊı¡£ */
 					{
 						PID_Rest();
 						All_PID_Init();
@@ -476,7 +466,7 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 					}
 					break;
 				case 0xE1:
-					f.paraToSend = (u16)(*(data_buf+6)<<8)|*(data_buf+7);	//è¯»å–å‚æ•°
+					f.paraToSend = (u16)(*(data_buf+6)<<8)|*(data_buf+7);	/* ¶ÁÈ¡²ÎÊı¡£ */
 					break;
 				case 0x10:
 					FlyCtrlDataAnl(data_buf+5);
@@ -488,7 +478,7 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 			}
 			ANO_DT_SendCmd(SWJADDR,*(data_buf+5),(u16)(*(data_buf+6)<<8)|*(data_buf+7),(u16)(*(data_buf+8)<<8)|*(data_buf+9),(u16)(*(data_buf+10)<<8)|*(data_buf+11),(u16)(*(data_buf+12)<<8)|*(data_buf+13),(u16)(*(data_buf+14)<<8)|*(data_buf+15));
 		}
-		else if(*(data_buf+3)==0XE1)	//è®¾ç½®å‚æ•°
+		else if(*(data_buf+3)==0XE1)	/* ²ÎÊıĞ´ÈëÖ¡¡£ */
 		{
 			u16 _paraNum = (u16)(*(data_buf+5)<<8)|*(data_buf+6);
 			s32 _paraVal = (s32)(((*(data_buf+7))<<24) + ((*(data_buf+8))<<16) + ((*(data_buf+9))<<8) + (*(data_buf+10)));
@@ -496,6 +486,7 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 		}
 	}
 }
+/* ·¢ËÍÃüÁî»Ø°ü£¬±£³ÖÉÏÎ»»úÓë·É¿ØÃüÁî½»»¥Ò»ÖÂ¡£ */
 void ANO_DT_SendCmd(u8 dest, u8 fun, u16 cmd1, u16 cmd2, u16 cmd3, u16 cmd4, u16 cmd5)
 {
 	u8 _cnt = ANO_DT_FrameStart(dest, 0xE0);
@@ -514,6 +505,7 @@ void ANO_DT_SendCmd(u8 dest, u8 fun, u16 cmd1, u16 cmd2, u16 cmd3, u16 cmd4, u16
 
 	ANO_DT_FrameSend(_cnt);
 }
+/* °´²ÎÊı±àºÅ»Ø´«µ¥¸ö²ÎÊıÖµ¡£ */
 void ANO_DT_SendParame(u16 num)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0xE1);
@@ -531,15 +523,17 @@ void ANO_DT_SendParame(u16 num)
 
 	ANO_DT_FrameSend(_cnt);
 }
+/* Ğ´Èëµ¥¸ö²ÎÊı²¢´¥·¢±£´æÁ÷³Ì¡£ */
 void ANO_DT_GetParame(u16 num,s32 data)
 {
 	if(num > PARNUM)
 		return;
 	ParValList[num] = data;
 	ANO_DT_ParListToParUsed();
-	f.paraToSend = num;	//å°†æ¥æ”¶åˆ°çš„å‚æ•°å‘å›ä¸Šä½æœºè¿›è¡ŒåŒå‘éªŒè¯
+	f.paraToSend = num;	/* ½«½ÓÊÕµ½µÄ²ÎÊı»Ø´«ÉÏÎ»»ú×öË«ÏòĞ£Ñé¡£ */
 	data_save();
 }
+/* ½«²ÎÊıÁĞ±íÍ¬²½µ½Êµ¼Ê·É¿Ø²ÎÊı½á¹¹¡£ */
 void ANO_DT_ParListToParUsed(void)
 {
 	Ano_Parame.set.pid_att_1level[ROL][KP] = (float) ParValList[PAR_PID_1_P] / 1000;
@@ -594,9 +588,9 @@ void ANO_DT_ParListToParUsed(void)
 	Ano_Parame.set.return_home_power_voltage = (float) ParValList[PAR_LVRETN] / 10;
 	Ano_Parame.set.lowest_power_voltage = (float) ParValList[PAR_LVDOWN] / 10;
 	
-	Ano_Parame.set.auto_take_off_height = ParValList[PAR_TAKEOFFHIGH];//cm
-	Ano_Parame.set.auto_take_off_speed = ParValList[PAR_TAKEOFFSPEED];//cm/s
-	Ano_Parame.set.auto_landing_speed = ParValList[PAR_LANDSPEED];//cm/s
+	Ano_Parame.set.auto_take_off_height = ParValList[PAR_TAKEOFFHIGH];	/* cm */
+	Ano_Parame.set.auto_take_off_speed = ParValList[PAR_TAKEOFFSPEED];	/* cm/s */
+	Ano_Parame.set.auto_landing_speed = ParValList[PAR_LANDSPEED];	/* cm/s */
 	Ano_Parame.set.idle_speed_pwm	 = ParValList[PAR_UNLOCKPWM];
 	
 	if(ParValList[PAR_HEATSWITCH] == 0)
@@ -604,6 +598,7 @@ void ANO_DT_ParListToParUsed(void)
 	else
 		Ano_Parame.set.heatSwitch = 1;
 }
+/* ½«Êµ¼Ê·É¿Ø²ÎÊı½á¹¹»ØÌîµ½Ğ­Òé²ÎÊıÁĞ±í¡£ */
 void ANO_DT_ParUsedToParList(void)
 {
 	ParValList[PAR_PID_1_P] = Ano_Parame.set.pid_att_1level[ROL][KP] * 1000;
@@ -669,6 +664,7 @@ void ANO_DT_ParUsedToParList(void)
 		ParValList[PAR_HEATSWITCH] = 1;
 }
 
+/* ±£ÁôµÄ¾É°æ°æ±¾ĞÅÏ¢·¢ËÍ½Ó¿Ú¡£ */
 void ANO_DT_Send_VER(void)
 {
 	u8 temp[14];
@@ -690,6 +686,7 @@ void ANO_DT_Send_VER(void)
 	ANO_DT_Send_Data(temp,14);
 }
 
+/* ·¢ËÍ°æ±¾ĞÅÏ¢Ö¡¡£ */
 void ANO_DT_Send_Version(u8 hardware_type, u16 hardware_ver,u16 software_ver,u16 protocol_ver,u16 bootloader_ver)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x00);
@@ -707,6 +704,7 @@ void ANO_DT_Send_Version(u8 hardware_type, u16 hardware_ver,u16 software_ver,u16
 	ANO_DT_FrameSend(_cnt);
 }
 
+/* ·¢ËÍËÙ¶ÈĞÅÏ¢¡£ */
 void ANO_DT_Send_Speed(float x_s,float y_s,float z_s)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x0B);
@@ -726,6 +724,7 @@ void ANO_DT_Send_Speed(float x_s,float y_s,float z_s)
 
 }
 
+/* ·¢ËÍ¶¨Î»×´Ì¬¡¢¾­Î³¶ÈºÍ·µº½ĞÅÏ¢¡£ */
 void ANO_DT_Send_Location(u8 state,u8 sat_num,s32 lon,s32 lat,float back_home_angle,float back_home_dist)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x04);
@@ -736,13 +735,13 @@ void ANO_DT_Send_Location(u8 state,u8 sat_num,s32 lon,s32 lat,float back_home_an
 	data_to_send[_cnt++]=state;
 	data_to_send[_cnt++]=sat_num;
 	
-	_temp2 = lon;//ç»åº¦
+	_temp2 = lon;	/* ¾­¶È¡£ */
 	data_to_send[_cnt++]=BYTE3(_temp2);
 	data_to_send[_cnt++]=BYTE2(_temp2);	
 	data_to_send[_cnt++]=BYTE1(_temp2);
 	data_to_send[_cnt++]=BYTE0(_temp2);
 	
-	_temp2 = lat;//çº¬åº¦
+	_temp2 = lat;	/* Î³¶È¡£ */
 	data_to_send[_cnt++]=BYTE3(_temp2);
 	data_to_send[_cnt++]=BYTE2(_temp2);	
 	data_to_send[_cnt++]=BYTE1(_temp2);
@@ -762,6 +761,7 @@ void ANO_DT_Send_Location(u8 state,u8 sat_num,s32 lon,s32 lat,float back_home_an
 }
 
 
+/* ·¢ËÍ×ËÌ¬¡¢¸ß¶È¡¢Ä£Ê½ºÍ½âËø×´Ì¬¡£ */
 void ANO_DT_Send_Status(float angle_rol, float angle_pit, float angle_yaw, s32 alt, u8 fly_model, u8 armed)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x01);
@@ -789,6 +789,7 @@ void ANO_DT_Send_Status(float angle_rol, float angle_pit, float angle_yaw, s32 a
 
 	ANO_DT_FrameSend(_cnt);
 }
+/* ·¢ËÍ¼ÓËÙ¶È¡¢½ÇËÙ¶ÈºÍ´ÅÁ¦¼ÆÔ­Ê¼Êı¾İ¡£ */
 void ANO_DT_Send_Senser(s16 a_x,s16 a_y,s16 a_z,s16 g_x,s16 g_y,s16 g_z,s16 m_x,s16 m_y,s16 m_z)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x02);
@@ -826,6 +827,7 @@ void ANO_DT_Send_Senser(s16 a_x,s16 a_y,s16 a_z,s16 g_x,s16 g_y,s16 g_z,s16 m_x,
 
 	ANO_DT_FrameSend(_cnt);
 }
+/* ·¢ËÍÆøÑ¹¡¢²â¾àºÍÎÂ¶ÈµÈ²¹³ä´«¸ĞÆ÷Êı¾İ¡£ */
 void ANO_DT_Send_Senser2(s32 bar_alt,s32 csb_alt, s16 sensertmp)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x07);
@@ -845,6 +847,7 @@ void ANO_DT_Send_Senser2(s32 bar_alt,s32 csb_alt, s16 sensertmp)
 
 	ANO_DT_FrameSend(_cnt);
 }
+/* ·¢ËÍÒ£¿ØÆ÷Í¨µÀÊı¾İ¡£ */
 void ANO_DT_Send_RCData(u16 thr,u16 yaw,u16 rol,u16 pit,u16 aux1,u16 aux2,u16 aux3,u16 aux4,u16 aux5,u16 aux6)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x03);
@@ -872,6 +875,7 @@ void ANO_DT_Send_RCData(u16 thr,u16 yaw,u16 rol,u16 pit,u16 aux1,u16 aux2,u16 au
 
 	ANO_DT_FrameSend(_cnt);
 }
+/* ·¢ËÍµçÑ¹ºÍµçÁ÷ĞÅÏ¢¡£ */
 void ANO_DT_Send_Power(u16 votage, u16 current)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x05);
@@ -886,6 +890,7 @@ void ANO_DT_Send_Power(u16 votage, u16 current)
 
 	ANO_DT_FrameSend(_cnt);
 }
+/* ·¢ËÍµç»úÊä³öÕ¼¿Õ±È¡£ */
 void ANO_DT_Send_MotoPWM(u16 m_1,u16 m_2,u16 m_3,u16 m_4,u16 m_5,u16 m_6,u16 m_7,u16 m_8)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x06);
@@ -910,6 +915,7 @@ void ANO_DT_Send_MotoPWM(u16 m_1,u16 m_2,u16 m_3,u16 m_4,u16 m_5,u16 m_6,u16 m_7
 	ANO_DT_FrameSend(_cnt);
 }
 
+/* ·¢ËÍ´¿×Ö·û´®µ÷ÊÔĞÅÏ¢¡£ */
 void ANO_DT_SendString(const char *str)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0xA0);
@@ -923,6 +929,7 @@ void ANO_DT_SendString(const char *str)
 
 	ANO_DT_FrameSend(_cnt);
 }
+/* ·¢ËÍ¡°×Ö·û´® + ÊıÖµ¡±µ÷ÊÔĞÅÏ¢¡£ */
 void ANO_DT_SendStrVal(const char *str, s32 val)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0xA1);
@@ -941,6 +948,7 @@ void ANO_DT_SendStrVal(const char *str, s32 val)
 	ANO_DT_FrameSend(_cnt);
 }
 
+/* ·¢ËÍÍâÉè¹¤×÷×´Ì¬¸ÅÀÀ¡£ */
 void ANO_DT_SendSensorSta(u8 of_sta,u8 gps_sta,u8 opmv_sta,u8 uwb_sta,u8 altadd_sta)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x08);
@@ -954,6 +962,7 @@ void ANO_DT_SendSensorSta(u8 of_sta,u8 gps_sta,u8 opmv_sta,u8 uwb_sta,u8 altadd_
 	ANO_DT_FrameSend(_cnt);
 }
 
+/* ·¢ËÍ OpenMV É«¿é¸ú×ÙĞÅÏ¢¡£ */
 void ANO_DT_SendOmvCt(u8 color, u8 sta, s16 x, s16 y, u8 d_tim)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x41);
@@ -969,6 +978,7 @@ void ANO_DT_SendOmvCt(u8 color, u8 sta, s16 x, s16 y, u8 d_tim)
 	ANO_DT_FrameSend(_cnt);
 }
 
+/* ·¢ËÍ OpenMV Ñ²ÏßĞÅÏ¢¡£ */
 void ANO_DT_SendOmvLt(u8 sta, s16 angle, s16 offset, u8 pflag, s16 x, s16 y, u8 d_tim)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0x42);
@@ -989,7 +999,10 @@ void ANO_DT_SendOmvLt(u8 sta, s16 angle, s16 offset, u8 pflag, s16 x, s16 y, u8 
 }
 
 
-//ç”¨æˆ·è‡ªå®šä¹‰æ•°æ®å‘é€
+/*
+ * ¹¦ÄÜ£º·¢ËÍÓÃ»§×Ô¶¨Òåµ÷ÊÔÊı¾İ¡£
+ * ËµÃ÷£ºµ±Ç°ÄÚÈİ·şÎñÓÚ OpenMV Ïà¹Øµ÷ÊÔ£¬×Ö¶ÎË³ĞòĞèÓëÉÏÎ»»úÏÔÊ¾±£³ÖÒ»ÖÂ¡£
+ */
 void ANO_DT_Send_User()
 {
 	u8 _cnt = 0;
@@ -998,120 +1011,31 @@ void ANO_DT_Send_User()
 	data_to_send[_cnt++]=MYHWADDR;
 	data_to_send[_cnt++]=SWJADDR;
 	
-	data_to_send[_cnt++]=0xf1; //ç”¨æˆ·æ•°æ®
+    data_to_send[_cnt++]=0xf1; /* ÓÃ»§×Ô¶¨Òåµ÷ÊÔÊı¾İ¡£ */
 	data_to_send[_cnt++]=0;
-////////////////////////////////////////	
-////=====================================
-
-//	_temp = (s16)(of_rdf.gnd_vel_obs_h[0]);//         //1
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);	
-//	
-//	_temp = (s16)(of_rdf.gnd_vel_est_h[0]);//         //2
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);		
-//	
-//	_temp = (s16)(of_rdf.gnd_vel_obs_h[1]);//         //3
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-//	
-//	_temp = (s16)(of_rdf.gnd_vel_est_h[1]);//         //4
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);	
-////=====================================
-////=====================================
-	
-	_temp = (s16)(ano_opmv_cbt_ctrl.opmv_pos[1] );//         //1
+	/* µ±Ç°×Ô¶¨ÒåÖ¡Êä³ö 6 ×é OpenMV Ïà¹Øµ÷ÊÔÁ¿¡£ */
+	_temp = (s16)(ano_opmv_cbt_ctrl.opmv_pos[1] );
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);		
 	
-	_temp = (s16)(ano_opmv_cbt_ctrl.decou_pos_pixel[1] );//         //2
+	_temp = (s16)(ano_opmv_cbt_ctrl.decou_pos_pixel[1] );
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);	
 		
-	_temp = (s16)(ano_opmv_cbt_ctrl.ground_pos_err_h_cm[1] );//         //3
+	_temp = (s16)(ano_opmv_cbt_ctrl.ground_pos_err_h_cm[1] );
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
 	
-	_temp = (s16)(ano_opmv_cbt_ctrl.ground_pos_err_d_h_cmps[1] );//4
+	_temp = (s16)(ano_opmv_cbt_ctrl.ground_pos_err_d_h_cmps[1] );
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);	
 	
-	_temp = (s16)(ano_opmv_cbt_ctrl.target_gnd_velocity_cmps[1]); //5
+	_temp = (s16)(ano_opmv_cbt_ctrl.target_gnd_velocity_cmps[1]);
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);	
-
-	_temp = (s16)(ano_opmv_cbt_ctrl.exp_velocity_h_cmps[1]); //6
+	_temp = (s16)(ano_opmv_cbt_ctrl.exp_velocity_h_cmps[1]);
 	data_to_send[_cnt++]=BYTE1(_temp);
-	data_to_send[_cnt++]=BYTE0(_temp);	
-
-////=====================================
-//=====================================
-//extern s32 sensor_val_ref[];
-//	_temp = (s16)(sensor_val_ref[A_Z]);//          //1
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);	
-
-//	_temp = (s16)(wcz_acc_fus.out);//         //1
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);	
-//	
-//	_temp = (s16)(wcz_spe_fus.out);//         //2
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);	
-//	
-//	_temp = (s16)(wcz_hei_fus.out);//         //3
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);	
-//	
-//	_temp = (s16)(wcz_ref_speed);//         //4
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);	
-
-//	_temp = (s16)(wcz_ref_height);//         //5
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-//	
-//	_temp = (s16)(mc.ct_val_thr);//         //6
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-//	
-//	_temp = (s16)(switchs.of_tof_on *1000);//         //7
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);	
-//	
-//	_temp = (s16)(ref_tof_height);//         //7
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);		
-//=====================================
-//#include "Ano_OF.h"
-//static u16 tmp = 0;
-//	tmp++;
-//	_temp = (s16)(OF_DX2);//         //6
-//	data_to_send[_cnt++]=BYTE1(tmp);
-//	data_to_send[_cnt++]=BYTE0(tmp);
-
-//	_temp = (s16)(OF_DY2);//         //6
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-
-//	_temp = (s16)(OF_DX2FIX);//         //6
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-//	
-//	_temp = (s16)(OF_DY2FIX);//         //6
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-//	
-//	_temp = (s16)(100*sensor.Tempreature_C);//         //7
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-//	
-//	extern float temperature_ctrl_val;
-//	_temp = (s16)(100 *temperature_ctrl_val);//         //8
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-////////////////////////////////////////
+	data_to_send[_cnt++]=BYTE0(_temp);
 	data_to_send[4] = _cnt-5;
 	
 	u8 sum = 0;
@@ -1124,4 +1048,3 @@ void ANO_DT_Send_User()
 }
 
 
-/******************* (C) COPYRIGHT 2014 ANO TECH *****END OF FILE************/

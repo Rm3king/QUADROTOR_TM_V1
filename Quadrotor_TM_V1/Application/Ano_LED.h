@@ -1,12 +1,16 @@
 #ifndef __ANO_LED_H
 #define __ANO_LED_H
 
-/* LED 状态指示接口，仅暴露实际使用中的公共入口。 */
+/*
+ * 模块名称：Ano_LED
+ * 模块职责：定义 LED 状态指示相关的公共数据结构、位掩码与任务入口。
+ * 使用约束：本头文件仅暴露调度器实际使用的公共接口。
+ */
 #include "sysconfig.h"
 
 
-//==定义
-enum  //led编号
+/* LED 编号定义。 */
+enum
 {
 	X_led = 0,
 	B_led,
@@ -46,10 +50,10 @@ typedef struct
 
 
 
-//==数据声明
+/* 对外状态数据。 */
 extern _led_sta LED_STA;
 
-//==函数声明
+/* 对外任务接口。 */
 void LED_1ms_DRV(void );
 void LED_Task2(u8 dT_ms);
 
