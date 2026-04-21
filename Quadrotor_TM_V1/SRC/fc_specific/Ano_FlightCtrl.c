@@ -21,6 +21,12 @@
 #include "Ano_ProgramCtrl_User.h"
 #include "Drv_OpenMV.h"
 
+/*
+ * ?????
+ * ????????????
+ * ??????????????/??/?????????????????????
+ */
+
 
 /*============================================================================
 更新：
@@ -36,6 +42,7 @@
 /////////////////////////////////////////////////////////
 
 /*PID参数初始化*/
+/* ??????????? PID ??? */
 void All_PID_Init(void)
 {
 
@@ -58,6 +65,7 @@ void All_PID_Init(void)
 }
 
 /*控制参数改变任务*/
+/* ?????????????????? */
 void ctrl_parameter_change_task()
 {
 
@@ -86,6 +94,7 @@ void ctrl_parameter_change_task()
 
 
 /*一键翻滚（暂无）*/
+/* ?????????? */
 void one_key_roll()
 {
 
@@ -102,6 +111,7 @@ void one_key_roll()
 
 static u16 one_key_taof_start;
 /*一键起飞任务（主要功能为延迟）*/
+/* ???????????? */
 void one_key_take_off_task(u16 dt_ms)
 {
 	if(one_key_taof_start != 0)
@@ -130,6 +140,7 @@ void one_key_take_off_task(u16 dt_ms)
 
 }
 /*一键起飞*/
+/* ?????????? */
 void one_key_take_off()
 {
 	if(flag.unlock_err == 0)
@@ -142,11 +153,13 @@ void one_key_take_off()
 	}
 }
 /*一键降落*/
+/* ?????????? */
 void one_key_land()
 {
 	flag.auto_take_off_land = AUTO_LAND;
 }
 /*急停锁止*/
+/* ???????? */
 void Sudden_Stop_Task(void)
 {
     flag.unlock_cmd = 0;
@@ -172,6 +185,7 @@ float stop_baro_hpf;
 /*降落检测*/
 
 static s16 ld_delay_cnt ;
+/* ???????? */
 void land_discriminat(s16 dT_ms)
 {
 //	static s16 acc_delta,acc_old;
@@ -232,6 +246,7 @@ void land_discriminat(s16 dT_ms)
 
 /*飞行状态任务*/
 
+/* ???????????? */
 void Flight_State_Task(u8 dT_ms,s16 *CH_N)
 {
 	s16 thr_deadzone;
@@ -388,6 +403,7 @@ static u8 of_tof_on_tmp;
 //
 
 _judge_sync_data_st jsdata;
+/* ???????????????? */
 void Swtich_State_Task(u8 dT_ms)
 {
 	switchs.baro_on = 1;
@@ -544,6 +560,7 @@ static void Speed_Mode_Switch()
 u8 speed_mode_old = 255;
 u8 flight_mode_old = 255;
 
+/* ??????????????? */
 void Flight_Mode_Set(u8 dT_ms)
 {
 	Speed_Mode_Switch();
