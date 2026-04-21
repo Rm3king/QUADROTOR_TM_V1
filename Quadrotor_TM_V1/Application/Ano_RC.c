@@ -1,9 +1,9 @@
 /******************** (C) COPYRIGHT 2017 ANO Tech ********************************
-  * ä½œè€…   ï¼šåŒ¿åç§‘åˆ›
- * å®˜ç½‘    ï¼šwww.anotc.com
- * æ·˜å®    ï¼šanotc.taobao.com
- * æŠ€æœ¯Qç¾¤ ï¼š190169595
- * æè¿°    ï¼šé¥æ§å™¨é€šé“æ•°æ®å¤„ç†
+  * ×÷Õß   £ºÄäÃû¿Æ´´
+ * ¹ÙÍø    £ºwww.anotc.com
+ * ÌÔ±¦    £ºanotc.taobao.com
+ * ¼¼ÊõQÈº £º190169595
+ * ÃèÊö    £ºÒ£¿ØÆ÷Í¨µÀÊı¾İ´¦Àí
 **********************************************************************************/
 #include "sysconfig.h"
 #include "Ano_Parameter.h"
@@ -17,13 +17,14 @@
 #include "Ano_Sensor_Basic.h"
 #include "Ano_LED.h"
 
-//æ‘‡æ†è§¦å‘å€¼ï¼Œæ‘‡æ†å€¼èŒƒå›´ä¸º+-500ï¼Œè¶…è¿‡300å±äºè§¦å‘èŒƒå›´
+//Ò¡¸Ë´¥·¢Öµ£¬Ò¡¸ËÖµ·¶Î§Îª+-500£¬³¬¹ı300ÊôÓÚ´¥·¢·¶Î§
 #define UN_YAW_VALUE  300
 #define UN_THR_VALUE  300
 #define UN_PIT_VALUE  300
 #define UN_ROL_VALUE  300
 
 static u8 RC_IN_MODE;
+/* Ò£¿ØÊäÈë³õÊ¼»¯ */
 void Remote_Control_Init()
 {
 	//
@@ -42,13 +43,14 @@ void Remote_Control_Init()
 
 static u16 cwd_cnt[10] ;
 u8 chn_en_bit = 0;
+/* Î¹Í¨µÀ¿´ÃÅ¹· */
 void ch_watch_dog_feed(u8 ch_n)
 {
 	ch_n = LIMIT(ch_n,0,7);
 	cwd_cnt[ch_n] = 0;
 }
 
-static void ch_watch_dog(u8 dT_ms)//å¦‚æœæ˜¯PPM/SBUSæ¨¡å¼ï¼Œä¹Ÿåªæ£€æµ‹å‰8é€šé“
+static void ch_watch_dog(u8 dT_ms)//Èç¹ûÊÇPPM/SBUSÄ£Ê½£¬Ò²Ö»¼ì²âÇ°8Í¨µÀ
 {
 	for(u8 i = 0;i<8;i++)
 	{
@@ -60,7 +62,7 @@ static void ch_watch_dog(u8 dT_ms)//å¦‚æœæ˜¯PPM/SBUSæ¨¡å¼ï¼Œä¹Ÿåªæ£€æµ‹å‰8é€
 		else
 		{
 			chn_en_bit &= ~(0x01<<i);
-//			Rc_Pwm_In[i] = 0;  //æŠŠæ•è·å€¼å¤ä½
+//			Rc_Pwm_In[i] = 0;  //°Ñ²¶»ñÖµ¸´Î»
 //			Rc_Ppm_In[i] = 0;
 //			Rc_Sbus_In[i] = 0;
 		}
@@ -75,44 +77,45 @@ _stick_f_lp_st unlock_f;
 u8 stick_fun_0;
 u16 unlock_time = 200;
 
+/* Ò£¿ØÊäÈë³õÊ¼»¯ */
 void unlock(u8 dT_ms)
 {
 	
-	if( flag.power_state <=2 && para_sta.save_trig == 0)//åªæœ‰ç”µæ± ç”µå‹éæœ€ä½å¹¶ä¸”æ²¡æœ‰æ“ä½œflashæ—¶ï¼Œæ‰å…è®¸è¿›è¡Œè§£é”
+	if( flag.power_state <=2 && para_sta.save_trig == 0)//Ö»ÓĞµç³ØµçÑ¹·Ç×îµÍ²¢ÇÒÃ»ÓĞ²Ù×÷flashÊ±£¬²ÅÔÊĞí½øĞĞ½âËø
 	{
 		if(sens_hd_check.acc_ok && sens_hd_check.gyro_ok)
 		{
 			if(sens_hd_check.baro_ok)
 			{
-				if(flag.sensor_imu_ok  )//imuä¼ æ„Ÿå™¨æ­£å¸¸æ—¶ï¼Œæ‰å…è®¸è§£é”
+				if(flag.sensor_imu_ok  )//imu´«¸ĞÆ÷Õı³£Ê±£¬²ÅÔÊĞí½âËø
 				{
-					flag.unlock_err = 0;	//å…è®¸è§£é”æ ‡å¿—ä½
+					flag.unlock_err = 0;	//ÔÊĞí½âËø±êÖ¾Î»
 
 				}
 				else
 				{
-					flag.unlock_err = 1;//imuå¼‚å¸¸ï¼Œä¸å…è®¸è§£é”
+					flag.unlock_err = 1;//imuÒì³££¬²»ÔÊĞí½âËø
 
 				}
 			}
 			else
 			{
 				LED_STA.errBaro = 1;
-				flag.unlock_err = 2;//æ°”å‹è®¡å¼‚å¸¸ï¼Œä¸å…è®¸è§£é”ã€‚
+				flag.unlock_err = 2;//ÆøÑ¹¼ÆÒì³££¬²»ÔÊĞí½âËø¡£
 			}
 		}
 		else
 		{
 			LED_STA.errMpu = 1;
-			flag.unlock_err = 3;//æƒ¯æ€§ä¼ æ„Ÿå™¨å¼‚å¸¸ï¼Œä¸å…è®¸è§£é”ã€‚
+			flag.unlock_err = 3;//¹ßĞÔ´«¸ĞÆ÷Òì³££¬²»ÔÊĞí½âËø¡£
 		}
 	}
 	else
 	{
-		flag.unlock_err = 4;//ç”µæ± ç”µå‹å¼‚å¸¸ï¼Œä¸å…è®¸è§£é”
+		flag.unlock_err = 4;//µç³ØµçÑ¹Òì³££¬²»ÔÊĞí½âËø
 	}
 	
-	//è§£é”
+	//½âËø
 	if(flag.unlock_sta == 0)
 	{
 		if(flag.unlock_cmd != 0)
@@ -167,10 +170,10 @@ void unlock(u8 dT_ms)
 	}
 	
 	////////////////////////////////////////////
-	//æ‰€æœ‰åŠŸèƒ½åˆ¤æ–­ï¼Œéƒ½è¦æ²¹é—¨åœ¨ä½å€¼æ—¶æ‰è¿›è¡Œ
+	//ËùÓĞ¹¦ÄÜÅĞ¶Ï£¬¶¼ÒªÓÍÃÅÔÚµÍÖµÊ±²Å½øĞĞ
 	if(CH_N[CH_THR] < -UN_THR_VALUE  )
 	{
-		//åˆ¤æ–­ç”¨æˆ·æ˜¯å¦æƒ³è¦ä¸Šé”ã€è§£é”
+		//ÅĞ¶ÏÓÃ»§ÊÇ·ñÏëÒªÉÏËø¡¢½âËø
 		if(ABS(CH_N[CH_YAW])>0.1f*UN_YAW_VALUE && CH_N[CH_PIT]< -0.1f*UN_PIT_VALUE)
 		{
 			if(flag.locking == 0)
@@ -183,7 +186,7 @@ void unlock(u8 dT_ms)
 			flag.locking = 0;
 		}
 
-		//é£æ§ä¸Šé”ã€è§£é”æ£€æµ‹
+		//·É¿ØÉÏËø¡¢½âËø¼ì²â
 		if(CH_N[CH_PIT]<-UN_PIT_VALUE && CH_N[CH_ROL]>UN_ROL_VALUE && CH_N[CH_YAW]<-UN_YAW_VALUE)
 		{
 			stick_fun_0 = 1;
@@ -203,22 +206,22 @@ void unlock(u8 dT_ms)
 		u8 f = 0;		
 		if(flag.unlock_sta)
 		{
-			//å¦‚æœä¸ºè§£é”çŠ¶æ€ï¼Œæœ€ç»ˆf=0ï¼Œå°†fèµ‹å€¼ç»™flag.unlock_staï¼Œé£æ§å®Œæˆä¸Šé”
+			//Èç¹ûÎª½âËø×´Ì¬£¬×îÖÕf=0£¬½«f¸³Öµ¸øflag.unlock_sta£¬·É¿ØÍê³ÉÉÏËø
 			f = 0;
 			unlock_time = 1000;
 		}
 		else
 		{
-			//å¦‚æœé£æ§ä¸ºé”å®šçŠ¶æ€ï¼Œåˆ™f=2ï¼Œå°†fèµ‹å€¼ç»™flag.unlock_staï¼Œé£æ§è§£é”å®Œæˆ
+			//Èç¹û·É¿ØÎªËø¶¨×´Ì¬£¬Ôòf=2£¬½«f¸³Öµ¸øflag.unlock_sta£¬·É¿Ø½âËøÍê³É
 			f = 2;
 			unlock_time = 200;
 		}
-		//è¿›è¡Œæœ€ç»ˆçš„æ—¶é—´ç§¯åˆ†åˆ¤æ–­ï¼Œæ‘‡æ†å¿…é¡»æ»¡è¶³æ¡ä»¶unlock_timeæ—¶é—´åï¼Œæ‰ä¼šæ‰§è¡Œé”å®šå’Œè§£é”åŠ¨ä½œ
+		//½øĞĞ×îÖÕµÄÊ±¼ä»ı·ÖÅĞ¶Ï£¬Ò¡¸Ë±ØĞëÂú×ãÌõ¼şunlock_timeÊ±¼äºó£¬²Å»áÖ´ĞĞËø¶¨ºÍ½âËø¶¯×÷
 		stick_function_check_longpress(dT_ms,&unlock_f,unlock_time,stick_fun_0,f,&flag.unlock_cmd);
 	}
 	else
 	{
-		flag.locking = 0; //æ²¹é—¨é«˜
+		flag.locking = 0; //ÓÍÃÅ¸ß
 		if(flag.unlock_cmd == 2)
 		{
 			flag.unlock_cmd = 1;
@@ -228,34 +231,34 @@ void unlock(u8 dT_ms)
 	
 	if(CH_N[CH_THR]>-350)
 	{
-		flag.thr_low = 0;//æ²¹é—¨éä½
+		flag.thr_low = 0;//ÓÍÃÅ·ÇµÍ
 	}
 	else
 	{
-		flag.thr_low = 1;//æ²¹é—¨æ‹‰ä½
+		flag.thr_low = 1;//ÓÍÃÅÀ­µÍ
 	}
 }
 
-void RC_duty_task(u8 dT_ms) //å»ºè®®2msè°ƒç”¨ä¸€æ¬¡
+void RC_duty_task(u8 dT_ms) //½¨Òé2msµ÷ÓÃÒ»´Î
 {
 	if(flag.start_ok)	
 	{
-		/////////////è·å¾—é€šé“æ•°æ®////////////////////////
+		/////////////»ñµÃÍ¨µÀÊı¾İ////////////////////////
 //		if(RC_IN_MODE == PWM)
 //		{
 //			for(u8 i=0;i<CH_NUM;i++)
 //			{
-//				if(chn_en_bit & (1<<i))//(Rc_Pwm_In[i]!=0)//è¯¥é€šé“æœ‰å€¼ï¼Œ==0è¯´æ˜è¯¥é€šé“æœªæ’çº¿ï¼ˆPWMï¼‰
+//				if(chn_en_bit & (1<<i))//(Rc_Pwm_In[i]!=0)//¸ÃÍ¨µÀÓĞÖµ£¬==0ËµÃ÷¸ÃÍ¨µÀÎ´²åÏß£¨PWM£©
 //				{
-//					//CH_N[]+1500ä¸ºä¸Šä½æœºæ˜¾ç¤ºé€šé“å€¼
-//					CH_N[i] = 1.25f *((s16)Rc_Pwm_In[i] - 1500); //1100 -- 1900us,å¤„ç†æˆå¤§çº¦+-500æ‘‡æ†é‡
+//					//CH_N[]+1500ÎªÉÏÎ»»úÏÔÊ¾Í¨µÀÖµ
+//					CH_N[i] = 1.25f *((s16)Rc_Pwm_In[i] - 1500); //1100 -- 1900us,´¦Àí³É´óÔ¼+-500Ò¡¸ËÁ¿
 
 //				}
 //				else
 //				{
 //					CH_N[i] = 0;
 //				}
-//				CH_N[i] = LIMIT(CH_N[i],-500,500);//é™åˆ¶åˆ°+â€”500
+//				CH_N[i] = LIMIT(CH_N[i],-500,500);//ÏŞÖÆµ½+¡ª500
 //			}
 //		}
 //		else if(RC_IN_MODE == PPM)
@@ -263,50 +266,51 @@ void RC_duty_task(u8 dT_ms) //å»ºè®®2msè°ƒç”¨ä¸€æ¬¡
 		{
 			for(u8 i=0;i<CH_NUM;i++)
 			{
-				if(chn_en_bit & (1<<i))//(Rc_Ppm_In[i]!=0)//è¯¥é€šé“æœ‰å€¼
+				if(chn_en_bit & (1<<i))//(Rc_Ppm_In[i]!=0)//¸ÃÍ¨µÀÓĞÖµ
 				{
-					//CH_N[]+1500ä¸ºä¸Šä½æœºæ˜¾ç¤ºé€šé“å€¼
-					CH_N[i] = ((s16)RC_PPM.Captures[i] - 1500); //1000 -- 2000us,å¤„ç†æˆå¤§çº¦+-500æ‘‡æ†é‡
+					//CH_N[]+1500ÎªÉÏÎ»»úÏÔÊ¾Í¨µÀÖµ
+					CH_N[i] = ((s16)RC_PPM.Captures[i] - 1500); //1000 -- 2000us,´¦Àí³É´óÔ¼+-500Ò¡¸ËÁ¿
 				}
 				else
 				{
 					CH_N[i] = 0;
 				}
-				CH_N[i] = LIMIT(CH_N[i],-500,500);//é™åˆ¶åˆ°+â€”500
+				CH_N[i] = LIMIT(CH_N[i],-500,500);//ÏŞÖÆµ½+¡ª500
 			}		
 		}
 		else//sbus
 		{
 			for(u8 i=0;i<CH_NUM;i++)
 			{
-				if(chn_en_bit & (1<<i))//è¯¥é€šé“æœ‰å€¼
+				if(chn_en_bit & (1<<i))//¸ÃÍ¨µÀÓĞÖµ
 				{
-					//CH_N[]+1500ä¸ºä¸Šä½æœºæ˜¾ç¤ºé€šé“å€¼
-					CH_N[i] = 0.65f *((s16)Rc_Sbus_In[i] - 1024); //248 --1024 --1800,å¤„ç†æˆå¤§çº¦+-500æ‘‡æ†é‡
+					//CH_N[]+1500ÎªÉÏÎ»»úÏÔÊ¾Í¨µÀÖµ
+					CH_N[i] = 0.65f *((s16)Rc_Sbus_In[i] - 1024); //248 --1024 --1800,´¦Àí³É´óÔ¼+-500Ò¡¸ËÁ¿
 				}
 				else
 				{
 					CH_N[i] = 0;
 				}
-				CH_N[i] = LIMIT(CH_N[i],-500,500);//é™åˆ¶åˆ°+â€”500
+				CH_N[i] = LIMIT(CH_N[i],-500,500);//ÏŞÖÆµ½+¡ª500
 			}					
 		}
 
 		///////////////////////////////////////////////
-		//è§£é”ç›‘æµ‹	
+		//½âËø¼à²â	
 		unlock(dT_ms);
-		//æ‘‡æ†è§¦å‘åŠŸèƒ½ç›‘æµ‹
+		//Ò¡¸Ë´¥·¢¹¦ÄÜ¼à²â
 		stick_function(dT_ms);	
-		//é€šé“çœ‹é—¨ç‹—
+		//Í¨µÀ¿´ÃÅ¹·
 		ch_watch_dog(dT_ms);
 
-		//å¤±æ§ä¿æŠ¤æ£€æŸ¥
+		//Ê§¿Ø±£»¤¼ì²é
 		fail_safe_check(dT_ms);//3ms
 
 
 	}
 }
 
+/* Ò£¿ØÍ¨µÀÖÜÆÚ´¦Àí */
 void fail_safe()
 {
 	for(u8 i = 0;i<4;i++)
@@ -323,13 +327,13 @@ void fail_safe()
 	CH_N[CH_PIT] = 0;
 	CH_N[CH_YAW] = 0;
 	
-	//åˆ‡è®°ä¸èƒ½ç»™ CH_N[AUX1]èµ‹å€¼ï¼Œå¦åˆ™å¯èƒ½å¯¼è‡´æ­»å¾ªç¯ã€‚ï¼ˆæ ¹æ®AUX1ç‰¹æ®Šå€¼åˆ¤æ–­æ¥æ”¶æœºfailsafeä¿¡å·ï¼‰
+	//ÇĞ¼Ç²»ÄÜ¸ø CH_N[AUX1]¸³Öµ£¬·ñÔò¿ÉÄÜµ¼ÖÂËÀÑ­»·¡££¨¸ù¾İAUX1ÌØÊâÖµÅĞ¶Ï½ÓÊÕ»úfailsafeĞÅºÅ£©
 	
 	if(flag.unlock_sta)
 	{
 		if(switchs.gps_on ==0)
 		{
-			flag.auto_take_off_land = AUTO_LAND; //å¦‚æœè§£é”ï¼Œè‡ªåŠ¨é™è½æ ‡è®°ç½®ä½
+			flag.auto_take_off_land = AUTO_LAND; //Èç¹û½âËø£¬×Ô¶¯½µÂä±ê¼ÇÖÃÎ»
 		}
 		else
 		{
@@ -341,16 +345,16 @@ void fail_safe()
 
 u16 test_si_cnt;
 
-void fail_safe_check(u8 dT_ms) //dTç§’è°ƒç”¨ä¸€æ¬¡
+void fail_safe_check(u8 dT_ms) //dTÃëµ÷ÓÃÒ»´Î
 {
 	static u16 cnt;
 	static s8 cnt2;
 	
 	cnt += dT_ms;
-	if(cnt >= 500) //500*dT ç§’
+	if(cnt >= 500) //500*dT Ãë
 	{
 		cnt=0;
-		if((chn_en_bit & 0x0F) != 0x0F || flag.chn_failsafe ) //å‰4é€šé“æœ‰ä»»æ„ä¸€é€šé“æ— ä¿¡å·æˆ–è€…å—åˆ°æ¥æ”¶æœºå¤±æ§ä¿æŠ¤ä¿¡å·
+		if((chn_en_bit & 0x0F) != 0x0F || flag.chn_failsafe ) //Ç°4Í¨µÀÓĞÈÎÒâÒ»Í¨µÀÎŞĞÅºÅ»òÕßÊÜµ½½ÓÊÕ»úÊ§¿Ø±£»¤ĞÅºÅ
 		{
 			cnt2 ++;
 		}
@@ -363,7 +367,7 @@ void fail_safe_check(u8 dT_ms) //dTç§’è°ƒç”¨ä¸€æ¬¡
 		{
 			cnt2 = 0;
 			
-			flag.rc_loss = 1; //è®¤ä¸ºä¸¢å¤±é¥æ§ä¿¡å·
+			flag.rc_loss = 1; //ÈÏÎª¶ªÊ§Ò£¿ØĞÅºÅ
 			
 			LED_STA.noRc = 1;
 			
@@ -372,7 +376,7 @@ void fail_safe_check(u8 dT_ms) //dTç§’è°ƒç”¨ä¸€æ¬¡
 
 				
 		}
-		else if(cnt2<=-2) //è®¤ä¸ºä¿¡å·æ­£å¸¸
+		else if(cnt2<=-2) //ÈÏÎªĞÅºÅÕı³£
 		{
 			cnt2 = 0;
 			
@@ -382,23 +386,24 @@ void fail_safe_check(u8 dT_ms) //dTç§’è°ƒç”¨ä¸€æ¬¡
 				LED_STA.noRc = 0;
 				
 					if(flag.taking_off)
-					flag.auto_take_off_land = AUTO_TAKE_OFF_FINISH; //è§£é™¤ä¸‹é™
+					flag.auto_take_off_land = AUTO_TAKE_OFF_FINISH; //½â³ıÏÂ½µ
 			}
 			
 		}
 		
 		test_si_cnt = signal_intensity;
-		signal_intensity=0; //ç´¯è®¡æ¥æ”¶æ¬¡æ•°
+		signal_intensity=0; //ÀÛ¼Æ½ÓÊÕ´ÎÊı
 	}
 	
 	
 }
 
+/* Ö´ĞĞÊ§¿Ø±£»¤ */
 void stick_function_check(u8 dT_ms,_stick_f_c_st *sv,u8 times_n,u16 reset_time_ms,u8 en,u8 trig_val,u8 *trig)
 {
 	if(en)
 	{
-		sv->s_cnt = 0; //æ¸…é™¤è®¡æ—¶
+		sv->s_cnt = 0; //Çå³ı¼ÆÊ±
 		if(sv->s_state==0)
 		{
 			if(sv->s_now_times!=0)
@@ -415,40 +420,41 @@ void stick_function_check(u8 dT_ms,_stick_f_c_st *sv,u8 times_n,u16 reset_time_m
 		sv->s_cnt += dT_ms;
 		if(sv->s_cnt>reset_time_ms)
 		{
-			sv->s_now_times = 1; //æ¸…é™¤è®°å½•æ¬¡æ•°
+			sv->s_now_times = 1; //Çå³ı¼ÇÂ¼´ÎÊı
 		}
 	}
 
 	if(sv->s_now_times> times_n)
 	{
-		*trig = trig_val;            //è§¦å‘åŠŸèƒ½æ ‡è®°
+		*trig = trig_val;            //´¥·¢¹¦ÄÜ±ê¼Ç
 		sv->s_now_times = 0;
 	}
 
 }
+/* Ò¡¸Ë¹¦ÄÜ´¥·¢ÅĞ¶¨ */
 void stick_function_check_longpress(u8 dT_ms,u16 *time_cnt,u16 longpress_time_ms,u8 en,u8 trig_val,u8 *trig)
 {
-	//dT_msï¼šè°ƒç”¨é—´éš”æ—¶é—´
-	//time_cntï¼šç§¯åˆ†æ—¶é—´
-	//longpress_time_msï¼šé˜ˆå€¼æ—¶é—´ï¼Œè¶…è¿‡è¿™ä¸ªæ—¶é—´åˆ™ä¸ºæ»¡è¶³æ¡ä»¶
-	//enï¼šæ‘‡æ†çŠ¶æ€æ˜¯å¦æ»¡è¶³
-	//trig_valï¼šæ»¡è¶³åçš„è§¦å‘å€¼
-	//trigï¼šæŒ‡å‘éœ€è¦è§¦å‘çš„å¯„å­˜å™¨
-	if(en)//å¦‚æœæ»¡è¶³æ‘‡æ†æ¡ä»¶ï¼Œåˆ™è¿›è¡Œæ—¶é—´ç§¯åˆ†
+	//dT_ms£ºµ÷ÓÃ¼ä¸ôÊ±¼ä
+	//time_cnt£º»ı·ÖÊ±¼ä
+	//longpress_time_ms£ºãĞÖµÊ±¼ä£¬³¬¹ıÕâ¸öÊ±¼äÔòÎªÂú×ãÌõ¼ş
+	//en£ºÒ¡¸Ë×´Ì¬ÊÇ·ñÂú×ã
+	//trig_val£ºÂú×ãºóµÄ´¥·¢Öµ
+	//trig£ºÖ¸ÏòĞèÒª´¥·¢µÄ¼Ä´æÆ÷
+	if(en)//Èç¹ûÂú×ãÒ¡¸ËÌõ¼ş£¬Ôò½øĞĞÊ±¼ä»ı·Ö
 	{
 		if(*time_cnt!=0)
 		{
 			*time_cnt+=dT_ms;
 		}
 	}
-	else//ä¸æ»¡è¶³æ¡ä»¶ï¼Œç§¯åˆ†æ¢å¤1
+	else//²»Âú×ãÌõ¼ş£¬»ı·Ö»Ö¸´1
 	{
 		*time_cnt=1;
 	}
-	//æ—¶é—´ç§¯åˆ†æ»¡è¶³æ—¶é—´é˜ˆå€¼ï¼Œåˆ™è§¦å‘æ ‡è®°
+	//Ê±¼ä»ı·ÖÂú×ãÊ±¼äãĞÖµ£¬Ôò´¥·¢±ê¼Ç
 	if(*time_cnt>=longpress_time_ms)
 	{
-		*trig = trig_val;            //è§¦å‘åŠŸèƒ½æ ‡è®°
+		*trig = trig_val;            //´¥·¢¹¦ÄÜ±ê¼Ç
 		*time_cnt = 0;
 	}
 
@@ -458,13 +464,14 @@ _stick_f_lp_st cali_gyro,cali_acc,cali_surface;
 _stick_f_c_st cali_mag;
 
 u8 stick_fun_1,stick_fun_2,stick_fun_3,stick_fun_4,stick_fun_5_magcali;
+/* Ò¡¸Ë×éºÏ¹¦ÄÜ´¦Àí */
 void stick_function(u8 dT_ms)
 {
-	//////////////çŠ¶æ€ç›‘æµ‹
-	//æœªè§£é”æ‰å…è®¸æ£€æµ‹æ‘‡æ†åŠŸèƒ½
+	//////////////×´Ì¬¼à²â
+	//Î´½âËø²ÅÔÊĞí¼ì²âÒ¡¸Ë¹¦ÄÜ
 	if(flag.unlock_sta == 0)
 	{
-		//æ²¹é—¨ä½ï¼Œåˆ™ç»§ç»­
+		//ÓÍÃÅµÍ£¬Ôò¼ÌĞø
 		if(flag.thr_low)
 		{
 			if(CH_N[CH_PIT]<-350 && CH_N[CH_ROL]>350 && CH_N[CH_THR]<-350 && CH_N[CH_YAW]>350)
@@ -505,13 +512,13 @@ void stick_function(u8 dT_ms)
 		}
 		
 			///////////////
-		//è§¦å‘é™€èºä»ªæ ¡å‡†
+		//´¥·¢ÍÓÂİÒÇĞ£×¼
 		stick_function_check_longpress(dT_ms,&cali_gyro,1000,stick_fun_1,1,&sensor.gyr_CALIBRATE);
-		//è§¦å‘åŠ é€Ÿåº¦è®¡æ ¡å‡†
+		//´¥·¢¼ÓËÙ¶È¼ÆĞ£×¼
 		stick_function_check_longpress(dT_ms,&cali_acc,1000,stick_fun_2,1,&sensor.acc_CALIBRATE);
 		
 //		stick_function_check_longpress(dT_ms,&cali_surface,1000,stick_fun_4,1,&sensor_rot.surface_CALIBRATE );
-		//è§¦å‘ç½—ç›˜æ ¡å‡†
+		//´¥·¢ÂŞÅÌĞ£×¼
 		stick_function_check(dT_ms,&cali_mag,5,1000,stick_fun_5_magcali,1,&mag.mag_CALIBRATE);
 
 		

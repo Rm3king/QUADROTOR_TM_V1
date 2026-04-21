@@ -16,6 +16,7 @@
 GPS_INF Gps_information;
 unsigned short len;
 
+/* 计算 UBX 协议校验 */
 unsigned char GPS_ubx_check_sum(unsigned char *Buffer)
 {
 	unsigned char CK_A = 0, CK_B = 0;
@@ -79,6 +80,7 @@ const unsigned char gps_rate_out_config[16]=
 
 const unsigned char Enter_Send[]={0xB5,0x62,0x06,0x00,0x01,0x00,0x01,0x08,0x22};
 
+/* 配置 GPS 输出波特率 */
 void gps_baudrate_config(void)
 {
 	Delay_ms(200);
@@ -89,6 +91,7 @@ void gps_baudrate_config(void)
 		Delay_ms(20);
 }
 
+/* 配置 GPS 输出报文 */
 void gps_config(void)
 {
 	Delay_ms(100);
@@ -148,6 +151,7 @@ float wcy_acc_use;
 //	ANO_DT_Send_Data(data_to_send, _cnt);
 //}
 
+/* 初始化 GPS 引脚与串口 */
 void Drv_GpsPin_Init(void)
 {
 	Delay_ms(200);
@@ -162,6 +166,7 @@ void Drv_GpsPin_Init(void)
 unsigned char GPS_data_buff[100];
 unsigned char GPS_get_cnt = 0;
 
+/* 解析 GPS 缓冲区数据 */
 void GPS_data_analysis(void)
 {
 //	Gps_information.last_N_vel = (float)Gps_information.N_vel;							//记录上次南北向速度
@@ -195,6 +200,7 @@ void GPS_data_analysis(void)
 	Gps_information.run_heart++;	
 }
 
+/* 接收一个 GPS 字节 */
 void Drv_GpsGetOneByte(u8 data)
 {
 	if (GPS_get_cnt == 0)

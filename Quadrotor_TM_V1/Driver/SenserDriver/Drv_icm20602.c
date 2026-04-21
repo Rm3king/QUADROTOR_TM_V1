@@ -1,9 +1,9 @@
 /******************** (C) COPYRIGHT 2017 ANO Tech ********************************
- * ä½œè€…    ï¼šåŒ¿åç§‘åˆ›
- * å®˜ç½‘    ï¼šwww.anotc.com
- * æ·˜å®    ï¼šanotc.taobao.com
- * æŠ€æœ¯Qç¾¤ ï¼š190169595
- * æè¿°    ï¼šICM20602é©±åŠ¨
+ * ×÷Õß    £ºÄäÃû¿Æ´´
+ * ¹ÙÍø    £ºwww.anotc.com
+ * ÌÔ±¦    £ºanotc.taobao.com
+ * ¼¼ÊõQÈº £º190169595
+ * ÃèÊö    £ºICM20602Çı¶¯
 **********************************************************************************/
 #include "Drv_icm20602.h"
 #include "Drv_spi.h"
@@ -14,11 +14,11 @@
 
 void Drv_Icm20602IrqHandler(void)
 {
-	//æ¸…é™¤ä¸­æ–­æ ‡è®°
+	//Çå³ıÖĞ¶Ï±ê¼Ç
 	GPIOIntClear(ICM20602_READY_PORT, ICM20602_READY_PIN);
-	//æ‰§è¡Œä¸­æ–­å‡½æ•°
+	//Ö´ĞĞÖĞ¶Ïº¯Êı
 	//Drv_Icm20602_Read();
-	//åˆ©ç”¨icmçš„1msä¸­æ–­åš1msä»»åŠ¡
+	//ÀûÓÃicmµÄ1msÖĞ¶Ï×ö1msÈÎÎñ
 	INT_1ms_Task();
 }
 void Drv_Icm20602CSPinInit(void)
@@ -34,11 +34,11 @@ void Drv_Icm20602ReadyPinInit(void)
 	ROM_GPIOPinTypeGPIOInput(ICM20602_READY_PORT, ICM20602_READY_PIN);
 	ROM_GPIOPadConfigSet(ICM20602_READY_PORT,ICM20602_READY_PIN,GPIO_STRENGTH_2MA,GPIO_PIN_TYPE_STD_WPD);
 	ROM_GPIOIntTypeSet(ICM20602_READY_PORT, ICM20602_READY_PIN , GPIO_RISING_EDGE);
-	//GPIOæ³¨å†Œä¸­æ–­
+	//GPIO×¢²áÖĞ¶Ï
 	GPIOIntRegister(ICM20602_READY_PORT, Drv_Icm20602IrqHandler);
-	//ä½¿èƒ½ä¸­æ–­
+	//Ê¹ÄÜÖĞ¶Ï
 	GPIOIntEnable(ICM20602_READY_PORT, ICM20602_READY_PIN);
-	//è®¾ç½®ä¸­æ–­ä¼˜å…ˆçº§
+	//ÉèÖÃÖĞ¶ÏÓÅÏÈ¼¶
 	ROM_IntPrioritySet(ICM20602_READY_INT_PORT, USER_INT7);
 }
 
@@ -68,11 +68,11 @@ static u8 icm20602_writebyte(u8 reg, u8 data)
 	icm20602_enable(0);
 	return status;
 }
-/**************************å®ç°å‡½æ•°********************************************
-*åŠŸã€€ã€€èƒ½:	  è¯» ä¿®æ”¹ å†™ æŒ‡å®šè®¾å¤‡ æŒ‡å®šå¯„å­˜å™¨ä¸€ä¸ªå­—èŠ‚ ä¸­çš„1ä¸ªä½
-reg	   å¯„å­˜å™¨åœ°å€
-bitNum  è¦ä¿®æ”¹ç›®æ ‡å­—èŠ‚çš„bitNumä½
-data  ä¸º0 æ—¶ï¼Œç›®æ ‡ä½å°†è¢«æ¸…0 å¦åˆ™å°†è¢«ç½®ä½
+/**************************ÊµÏÖº¯Êı********************************************
+*¹¦¡¡¡¡ÄÜ:	  ¶Á ĞŞ¸Ä Ğ´ Ö¸¶¨Éè±¸ Ö¸¶¨¼Ä´æÆ÷Ò»¸ö×Ö½Ú ÖĞµÄ1¸öÎ»
+reg	   ¼Ä´æÆ÷µØÖ·
+bitNum  ÒªĞŞ¸ÄÄ¿±ê×Ö½ÚµÄbitNumÎ»
+data  Îª0 Ê±£¬Ä¿±êÎ»½«±»Çå0 ·ñÔò½«±»ÖÃÎ»
 *******************************************************************************/
 static void icm20602_writeBit(u8 reg, u8 bitNum, u8 data) 
 {
@@ -81,12 +81,12 @@ static void icm20602_writeBit(u8 reg, u8 bitNum, u8 data)
     b = (data != 0) ? (b | (1 << bitNum)) : (b & ~(1 << bitNum));
 	icm20602_writebyte(reg, b);
 }
-/**************************å®ç°å‡½æ•°********************************************
-*åŠŸã€€ã€€èƒ½:	    è¯» ä¿®æ”¹ å†™ æŒ‡å®šè®¾å¤‡ æŒ‡å®šå¯„å­˜å™¨ä¸€ä¸ªå­—èŠ‚ ä¸­çš„å¤šä¸ªä½
-reg	   å¯„å­˜å™¨åœ°å€
-bitStart  ç›®æ ‡å­—èŠ‚çš„èµ·å§‹ä½
-length   ä½é•¿åº¦
-data    å­˜æ”¾æ”¹å˜ç›®æ ‡å­—èŠ‚ä½çš„å€¼
+/**************************ÊµÏÖº¯Êı********************************************
+*¹¦¡¡¡¡ÄÜ:	    ¶Á ĞŞ¸Ä Ğ´ Ö¸¶¨Éè±¸ Ö¸¶¨¼Ä´æÆ÷Ò»¸ö×Ö½Ú ÖĞµÄ¶à¸öÎ»
+reg	   ¼Ä´æÆ÷µØÖ·
+bitStart  Ä¿±ê×Ö½ÚµÄÆğÊ¼Î»
+length   Î»³¤¶È
+data    ´æ·Å¸Ä±äÄ¿±ê×Ö½ÚÎ»µÄÖµ
 ******************************************************************************
 static void icm20602_writeBits(u8 reg,u8 bitStart,u8 length,u8 data)
 {
@@ -114,8 +114,8 @@ static void icm20602_INT_Config(void)
 {
 	icm20602_setIntEnabled();
 }
-/**************************å®ç°å‡½æ•°********************************************
-*åŠŸã€€ã€€èƒ½:	    åˆå§‹åŒ–icmè¿›å…¥å¯ç”¨çŠ¶æ€ã€‚
+/**************************ÊµÏÖº¯Êı********************************************
+*¹¦¡¡¡¡ÄÜ:	    ³õÊ¼»¯icm½øÈë¿ÉÓÃ×´Ì¬¡£
 *******************************************************************************/
 static u8 ICM_ID;
 u8 Drv_Icm20602Init(void)
@@ -130,10 +130,10 @@ u8 Drv_Icm20602Init(void)
 	if(tmp != MPU_WHOAMI_20602)
 	return 0;
 
-	/*å¤ä½reg*/
+	/*¸´Î»reg*/
 	icm20602_writebyte(MPU_RA_SIGNAL_PATH_RESET,0x03);
 	MyDelayMs(10);
-  /*å¤ä½reg*/
+  /*¸´Î»reg*/
 	icm20602_writebyte(MPU_RA_USER_CTRL,0x01);	
 	MyDelayMs(10);
 
@@ -141,31 +141,31 @@ u8 Drv_Icm20602Init(void)
 	MyDelayMs(10);
 	icm20602_writebyte(MPU_RA_PWR_MGMT_2,0x00);
 	MyDelayMs(10);
-	//ä¸åˆ†é¢‘ï¼Œé…ç½®å†…éƒ¨lpfä»¥åï¼Œæœ€é«˜1000hzé‡‡æ ·ï¼ŒåŒæ—¶å¯¹åº”äº§ç”Ÿ1msä¸­æ–­
+	//²»·ÖÆµ£¬ÅäÖÃÄÚ²¿lpfÒÔºó£¬×î¸ß1000hz²ÉÑù£¬Í¬Ê±¶ÔÓ¦²úÉú1msÖĞ¶Ï
 	icm20602_writebyte(MPU_RA_SMPLRT_DIV,0);
 	MyDelayMs(10);
 	
-	/*é™€èºä»ªLPF 20HZ*/
+	/*ÍÓÂİÒÇLPF 20HZ*/
 	icm20602_writebyte(MPU_RA_CONFIG,ICM20602_LPF_20HZ);
 	MyDelayMs(10);
-	/*é™€èºä»ªé‡ç¨‹ +-2000dps*/
+	/*ÍÓÂİÒÇÁ¿³Ì +-2000dps*/
 	icm20602_writebyte(MPU_RA_GYRO_CONFIG,(3 << 3));
 	MyDelayMs(10);
-	/*åŠ é€Ÿåº¦è®¡é‡ç¨‹ +-16G*/
+	/*¼ÓËÙ¶È¼ÆÁ¿³Ì +-16G*/
 	icm20602_writebyte(MPU_RA_ACCEL_CONFIG,(3 << 3));
 	MyDelayMs(10);
-	/*åŠ é€Ÿåº¦è®¡LPF 20HZ*/
+	/*¼ÓËÙ¶È¼ÆLPF 20HZ*/
 	icm20602_writebyte(0X1D,0x04);
 	MyDelayMs(10);
-	/*å…³é—­ä½åŠŸè€—*/
+	/*¹Ø±ÕµÍ¹¦ºÄ*/
 	icm20602_writebyte(0X1E,0x00);
 	MyDelayMs(10);
-	/*å…³é—­FIFO*/
+	/*¹Ø±ÕFIFO*/
 	icm20602_writebyte(0X23,0x00);
 	MyDelayMs(10);
 	
 	icm20602_INT_Config();
-	//è¯»å–ID
+	//¶ÁÈ¡ID
 	icm20602_readbuf(MPU_RA_WHO_AM_I, 1, &ICM_ID);
 	//
 	if(ICM_ID == 0X12)
@@ -184,9 +184,9 @@ u8 mpu_buffer[14];
 
 void Drv_Icm20602_Read( void )
 {
-	//è¯»å–ä¼ æ„Ÿå™¨å¯„å­˜å™¨ï¼Œè¿ç»­è¯»14ä¸ªå­—èŠ‚
+	//¶ÁÈ¡´«¸ĞÆ÷¼Ä´æÆ÷£¬Á¬Ğø¶Á14¸ö×Ö½Ú
 	icm20602_readbuf(MPUREG_ACCEL_XOUT_H,14,mpu_buffer);
-	//æ•°æ®èµ‹å€¼
+	//Êı¾İ¸³Öµ
 	ICM_Get_Data();
 }
 
@@ -194,7 +194,7 @@ void Drv_Icm20602_Read( void )
 void ICM_Get_Data()
 {
 	s16 temp[2][3];
-	//	/*è¯»å–bufferåŸå§‹æ•°æ®*/
+	//	/*¶ÁÈ¡bufferÔ­Ê¼Êı¾İ*/
 	temp[0][X] = (s16)((((u16)mpu_buffer[0]) << 8) | mpu_buffer[1]);//>>1;// + 2 *sensor.Tempreature_C;// + 5 *sensor.Tempreature_C;
 	temp[0][Y] = (s16)((((u16)mpu_buffer[2]) << 8) | mpu_buffer[3]);//>>1;// + 2 *sensor.Tempreature_C;// + 5 *sensor.Tempreature_C;
 	temp[0][Z] = (s16)((((u16)mpu_buffer[4]) << 8) | mpu_buffer[5]);//>>1;// + 4 *sensor.Tempreature_C;// + 7 *sensor.Tempreature_C;
@@ -204,10 +204,10 @@ void ICM_Get_Data()
 	temp[1][Z] = (s16)((((u16)mpu_buffer[12]) << 8) | mpu_buffer[13]) ;
 
 	sensor.Tempreature = ((((int16_t)mpu_buffer[6]) << 8) | mpu_buffer[7]); //tempreature
-	/*icm20602æ¸©åº¦*/
+	/*icm20602ÎÂ¶È*/
 	sensor.Tempreature_C = sensor.Tempreature/326.8f + 25 ;//sensor.Tempreature/340.0f + 36.5f;
 	
-	//è°ƒæ•´ç‰©ç†åæ ‡è½´ä¸è½¯ä»¶åæ ‡è½´æ–¹å‘å®šä¹‰ä¸€è‡´
+	//µ÷ÕûÎïÀí×ø±êÖáÓëÈí¼ş×ø±êÖá·½Ïò¶¨ÒåÒ»ÖÂ
 	sensor.Acc_Original[X] = temp[0][X];
 	sensor.Acc_Original[Y] = temp[0][Y];
 	sensor.Acc_Original[Z] = temp[0][Z];

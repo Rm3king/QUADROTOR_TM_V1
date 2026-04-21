@@ -5,7 +5,7 @@
 #include "Ano_Math.h"
 #include "Ano_Pid.h"
 
-/* ??????? */
+/* 一键翻滚阶段定义 */
 enum
 {
     ROLL_END = 0,
@@ -14,7 +14,7 @@ enum
     ROLL_KEEP,
 };
 
-/* ????????? */
+/* 一键翻滚过程状态 */
 typedef struct
 {
     u8 roll_mode;
@@ -29,7 +29,7 @@ typedef struct
 } _rolling_flag_st;
 extern _rolling_flag_st rolling_flag;
 
-/* ??????????? */
+/* 角速度内环控制量 */
 typedef struct
 {
     float set_yaw_speed;
@@ -38,7 +38,7 @@ typedef struct
 } _att_1l_ct_st;
 extern _att_1l_ct_st att_1l_ct;
 
-/* ?????????? */
+/* 姿态角外环控制量 */
 typedef struct
 {
     float yaw_err;

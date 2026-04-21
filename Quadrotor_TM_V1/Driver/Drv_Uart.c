@@ -18,6 +18,7 @@
 u8 U1TxDataTemp[256];
 u8 U1TxInCnt = 0;
 u8 U1TxOutCnt = 0;
+/* 底板串口1中断服务，接收 GPS 数据 */
 void UART1_IRQHandler(void)
 {
 	uint8_t com_data;
@@ -36,6 +37,7 @@ void UART1_IRQHandler(void)
 		Drv_Uart1TxCheck();
 	}
 }
+/* 初始化底板串口1 */
 void Drv_Uart1Init(uint32_t baudrate)
 {
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
@@ -75,6 +77,7 @@ void Drv_Uart1TxCheck(void)
 u8 U2TxDataTemp[256];
 u8 U2TxInCnt = 0;
 u8 U2TxOutCnt = 0;
+/* 底板串口2中断服务，接收数传数据 */
 void UART2_IRQHandler(void)
 {
 	uint8_t com_data;
@@ -93,6 +96,7 @@ void UART2_IRQHandler(void)
 		Drv_Uart2TxCheck();
 	}
 }
+/* 初始化底板串口2 */
 void Drv_Uart2Init(uint32_t baudrate)
 {
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART4);
@@ -132,6 +136,7 @@ void Drv_Uart2TxCheck(void)
 u8 U3TxDataTemp[256];
 u8 U3TxInCnt = 0;
 u8 U3TxOutCnt = 0;
+/* 底板串口3中断服务，接收 OpenMV 数据 */
 void UART3_IRQHandler(void)
 {
 	uint8_t com_data;
@@ -150,6 +155,7 @@ void UART3_IRQHandler(void)
 		Drv_Uart3TxCheck();
 	}
 }
+/* 初始化底板串口3 */
 void Drv_Uart3Init(uint32_t baudrate)
 {
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2);
@@ -191,6 +197,7 @@ void Drv_Uart3TxCheck(void)
 u8 U4TxDataTemp[256];
 u8 U4TxInCnt = 0;
 u8 U4TxOutCnt = 0;
+/* 底板串口4中断服务，接收光流数据 */
 void UART4_IRQHandler(void)
 {
 	uint8_t com_data;
@@ -229,6 +236,7 @@ void UART4_IRQHandler(void)
 		Drv_Uart4TxCheck();
 	}
 }
+/* 初始化底板串口4 */
 void Drv_Uart4Init(uint32_t baudrate)
 {
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART7);
@@ -268,6 +276,7 @@ void Drv_Uart4TxCheck(void)
 u8 U5TxDataTemp[256];
 u8 U5TxInCnt = 0;
 u8 U5TxOutCnt = 0;
+/* 底板串口5中断服务，接收激光测距数据 */
 void UART5_IRQHandler(void)
 {
 	uint8_t com_data;
@@ -287,6 +296,7 @@ void UART5_IRQHandler(void)
 		Drv_Uart5TxCheck();
 	}
 }
+/* 初始化底板串口5 */
 void Drv_Uart5Init(uint32_t baudrate)
 {
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART5);

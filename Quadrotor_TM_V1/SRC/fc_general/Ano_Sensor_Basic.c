@@ -21,7 +21,7 @@
 
 
 
-/* ?????????????? */
+/* 基础传感器初始化 */
 void Sensor_Basic_Init()
 {
 	/*设置重心相对传感器的偏移量*/
@@ -49,7 +49,7 @@ u16 acc_sum_cnt = 0,gyro_sum_cnt = 0,acc_z_auto_cnt;
 s16 g_old[VEC_XYZ];
 float g_d_sum[VEC_XYZ] = {500,500,500};
 
-/* ????? Z ?????? */
+/* Z轴加速度静态修正 */
 void mpu_auto_az()
 {
 	if(sensor.acc_z_auto_CALIBRATE)
@@ -89,7 +89,7 @@ void mpu_auto_az()
 }
 
 
-/* ?????????? */
+/* 静止状态检测 */
 void motionless_check(u8 dT_ms)
 {
 	u8 t = 0;
@@ -121,7 +121,7 @@ void motionless_check(u8 dT_ms)
 
 }
 
-/* ???????????????? */
+/* MPU6050 零偏校准 */
 void MPU6050_Data_Offset()
 {
 	static u8 off_cnt;
@@ -240,7 +240,7 @@ float wh_matrix[VEC_XYZ][VEC_XYZ] =
 
 };
 
-/* ?????????????????? */
+/* 机体中心点补偿更新 */
 void Center_Pos_Set()
 {
 	center_pos.center_pos_cm[X] = X_POS_OFFSET_CM;//+0.0f;
@@ -250,7 +250,7 @@ void Center_Pos_Set()
 
 static float gyr_f[5][VEC_XYZ],acc_f[5][VEC_XYZ];
 
-/* ????????????? */
+/* 传感器数据预处理 */
 void Sensor_Data_Prepare(u8 dT_ms)
 {	
 	float hz = 0 ;

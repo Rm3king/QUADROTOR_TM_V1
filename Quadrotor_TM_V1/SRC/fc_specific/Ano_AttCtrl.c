@@ -13,9 +13,9 @@
 #include "Ano_ProgramCtrl_User.h"
 
 /*
- * ?????
- * ???????
- * ?????????? PID ????????????????????????
+ * 模块：姿态控制
+ * 职责：姿态角与角速度双环控制
+ * 说明：保持原有 PID 结构与控制流程，仅整理注释与分区。
  */
 
 
@@ -32,8 +32,7 @@ _PID_val_st val_2[VEC_RPY];
 //角速度环控制数据
 _PID_val_st val_1[VEC_RPY];
 
-/*角度环PID参数初始化*/
-/* ??????????? PID ??? */
+/* 姿态角外环 PID 参数初始化 */
 void Att_2level_PID_Init()
 {
 	arg_2[ROL].kp = Ano_Parame.set.pid_att_2level[ROL][KP];
@@ -67,8 +66,7 @@ arg_1_kp：调整角速度响应速度，不震荡的前提下，尽量越高越好。
 */
 #define CTRL_1_KI_START 0.f
 
-/*角速度环PID参数初始化*/
-/* ???????????? PID ??? */
+/* 角速度内环 PID 参数初始化 */
 void Att_1level_PID_Init()
 {
 	arg_1[ROL].kp = Ano_Parame.set.pid_att_1level[ROL][KP];
@@ -104,7 +102,7 @@ void Att_1level_PID_Init()
 #endif
 }
 
-/* ???????????????? */
+/* 按模式设置角速度内环积分项 */
 void Set_Att_1level_Ki(u8 mode)
 {
 	if(mode == 0)
@@ -122,7 +120,7 @@ void Set_Att_1level_Ki(u8 mode)
 	}
 }
 
-/* ??????????????? */
+/* 按模式设置姿态角外环积分项 */
 void Set_Att_2level_Ki(u8 mode)
 {
 	if(mode == 0)
@@ -144,8 +142,7 @@ static s32 max_yaw_speed,set_yaw_av_tmp;
 #define POS_V_DAMPING 0.02f
 static float exp_rol_tmp,exp_pit_tmp;
 	
-/*角度环控制*/
-/* ??????????? */
+/* 姿态角外环控制任务 */
 void Att_2level_Ctrl(float dT_s,s16 *CH_N)
 {
 	/*积分微调*/
@@ -282,7 +279,7 @@ void Att_2level_Ctrl(float dT_s,s16 *CH_N)
 _att_1l_ct_st att_1l_ct;
 static float ct_val[4];
 /*角速度环控制*/
-/* ???????????? */
+/* 角速度内环控制任务 */
 void Att_1level_Ctrl(float dT_s)
 {
 	////////////////改变控制参数任务（最小控制周期内）////////////////////////

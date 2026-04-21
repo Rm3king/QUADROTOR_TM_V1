@@ -3,7 +3,7 @@
 #include "Ano_FcData.h"
 #include "Ano_Pid.h"
 
-/* ???????? */
+/* 电机混控输出量 */
 typedef struct
 {
     s32 ct_val_rol;

@@ -2,7 +2,7 @@
 #define __ANO_IMU_H
 #include "Ano_FcData.h"
 
-/* ????????? */
+/* 姿态解算结果与中间量 */
 typedef struct
 {
     float w;
@@ -35,7 +35,7 @@ typedef struct
 } _imu_st;
 extern _imu_st imu_data;
 
-/* ????????? */
+/* 姿态解算使能与增益配置 */
 typedef struct
 {
     float gkp;

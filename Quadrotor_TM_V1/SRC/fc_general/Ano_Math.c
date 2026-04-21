@@ -1,5 +1,5 @@
 /******************** +++++++++++++++++++++++++++ ********************************
- * ÊèèËø∞    ÔºöÂø´ÈÄüËÆ°ÁÆó
+ * √Ë ˆ    £∫øÏÀŸº∆À„
 **********************************************************************************/
 
 #include "Ano_Math.h"
@@ -73,7 +73,7 @@ const float fast_atan_table[257] =
 	7.853983e-01
 };
 
-/* ?????????? */
+/* «Û∏°µ„ ˝æ¯∂‘÷µ */
 float my_abs(float f)
 {
 	if (f >= 0.0f)
@@ -84,7 +84,7 @@ float my_abs(float f)
 	return -f;
 }
 
-/* ??????????? */
+/* øÏÀŸ∑¥’˝«–Ω¸À∆ */
 REAL fast_atan2(REAL y, REAL x) 
 {
 	REAL x_abs, y_abs, z;
@@ -178,13 +178,13 @@ float my_atan(float x, float y)
 	return fast_atan2(y, x);
 }
 
-////ËÆ°ÁÆóÊµÆÁÇπÊï∞Âπ≥Êñπ
+////º∆À„∏°µ„ ˝∆Ω∑Ω
 //float my_pow(float a)
 //{
 //	return a*a;
 //}
 
-/* ??????????? */
+/* øÏÀŸ∆Ω∑Ω∏˘µπ ˝ */
 float my_sqrt_reciprocal(float number)
 {
 //	long i;
@@ -214,8 +214,8 @@ float my_sqrt_reciprocal(float number)
 	return y;
 }
 
-//Âø´ÈÄüÂπ≥ÊñπÊ†πÁÆóÊ≥ï
-/* ????????? */
+//øÏÀŸ∆Ω∑Ω∏˘À„∑®
+/* øÏÀŸ∆Ω∑Ω∏˘ */
 float my_sqrt(float number)
 {
 //	long i;
@@ -277,7 +277,7 @@ float my_cos(double rad)
 	return my_sin(rad)*_flag;
 }
 
-/* ?????????? */
+/* À¿«¯¥¶¿Ì */
 float my_deadzone(float x,float ref,float zoom)
 {
 	float t;
@@ -358,7 +358,7 @@ double To_180_degrees_db(double x)
 	return (x>180?(x-360):(x<-180?(x+360):x));
 }
 
-/* ?????????? */
+/* ∂‘∂˛Œ¨œÚ¡ø÷¥––∑˘÷µœﬁ÷∆ */
 void length_limit(float *in1,float *in2,float limit,float out[2])
 {
 	float l = my_2_norm(*in1,*in2);
@@ -391,24 +391,24 @@ float fifo(u8 arr_num,u8 *cnt,float *arr,float in)
 |  | =  |          |   |  |
 |y2|    |sinx, cosx|   |y2|
 */
-/* ???????? 90 ?????? */
-void rot_vec_2(float in[2],float sinx,float out[2]) //x = +-90Â∫¶ÊóãËΩ¨ÔºåÂèñsin x
+/* ∂˛Œ¨œÚ¡ø–˝◊™ 90 ∂» */
+void rot_vec_2(float in[2],float sinx,float out[2]) //x = +-90∂»–˝◊™£¨»°sin x
 {
 	out[0] = in[0] *my_sqrt(1-my_pow(sinx)) - in[1] *sinx;
 	out[1] = in[1] *my_sqrt(1-my_pow(sinx)) + in[0] *sinx;
 }
 
 /*
-va x vb = |va||vb| *sinx *vn,vn‰∏∫ÂûÇÁõ¥‰∫éva,vbÁöÑÂçï‰ΩçÂêëÈáè
-ÂΩí‰∏ÄÂåñËÆ°ÁÆóÔºåÂèñ va x vb = sinx;
+va x vb = |va||vb| *sinx *vn,vnŒ™¥π÷±”⁄va,vbµƒµ•ŒªœÚ¡ø
+πÈ“ªªØº∆À„£¨»° va x vb = sinx;
 */
 
-float vec_2_cross_product(float in1[2],float in2[2]) //Ê≠£Ë¥ü‰∏∫in1->in2 Â§πËßíÈÄÜÊó∂Èíà
+float vec_2_cross_product(float in1[2],float in2[2]) //’˝∏∫Œ™in1->in2 º–Ω«ƒÊ ±’Î
 {
 	return (in1[0] *in2[1] - in1[1] *in2[0]);
 }
 
-float vec_2_dot_product(float in1[2],float in2[2]) //Ê≠£Ë¥ü‰∏∫in1->in2 Â§πËßíÔºàÁ©∫Èó¥ÂÆûÈôÖÂ§πËßíÔºâ
+float vec_2_dot_product(float in1[2],float in2[2]) //’˝∏∫Œ™in1->in2 º–Ω«£®ø’º‰ µº º–Ω«£©
 {
 	return (in1[0]*in2[0] + in1[1]*in2[1]);
 }
@@ -418,14 +418,14 @@ A x B = (AyBz - AzBy)i + (AzBx - AxBz)j + (AxBy - AyBx)k
 			
 */
 	
-void vec_3_cross_product_err_sinx(float in1[3],float in2[3],float out[3]) //ËæìÂá∫xyzËØØÂ∑ÆÂ§πËßíx ÁöÑsin(x)ÔºåÂè≥ÊâãËû∫Êóã
+void vec_3_cross_product_err_sinx(float in1[3],float in2[3],float out[3]) // ‰≥ˆxyzŒÛ≤Óº–Ω«x µƒsin(x)£¨”“ ÷¬›–˝
 {
 	out[0] = (in1[1] * in2[2] - in1[2] * in2[1] ) ;
 	out[1] = (in1[2] * in2[0] - in1[0] * in2[2] ) ;
 	out[2] = (in1[0] * in2[1] - in1[1] * in2[0] ) ;
 }
 
-float vec_3_dot_product(float in1[3],float in2[3]) //Ê≠£Ë¥ü‰∏∫in1->in2 Â§πËßíÔºàÁ©∫Èó¥ÂÆûÈôÖÂ§πËßíÔºâ
+float vec_3_dot_product(float in1[3],float in2[3]) //’˝∏∫Œ™in1->in2 º–Ω«£®ø’º‰ µº º–Ω«£©
 {
 	return (in1[0]*in2[0] + in1[1]*in2[1] + in1[2]*in2[2]);
 }

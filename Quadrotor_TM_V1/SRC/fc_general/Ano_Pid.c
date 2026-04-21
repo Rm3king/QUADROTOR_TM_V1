@@ -1,24 +1,24 @@
 /******************** (C) COPYRIGHT 2016 ANO Tech ***************************
- * ä½œè€…		 ï¼šåŒ¿åç§‘åˆ›
- * æ–‡ä»¶å  ï¼šANO_PID.c
- * æè¿°    ï¼šPIDå‡½æ•°
- * å®˜ç½‘    ï¼šwww.anotc.com
- * æ·˜å®    ï¼šanotc.taobao.com
- * æŠ€æœ¯Qç¾¤ ï¼š190169595
+ * ×÷Õß		 £ºÄäÃû¿Æ´´
+ * ÎÄ¼şÃû  £ºANO_PID.c
+ * ÃèÊö    £ºPIDº¯Êı
+ * ¹ÙÍø    £ºwww.anotc.com
+ * ÌÔ±¦    £ºanotc.taobao.com
+ * ¼¼ÊõQÈº £º190169595
 *****************************************************************************/
 #include "Ano_Pid.h"
 #include "Ano_Math.h"
 #include "Ano_Filter.h"
 
 
-float PID_calculate( float dT_s,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
-										float in_ff,				//å‰é¦ˆå€¼
-										float expect,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
-										float feedback,			//åé¦ˆå€¼ï¼ˆï¼‰
-										_PID_arg_st *pid_arg, //PIDå‚æ•°ç»“æ„ä½“
-										_PID_val_st *pid_val,	//PIDæ•°æ®ç»“æ„ä½“
-										float inte_d_lim,//ç§¯åˆ†è¯¯å·®é™å¹…
-										float inte_lim			//integration limitï¼Œç§¯åˆ†é™å¹…									
+float PID_calculate( float dT_s,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
+										float in_ff,				//Ç°À¡Öµ
+										float expect,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
+										float feedback,			//·´À¡Öµ£¨£©
+										_PID_arg_st *pid_arg, //PID²ÎÊı½á¹¹Ìå
+										_PID_val_st *pid_val,	//PIDÊı¾İ½á¹¹Ìå
+										float inte_d_lim,//»ı·ÖÎó²îÏŞ·ù
+										float inte_lim			//integration limit£¬»ı·ÖÏŞ·ù									
 										 )	
 {
 	float differential,hz;

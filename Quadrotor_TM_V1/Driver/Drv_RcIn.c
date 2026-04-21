@@ -37,6 +37,7 @@ static void PPM_Cal(uint32_t  PulseHigh)
         }
     }
 }
+/* 解析一帧 PPM 数据 */
 static void PPM_Decode(void)
 {
 	static uint32_t	PeriodVal1,PeriodVal2 = 0;
@@ -52,6 +53,7 @@ static void PPM_Decode(void)
 		PeriodVal2 = PeriodVal1;
 		PPM_Cal(PulseHigh);
 }
+/* 初始化 PPM 输入 */
 void Drv_PpmInit(void)
 {
 	ROM_SysCtlPeripheralEnable(PPM_SYSCTL);
@@ -88,6 +90,7 @@ bit1 = n/a
 bit0 = n/a
 
 */
+/* 解析一字节 SBUS 数据 */
 static void Sbus_Decode(uint8_t data)
 {
 	static uint8_t i;
@@ -146,6 +149,7 @@ static void Sbus_Decode(uint8_t data)
 	}
 
 }
+/* SBUS 接收中断服务 */
 static void Sbus_IRQHandler(void)
 {
 	uint8_t com_data;	
@@ -161,6 +165,7 @@ static void Sbus_IRQHandler(void)
 		Sbus_Decode(com_data);	
 	}
 }
+/* 初始化 SBUS 输入 */
 void Drv_SbusInit(void)
 {
 	ROM_SysCtlPeripheralEnable(SBUS_SYSCTL);

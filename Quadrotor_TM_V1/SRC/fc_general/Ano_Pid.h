@@ -7,13 +7,13 @@
 typedef struct
 {
 	u8 fb_d_mode;
-	float kp;			 //æ¯”ä¾‹ç³»æ•°
-	float ki;			 //ç§¯åˆ†ç³»æ•°
-	float kd_ex;		 	 //å¾®åˆ†ç³»æ•°
-	float kd_fb; //previous_d å¾®åˆ†å…ˆè¡Œ
-//	float inc_hz;  //ä¸å®Œå…¨å¾®åˆ†ä½é€šç³»æ•°
-//	float k_inc_d_norm; //Incomplete ä¸å®Œå…¨å¾®åˆ† å½’ä¸€ï¼ˆ0,1ï¼‰
-	float k_ff;		 //å‰é¦ˆ 
+	float kp;			 //±ÈÀıÏµÊı
+	float ki;			 //»ı·ÖÏµÊı
+	float kd_ex;		 	 //Î¢·ÖÏµÊı
+	float kd_fb; //previous_d Î¢·ÖÏÈĞĞ
+//	float inc_hz;  //²»ÍêÈ«Î¢·ÖµÍÍ¨ÏµÊı
+//	float k_inc_d_norm; //Incomplete ²»ÍêÈ«Î¢·Ö ¹éÒ»£¨0,1£©
+	float k_ff;		 //Ç°À¡ 
 
 }_PID_arg_st;
 
@@ -37,15 +37,15 @@ typedef struct
 	float out;
 }_PID_val_st;
 
-float PID_calculate( float T,            //å‘¨æœŸ
-										float in_ff,				//å‰é¦ˆ
-										float expect,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
-										float feedback,			//åé¦ˆå€¼
-										_PID_arg_st *pid_arg, //PIDå‚æ•°ç»“æ„ä½“
-										_PID_val_st *pid_val,	//PIDæ•°æ®ç»“æ„ä½“
+float PID_calculate( float T,            //ÖÜÆÚ
+										float in_ff,				//Ç°À¡
+										float expect,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
+										float feedback,			//·´À¡Öµ
+										_PID_arg_st *pid_arg, //PID²ÎÊı½á¹¹Ìå
+										_PID_val_st *pid_val,	//PIDÊı¾İ½á¹¹Ìå
 										float inte_d_lim,
-										float inte_lim			//integration limitï¼Œç§¯åˆ†é™å¹…
-										   );			//è¾“å‡º
+										float inte_lim			//integration limit£¬»ı·ÖÏŞ·ù
+										   );			//Êä³ö
 
 
 										

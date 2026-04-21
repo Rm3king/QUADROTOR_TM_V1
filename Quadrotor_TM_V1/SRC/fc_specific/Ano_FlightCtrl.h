@@ -4,7 +4,7 @@
 #include "Ano_Filter.h"
 #include "Ano_Math.h"
 
-/* ?????????? */
+/* 飞行动作脚本编号 */
 enum
 {
     null = 0,
@@ -27,7 +27,7 @@ enum
     pit_rol_pn_2,
 };
 
-/* ?????? */
+/* 飞行状态控制量 */
 typedef struct
 {
     s16 alt_ctrl_speed_set;
@@ -38,7 +38,7 @@ typedef struct
 } _flight_state_st;
 extern _flight_state_st fs;
 
-/* ??????????? */
+/* 光流与高度同步判定输入 */
 typedef struct
 {
     u8 of_qua;

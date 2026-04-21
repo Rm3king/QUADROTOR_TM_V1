@@ -22,9 +22,9 @@
 #include "Drv_OpenMV.h"
 
 /*
- * ?????
- * ????????????
- * ??????????????/??/?????????????????????
+ * 模块：飞行控制
+ * 职责：飞行模式、起降流程和状态切换管理
+ * 说明：保持原有状态机条件与控制流程，仅做可读性整理。
  */
 
 
@@ -41,8 +41,7 @@
 
 /////////////////////////////////////////////////////////
 
-/*PID参数初始化*/
-/* ??????????? PID ??? */
+/* 所有控制环 PID 参数初始化 */
 void All_PID_Init(void)
 {
 
@@ -64,8 +63,7 @@ void All_PID_Init(void)
 	
 }
 
-/*控制参数改变任务*/
-/* ?????????????????? */
+/* 根据飞行状态切换控制参数 */
 void ctrl_parameter_change_task()
 {
 
@@ -93,8 +91,7 @@ void ctrl_parameter_change_task()
 }
 
 
-/*一键翻滚（暂无）*/
-/* ?????????? */
+/* 一键翻滚触发入口 */
 void one_key_roll()
 {
 
@@ -110,8 +107,7 @@ void one_key_roll()
 }
 
 static u16 one_key_taof_start;
-/*一键起飞任务（主要功能为延迟）*/
-/* ???????????? */
+/* 一键起飞延时任务 */
 void one_key_take_off_task(u16 dt_ms)
 {
 	if(one_key_taof_start != 0)
@@ -139,8 +135,7 @@ void one_key_take_off_task(u16 dt_ms)
 	}
 
 }
-/*一键起飞*/
-/* ?????????? */
+/* 一键起飞触发 */
 void one_key_take_off()
 {
 	if(flag.unlock_err == 0)
@@ -152,14 +147,12 @@ void one_key_take_off()
 		}
 	}
 }
-/*一键降落*/
-/* ?????????? */
+/* 一键降落触发 */
 void one_key_land()
 {
 	flag.auto_take_off_land = AUTO_LAND;
 }
-/*急停锁止*/
-/* ???????? */
+/* 急停锁止处理 */
 void Sudden_Stop_Task(void)
 {
     flag.unlock_cmd = 0;
@@ -182,10 +175,8 @@ extern s32 ref_height_get;
 
 float stop_baro_hpf;
 
-/*降落检测*/
-
 static s16 ld_delay_cnt ;
-/* ???????? */
+/* 降落状态判定 */
 void land_discriminat(s16 dT_ms)
 {
 //	static s16 acc_delta,acc_old;
@@ -244,9 +235,7 @@ void land_discriminat(s16 dT_ms)
 }
 
 
-/*飞行状态任务*/
-
-/* ???????????? */
+/* 飞行状态任务 */
 void Flight_State_Task(u8 dT_ms,s16 *CH_N)
 {
 	s16 thr_deadzone;
@@ -403,7 +392,7 @@ static u8 of_tof_on_tmp;
 //
 
 _judge_sync_data_st jsdata;
-/* ???????????????? */
+/* 状态切换判定任务 */
 void Swtich_State_Task(u8 dT_ms)
 {
 	switchs.baro_on = 1;
@@ -560,7 +549,7 @@ static void Speed_Mode_Switch()
 u8 speed_mode_old = 255;
 u8 flight_mode_old = 255;
 
-/* ??????????????? */
+/* 飞行模式设置任务 */
 void Flight_Mode_Set(u8 dT_ms)
 {
 	Speed_Mode_Switch();

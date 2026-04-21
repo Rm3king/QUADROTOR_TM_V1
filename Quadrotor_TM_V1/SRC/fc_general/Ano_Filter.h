@@ -2,7 +2,7 @@
 #define __ANO_FILTER_H
 #include "Ano_FcData.h"
 
-/* ?????????? */
+/* Ò»½×µÍÍ¨ÂË²¨Æ÷×´Ì¬ */
 typedef struct
 {
     float out;
@@ -15,7 +15,7 @@ typedef struct
     float k;
 } _ano_filter_1_st;
 
-/* ???????? */
+/* »ı·ÖĞŞÕıÂË²¨Æ÷×´Ì¬ */
 typedef struct
 {
     float in_est;
@@ -27,7 +27,7 @@ typedef struct
     float out;
 } _inte_fix_filter_st;
 
-/* ?????????? */
+/* Î¢·ÖĞŞÕıÂË²¨Æ÷×´Ì¬ */
 typedef struct
 {
     float in_est_d;
@@ -38,14 +38,14 @@ typedef struct
     float out;
 } _fix_inte_filter_st;
 
-/* ?????? */
+/* ÏŞ·ùµÍÍ¨ÂË²¨Æ÷×´Ì¬ */
 typedef struct
 {
     float lpf_1;
     float out;
 } _lf_t;
 
-/* ???????? */
+/* ÏŞ·ùËÀÇøÂË²¨Æ÷×´Ì¬ */
 typedef struct
 {
     float lpf_1;
@@ -54,7 +54,7 @@ typedef struct
     float out;
 } _jldf_t;
 
-/* ???????? */
+/* Í¨ÓÃÒ»½×ÂË²¨Æ÷×´Ì¬ */
 typedef struct
 {
     float a;
@@ -67,7 +67,7 @@ typedef struct
     float out_f;
 } _filter_1_st;
 
-/* ?????????? */
+/* ×îËÙÏÂ½µÂË²¨Æ÷×´Ì¬ */
 typedef struct
 {
     u8 cnt;

@@ -5,7 +5,7 @@
 #include "Ano_Math.h"
 #include "Ano_Pid.h"
 
-/* ???????????? */
+/* 水平位置/速度控制量 */
 typedef struct
 {
     float exp[VEC_XYZ];
