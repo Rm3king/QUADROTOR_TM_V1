@@ -3,6 +3,13 @@
 
 #include "sysconfig.h"
 
+/*
+ * 遥控输入接口说明：
+ * 1. 本模块负责 PPM 与 SBUS 两类输入的底层采集。
+ * 2. 对外保留原始初始化接口，同时补充按协议语义命名的兼容别名。
+ * 3. 本轮不修改中断、解码与通道换算逻辑。
+ */
+
 typedef struct
 {
     int16_t Roll;
@@ -34,5 +41,9 @@ extern u16 Rc_Sbus_In[16];
 
 void Drv_PpmInit(void);
 void Drv_SbusInit(void);
+
+/* 语义化兼容别名：用于逐步替代仅按缩写命名的旧接口。 */
+#define Drv_RcPpm_Init		Drv_PpmInit
+#define Drv_RcSbus_Init		Drv_SbusInit
 
 #endif
