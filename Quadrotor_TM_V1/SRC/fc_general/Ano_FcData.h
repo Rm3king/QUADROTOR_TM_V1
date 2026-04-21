@@ -1,9 +1,14 @@
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __ANO_FCDATA_H
 #define __ANO_FCDATA_H
-/* Includes ------------------------------------------------------------------*/
+
 #include "config.h"
-/* Exported types ------------------------------------------------------------*/
+
+/*
+ * 模块名称：Ano_FcData
+ * 模块职责：集中声明飞控全局状态、参数镜像、传感器索引和公共状态结构。
+ * 使用约束：本头文件定义的是跨模块共享状态，重构时只允许补充说明，不允许随意改变字段语义。
+ */
+
 #define TRUE 1
 #define FALSE 0 
 
@@ -121,6 +126,7 @@ enum
 	
 };
 
+/* 保存到参数区的校准与参考数据。 */
 typedef struct
 {
 	u8 first_f;
@@ -135,6 +141,7 @@ typedef struct
 } _save_st ;
 extern _save_st save;
 
+/* 飞控运行时标志位，覆盖传感器、控制与飞行状态。 */
 typedef struct
 {
 	//基本状态/传感器
@@ -180,6 +187,7 @@ typedef struct
 }_flag;
 extern _flag flag;
 
+/* 飞控运行时限幅状态变量。 */
 typedef struct
 {
 	float vel_limit_xy;
@@ -189,6 +197,7 @@ typedef struct
 }_fc_sta_var_st; //state variable
 extern _fc_sta_var_st fc_stv;
 	
+/* 外设开关状态。 */
 typedef struct
 {
 	u8 sonar_on;
@@ -203,6 +212,7 @@ typedef struct
 }_switch_st;
 extern _switch_st switchs;
 
+/* 传感器硬件自检结果。 */
 typedef struct
 {
 	u8 gyro_ok;
@@ -217,11 +227,9 @@ typedef struct
 	
 } _sensor_hd_check_st; //Hardware
 extern _sensor_hd_check_st sens_hd_check;
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-
+/* 触发参数延时保存。 */
 void data_save(void);
+/* 初始化参数读取流程。 */
 void Para_Data_Init(void);
 
 

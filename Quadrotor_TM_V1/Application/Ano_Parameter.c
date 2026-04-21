@@ -1,10 +1,8 @@
-/******************** (C) COPYRIGHT 2017 ANO Tech ********************************
-  * 作者   ：匿名科创
- * 官网    ：www.anotc.com
- * 淘宝    ：anotc.taobao.com
- * 技术Q群 ：190169595
- * 描述    ：参数配置等
-**********************************************************************************/
+/*
+ * ģ�����ƣ�Ano_Parameter
+ * ģ��ְ��ά��Ĭ�ϲ�������������ͬ������ʱ�������̡�
+ * ʹ��Լ�������ļ�ֱ�ӹ�������������洢ʱ���ع�ʱ�������ı�Ĭ��ֵ�����д�봥���߼���
+ */
 
 //#include "Drv_w25qxx.h"
 #include "Ano_Parameter.h"
@@ -20,7 +18,10 @@
 union Parameter Ano_Parame;
 _parameter_state_st para_sta;
 
-//注意这些仅仅是初始化存储区的默认参数，直接修改代码后，若没有触发写入对应存储区，参数不会生效！
+/* ע�⣺���ﶨ����ǲ�����Ĭ��ֵ���޸Ĵ������δ����д�룬�洢���еľ�ֵ�����Զ����¡� */
+
+//注意这些仅仅是初始化存储区的默认参数，直接修改代码后，若没有触发写入对应存储区，参数不会生效�?
+/* �ָ�Ĭ�� PID ������ */
 void PID_Rest()
 {
 //---	姿态控制角速度环PID参数
@@ -76,6 +77,7 @@ void PID_Rest()
 }
 
 
+/* ���������е�У׼����ͬ�����ɿ�����ʱ�ṹ�� */
 static void Parame_Copy_Para2fc()
 {
 	for(u8 i = 0;i<3;i++)
@@ -90,6 +92,7 @@ static void Parame_Copy_Para2fc()
 	}
 }
 
+/* ���ɿ�����ʱУ׼���ݻ������������ */
 static void Parame_Copy_Fc2para()
 {
 
@@ -101,15 +104,16 @@ static void Parame_Copy_Fc2para()
 		Ano_Parame.set.mag_gain[i]		=	save.mag_gain[i];   
 			
 		
-		//center_pos参数不需要反向赋值
+		//center_pos参数不需要反向赋�?
 	}
 }
 
 
-//注意这些仅仅是初始化存储区的默认参数，直接修改代码后，若没有触发写入对应存储区，参数不会生效！
+//注意这些仅仅是初始化存储区的默认参数，直接修改代码后，若没有触发写入对应存储区，参数不会生效�?
+/* �ָ�Ĭ�Ϸɿز����� */
 void Parame_Reset(void)
 {
-	//参数初始化
+	//参数初始�?
 	Ano_Parame.set.pwmInMode = SBUS; // 原来是ppm
 	Ano_Parame.set.heatSwitch = 0;
 	Ano_Parame.set.warn_power_voltage = 3.50f *3;
@@ -139,9 +143,10 @@ void Parame_Reset(void)
 
 
 
+/* ����ǰ��������д��洢���� */
 static void Ano_Parame_Write(void)
 {
-	All_PID_Init();	//////存储PID参数后，重新初始化PID	
+	All_PID_Init();	/* �洢 PID ���������³�ʼ���������� */
 	Ano_Parame.set.frist_init = SOFT_VER;
 
 	Parame_Copy_Fc2para();
@@ -149,11 +154,12 @@ static void Ano_Parame_Write(void)
 	Dvr_ParamterSave();
 }
 
+/* ��ȡ����������Ҫʱִ��Ĭ�ϳ�ʼ����д�ء� */
 void Ano_Parame_Read(void)
 {
 	Dvr_ParamterRead();
 	
-	if(Ano_Parame.set.frist_init != SOFT_VER)	//内容没有被初始化，则进行参数初始化工作
+	if(Ano_Parame.set.frist_init != SOFT_VER)	//内容没有被初始化，则进行参数初始化工�?
 	{		
 		Parame_Reset();
 		PID_Rest();
@@ -166,9 +172,10 @@ void Ano_Parame_Read(void)
 }
 
 
+/* ������ʱ�������񣬱������������д�� Flash�� */
 void Ano_Parame_Write_task(u16 dT_ms)
 {
-	//因为写入flash耗时较长，我们飞控做了一个特殊逻辑，在解锁后，是不进行参数写入的，此时会置一个需要写入标志位，等飞机降落锁定后，再写入参数，提升飞行安全性
+	//因为写入flash耗时较长，我们飞控做了一个特殊逻辑，在解锁后，是不进行参数写入的，此时会置一个需要写入标志位，等飞机降落锁定后，再写入参数，提升飞行安全�?
 	//为了避免连续更新两个参数，造成flash写入两次，我们飞控加入一个延时逻辑，参数改变后三秒，才进行写入操作，可以一次写入多项参数，降低flash擦写次数
 	if(para_sta.save_en )				//允许存储
 	{

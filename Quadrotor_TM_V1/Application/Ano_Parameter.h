@@ -4,6 +4,12 @@
 #include "config.h"
 #include "Ano_FcData.h"
 
+/*
+ * 模块名称：Ano_Parameter
+ * 模块职责：定义飞控参数存储结构、参数保存状态和参数读写接口。
+ * 使用约束：本头文件只描述参数布局与接口，不改变参数含义与存储时序。
+ */
+/* 持久化参数结构，字段顺序直接决定存储布局。 */
 __packed struct Parameter_s
 {
 	u16 frist_init;	//飞控第一次初始化，需要做一些特殊工作，比如清空flash
@@ -41,6 +47,7 @@ __packed struct Parameter_s
 	float idle_speed_pwm;
 };
 
+/* 参数存储联合体，提供结构化访问和字节级访问。 */
 union Parameter
 {
 	//这里使用联合体，长度是4KByte，联合体内部是一个结构体，该结构体内是需要保存的参数
@@ -49,6 +56,7 @@ union Parameter
 };
 extern union Parameter Ano_Parame;
 
+/* 参数保存运行状态。 */
 typedef struct
 {
 	u8 save_en;
@@ -57,9 +65,13 @@ typedef struct
 }_parameter_state_st ;
 extern _parameter_state_st para_sta;
 
+/* 读取参数区，并在必要时执行默认初始化。 */
 void Ano_Parame_Read(void);
+/* 周期性参数保存任务。 */
 void Ano_Parame_Write_task(u16 dT_ms);
+/* 恢复默认 PID 参数。 */
 void PID_Rest(void);
+/* 恢复默认飞控参数。 */
 void Parame_Reset(void);
 
 #endif 
