@@ -2,8 +2,8 @@
 #define _SCHEDULER_H_
 #include "config.h"
 /*
- * ???????
- * task_func ???????????????? us?
+ * 调度任务描述。
+ * task_func 为任务入口，interval_ticks 和 last_run 的单位均为 us。
  */
 typedef struct
 {
@@ -11,6 +11,8 @@ typedef struct
     u32 interval_ticks;
     u32 last_run;
 } sched_task_t;
-u8 Main_Task(void);
+
 void INT_1ms_Task(void);
+u8 Main_Task(void);
+
 #endif

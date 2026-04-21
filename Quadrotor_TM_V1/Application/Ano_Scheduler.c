@@ -29,25 +29,25 @@
 #include "Ano_OF_DecoFusion.h"
 #include "User_control.h"
 /*
- * ?????
- * ???????
- *
- * ??????? 1ms ??????? 2ms?6ms?11ms?20ms?50ms
- * ?????????????????????????
+ * 模块说明。
+ * 主任务调度器负责维护 1ms 基准节拍，并轮询 2ms、6ms、11ms、20ms、50ms 周期任务。
+ * 本文件只整理代码表达，不改变任务频率、调用顺序和触发条件。
  */
 #define CIRCLE_NUM   20
+
 static u8 lt0_run_flag;
 static u8 circle_cnt[2];
+
 static void Loop_Task_0(void);
 static void Loop_Task_1(u32 dT_us);
 static void Loop_Task_2(u32 dT_us);
 static void Loop_Task_5(u32 dT_us);
 static void Loop_Task_8(u32 dT_us);
 static void Loop_Task_9(u32 dT_us);
+
 /*
- * ???1ms ?????
- * ???
- * ?????????? LED ? PWM???????????
+ * 功能：1ms 中断任务。
+ * 说明：累加调度节拍，同时驱动 LED 软件 PWM。
  */
 void INT_1ms_Task(void)
 {
@@ -59,7 +59,8 @@ void INT_1ms_Task(void)
     {
     }
 }
-/* 1ms ????? */
+
+/* 1ms 周期任务。 */
 static void Loop_Task_0(void)
 {
     Fc_Sensor_Get();
@@ -72,21 +73,24 @@ static void Loop_Task_0(void)
     ANO_OF_Data_Prepare_Task(0.001f);
     ANO_DT_Data_Exchange();
 }
-/* 2ms ????? */
+
+/* 2ms 周期任务。 */
 static void Loop_Task_1(u32 dT_us)
 {
     (void)dT_us;
     Att_1level_Ctrl(2e-3f);
     Motor_Ctrl_Task(2);
 }
-/* 6ms ????? */
+
+/* 6ms 周期任务。 */
 static void Loop_Task_2(u32 dT_us)
 {
     (void)dT_us;
     calculate_RPY();
     Att_2level_Ctrl(6e-3f, CH_N);
 }
-/* 11ms ????? */
+
+/* 11ms 周期任务。 */
 static void Loop_Task_5(u32 dT_us)
 {
     (void)dT_us;
@@ -104,7 +108,8 @@ static void Loop_Task_5(u32 dT_us)
     AnoOF_DataAnl_Task(11);
     LED_Task2(11);
 }
-/* 20ms ????? */
+
+/* 20ms 周期任务。 */
 static void Loop_Task_8(u32 dT_us)
 {
     (void)dT_us;
@@ -119,7 +124,8 @@ static void Loop_Task_8(u32 dT_us)
     ANO_OPMV_Ctrl_Task(20);
     InspectionTask(20);
 }
-/* 50ms ????? */
+
+/* 50ms 周期任务。 */
 static void Loop_Task_9(u32 dT_us)
 {
     (void)dT_us;
@@ -127,7 +133,8 @@ static void Loop_Task_9(u32 dT_us)
     Thermostatic_Ctrl_Task(50);
     Ano_Parame_Write_task(50);
 }
-/* ?????? */
+
+/* 调度表。 */
 static sched_task_t sched_tasks[] =
 {
     {Loop_Task_1,  2000,  0},
@@ -136,21 +143,24 @@ static sched_task_t sched_tasks[] =
     {Loop_Task_8, 20000,  0},
     {Loop_Task_9, 50000,  0},
 };
+
 #define TASK_NUM   (sizeof(sched_tasks) / sizeof(sched_task_t))
+
 /*
- * ???????????
- * ???
- * ??? 1ms ???????????????????????
+ * 功能：主循环调度入口。
+ * 说明：先处理 1ms 快速任务，再按周期轮询其余任务。
  */
 u8 Main_Task(void)
 {
     uint8_t index;
     uint32_t time_now, delta_time_us;
+
     if(lt0_run_flag != 0)
     {
         lt0_run_flag--;
         Loop_Task_0();
     }
+
     for(index = 0; index < TASK_NUM; index++)
     {
         time_now = GetSysRunTimeUs();
@@ -161,5 +171,6 @@ u8 Main_Task(void)
             sched_tasks[index].task_func(delta_time_us);
         }
     }
+
     return 0;
 }

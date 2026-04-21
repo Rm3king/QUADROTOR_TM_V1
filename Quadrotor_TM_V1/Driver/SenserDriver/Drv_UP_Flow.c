@@ -169,7 +169,7 @@ const static uint8_t Sensor_cfg[]={
 };
 
 #define CIRCLE_P(n,a,b) ((a) + ((n)-(a))%((b)-(a)))
-#define OF_BUFFER_NUM 19  //tag ?μ??????????
+#define OF_BUFFER_NUM 19  // 光流数据缓冲区长度
 
 uint8_t of_init_cnt;
 uint8_t of_buf_update_cnt;
@@ -258,7 +258,7 @@ u8 Drv_OFInit(void)
 	
 	if(of_init_cnt == 10)
 	{
-		//????????????
+		// 逐字节接收光流串口数据
 //		while(1)
 //		{
 //				for(u8 i = 0;i<2;i++)

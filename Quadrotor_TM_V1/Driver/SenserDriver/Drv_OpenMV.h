@@ -2,7 +2,8 @@
 #define __DRV_OPENMV_H
 #include "sysconfig.h"
 #include "Ano_FcData.h"
-/* ????????? */
+
+/* 色块跟踪结果。 */
 typedef struct
 {
     u8 color_flag;
@@ -11,7 +12,8 @@ typedef struct
     s16 pos_y;
     u8 dT_ms;
 } _openmv_color_block_st;
-/* ??????? */
+
+/* 寻线结果。 */
 typedef struct
 {
     u8 sta;
@@ -22,7 +24,8 @@ typedef struct
     s16 pos_y;
     u8 dT_ms;
 } _openmv_line_tracking_st;
-/* OpenMV ????? */
+
+/* OpenMV 数据总状态。 */
 typedef struct
 {
     u8 offline;
@@ -31,7 +34,10 @@ typedef struct
     _openmv_color_block_st cb;
     _openmv_line_tracking_st lt;
 } _openmv_data_st;
+
 extern _openmv_data_st opmv;
-void OpenMV_Offline_Check(u8 dT_ms);
+
 void OpenMV_Byte_Get(u8 bytedata);
+void OpenMV_Offline_Check(u8 dT_ms);
+
 #endif

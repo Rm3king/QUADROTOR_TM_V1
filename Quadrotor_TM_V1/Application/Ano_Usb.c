@@ -8,11 +8,9 @@
 #include "usbdcdc.h"
 #include "usb_serial_structs.h"
 /*
- * ?????
- * USB CDC ?????????
- *
- * ????? USB CDC ????????????????????
- * ?????????????????
+ * 模块说明。
+ * USB CDC 设备通信接口。
+ * 负责初始化 USB CDC 设备栈，并提供发送、接收与缓冲区查询接口。
  */
 static tLineCoding usb_linecoding =
 {
@@ -21,12 +19,13 @@ static tLineCoding usb_linecoding =
     USB_CDC_PARITY_EVEN,
     8,
 };
-/* USB ??????? */
+
+/* USB 枚举完成标志。 */
 static volatile bool g_bUSBConfigured = false;
+
 /*
- * ????? CDC ???????
- * ???
- * ????????????????????????
+ * 功能：处理 CDC 控制事件。
+ * 说明：维护连接状态，并处理串口参数读写请求。
  */
 uint32_t ControlHandler(void *pvCBData, uint32_t ui32Event,
                         uint32_t ui32MsgValue, void *pvMsgData)
@@ -40,21 +39,26 @@ uint32_t ControlHandler(void *pvCBData, uint32_t ui32Event,
             USBBufferFlush(&g_sTxBuffer);
             USBBufferFlush(&g_sRxBuffer);
         break;
+
         case USB_EVENT_DISCONNECTED:
             g_bUSBConfigured = false;
         break;
+
         case USBD_CDC_EVENT_GET_LINE_CODING:
             *((tLineCoding *)pvMsgData) = usb_linecoding;
         break;
+
         case USBD_CDC_EVENT_SET_LINE_CODING:
             usb_linecoding = *((tLineCoding *)pvMsgData);
         break;
+
         case USBD_CDC_EVENT_SET_CONTROL_LINE_STATE:
         case USBD_CDC_EVENT_SEND_BREAK:
         case USBD_CDC_EVENT_CLEAR_BREAK:
         case USB_EVENT_SUSPEND:
         case USB_EVENT_RESUME:
         break;
+
         default:
 #ifdef DEBUG
             while(1)
@@ -66,10 +70,10 @@ uint32_t ControlHandler(void *pvCBData, uint32_t ui32Event,
     }
     return 0;
 }
+
 /*
- * ????? CDC ???????
- * ???
- * ???? USBBuffer ???????????????????
+ * 功能：处理 CDC 发送事件。
+ * 说明：当前仅保留事件占位，不改变原始处理流程。
  */
 uint32_t TxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
                    void *pvMsgData)
@@ -81,6 +85,7 @@ uint32_t TxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
     {
         case USB_EVENT_TX_COMPLETE:
         break;
+
         default:
 #ifdef DEBUG
             while(1)
@@ -92,10 +97,10 @@ uint32_t TxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
     }
     return 0;
 }
+
 /*
- * ????? CDC ???????
- * ???
- * ????????????????????????????
+ * 功能：处理 CDC 接收事件。
+ * 说明：当前由 USBBuffer 统一管理数据缓冲，这里保留回调入口。
  */
 uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
                    void *pvMsgData)
@@ -108,10 +113,13 @@ uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
     {
         case USB_EVENT_RX_AVAILABLE:
         break;
+
         case USB_EVENT_DATA_REMAINING:
             return ui32Count;
+
         case USB_EVENT_REQUEST_BUFFER:
             return 0;
+
         default:
 #ifdef DEBUG
             while(1)
@@ -123,10 +131,10 @@ uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
     }
     return 0;
 }
+
 /*
- * ?????? USB CDC ?????
- * ???
- * ?? USB ???????????????????
+ * 功能：初始化 USB CDC 设备。
+ * 说明：完成 USB 引脚、缓冲区和设备栈初始化。
  */
 void AnoUsbCdcInit(void)
 {
@@ -140,7 +148,8 @@ void AnoUsbCdcInit(void)
     USBIntRegister(INT_USB0, USB0DeviceIntHandler);
     ROM_IntPrioritySet(INT_USB0, USER_INT7);
 }
-/* ?? USB CDC ??? */
+
+/* 功能：发送 USB CDC 数据。 */
 void AnoUsbCdcSend(const uint8_t *data, uint16_t length)
 {
     if(g_bUSBConfigured)
@@ -148,7 +157,8 @@ void AnoUsbCdcSend(const uint8_t *data, uint16_t length)
         USBBufferWrite(&g_sTxBuffer, data, length);
     }
 }
-/* ?? USB CDC ????? */
+
+/* 功能：读取 USB CDC 数据。 */
 uint16_t AnoUsbCdcRead(uint8_t *data, uint16_t length)
 {
     if(g_bUSBConfigured)
@@ -157,7 +167,8 @@ uint16_t AnoUsbCdcRead(uint8_t *data, uint16_t length)
     }
     return 0;
 }
-/* ?? USB CDC ???????????? */
+
+/* 功能：查询 USB CDC 接收缓冲区可读字节数。 */
 uint16_t AnoUsbCdcDataAvailable(void)
 {
     return USBBufferDataAvailable(&g_sRxBuffer);

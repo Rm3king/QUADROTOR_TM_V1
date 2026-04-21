@@ -1,16 +1,19 @@
 #ifndef _RC_H_
 #define _RC_H_
 #include "Ano_FcData.h"
-/* ????????? */
+
+/* 摇杆功能识别状态。 */
 typedef struct
 {
     u16 s_cnt;
     u8 s_now_times;
     u8 s_state;
 } _stick_f_c_st;
-/* ??????? */
+
+/* 摇杆低通滤波状态类型。 */
 #define _stick_f_lp_st   u16
-/* ??????? */
+
+/* 遥控通道索引。 */
 enum
 {
     CH1 = 0,
@@ -22,9 +25,11 @@ enum
     CH7,
     CH8
 };
+
 extern s16 CH_N[], RX_CH[CH_NUM];
 extern u16 signal_intensity;
 extern u8 chn_en_bit;
+
 void fail_safe_check(u8 dT_ms);
 void stick_function(u8 dT_ms);
 void stick_function_check_longpress(u8 dT_ms, u16 *time_cnt, u16 longpress_time_ms, u8 en, u8 trig_val, u8 *trig);
@@ -33,4 +38,5 @@ void Remote_Control_Init(void);
 void RC_duty_task(u8 dT_ms);
 void signal_check_task(u8 dT_ms);
 void ch_watch_dog_feed(u8 ch_n);
+
 #endif

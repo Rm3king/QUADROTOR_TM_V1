@@ -242,8 +242,7 @@ void Drv_GpsGetOneByte(u8 data)
 ////        RX_dat = GPS_UART->DR;
 ////    }
 ////	
-////	if(USART_GetITStatus(GPS_UART,USART_IT_RXNE)==SET)//USART_IT_RXNE:????  
-////	{   
+////	if(USART_GetITStatus(GPS_UART,USART_IT_RXNE)==SET)//USART_IT_RXNE: Ω” ’÷–∂œ  ////	{   
 ////		USART_ClearITPendingBit(GPS_UART,USART_IT_RXNE);  
 ////		RX_dat=USART_ReceiveData(GPS_UART); 
 ////		if (GPS_get_cnt == 0)

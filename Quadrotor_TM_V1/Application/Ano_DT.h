@@ -2,11 +2,9 @@
 #define _DATA_TRANSFER_H
 #include "sysconfig.h"
 /*
- * ?????
- * ????????????
- *
- * ??????????????????????????????
- * ???????
+ * 模块说明。
+ * 数据传输与上位机协议接口。
+ * 负责调试串口数据的发送标志管理、参数索引映射和协议收发接口声明。
  */
 typedef struct
 {
@@ -31,7 +29,8 @@ typedef struct
     u16 send_parame;
     u16 paraToSend;
 } dt_flag_t;
-/* PID ????? */
+
+/* PID 参数索引。 */
 #define PAR_PID_1_P         1
 #define PAR_PID_1_I         2
 #define PAR_PID_1_D         3
@@ -86,7 +85,8 @@ typedef struct
 #define PAR_PID_18_P        52
 #define PAR_PID_18_I        53
 #define PAR_PID_18_D        54
-/* ??????? */
+
+/* 其他参数索引。 */
 #define PAR_RCINMODE        61
 #define PAR_UNLOCKPWM       62
 #define PAR_LVWARN          63
@@ -99,8 +99,10 @@ typedef struct
 #define PAR_TAKEOFFSPEED    70
 #define PAR_LANDSPEED       71
 #define PAR_HEATSWITCH      72
+
 extern s32 ParValList[100];
 extern dt_flag_t f;
+
 void ANO_DT_Data_Receive_Anl_Task(void);
 void ANO_DT_Send_VER(void);
 void ANO_DT_Data_Exchange(void);
@@ -128,4 +130,5 @@ void ANO_DT_SendString(const char *str);
 void ANO_DT_SendStrVal(const char *str, s32 val);
 void ANO_DT_SendOmvCt(u8 color, u8 sta, s16 x, s16 y, u8 d_tim);
 void ANO_DT_SendOmvLt(u8 sta, s16 angle, s16 offset, u8 pflag, s16 x, s16 y, u8 d_tim);
+
 #endif

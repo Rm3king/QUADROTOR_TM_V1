@@ -3,12 +3,14 @@
 #include "Ano_FcData.h"
 #include "Ano_FlightCtrl.h"
 #include "ANO_IMU.h"
-/* ????????? */
+
+/* 程控飞行状态。 */
 _fly_ct_st program_ctrl;
-/* ??????????????? */
+/* 当前命令参数缓存。 */
 static u16 val, spd;
-/* ???????????? */
+/* 起飞命令边沿标志。 */
 static u8 cmd_take_off_f;
+
 #define FLYCTRL_AXIS_YAW 3
 #define FLYCTRL_CMD_TAKE_OFF         0x01
 #define FLYCTRL_CMD_LAND             0x02
@@ -21,10 +23,10 @@ static u8 cmd_take_off_f;
 #define FLYCTRL_CMD_TURN_LEFT        0x09
 #define FLYCTRL_CMD_TURN_RIGHT       0x0A
 #define FLYCTRL_CMD_EMERGENCY_STOP   0xA0
+
 /*
- * ???????????
- * ???
- * data[2] ?????data[3:4] ?????data[5:6] ?????
+ * 功能：解析程控命令数据。
+ * 说明：data[2] 为命令字，data[3:4] 为位移或角度，data[5:6] 为速度。
  */
 void FlyCtrlDataAnl(u8 *data)
 {
@@ -32,17 +34,16 @@ void FlyCtrlDataAnl(u8 *data)
     spd = ((*(data + 5)) << 8) + (*(data + 6));
     program_ctrl.cmd_state[0] = *(data + 2);
 }
+
 /*
- * ???????????????
- * ???
- * 1. ????????????????????????????
- * 2. ???????????????????
+ * 功能：执行程控命令。
+ * 说明：保持原有命令切换条件、状态检查和执行顺序不变。
  */
 void FlyCtrl_Task(u8 dT_ms)
 {
     if(program_ctrl.cmd_state[0] != program_ctrl.cmd_state[1])
     {
-        /* ??????????????????? */
+        /* 命令切换时先清空上一条命令的过程状态。 */
         FlyCtrlReset();
         if(flag.rc_loss == 0 && flag.flight_mode == LOC_HOLD && (switchs.of_flow_on || switchs.gps_on))
         {
@@ -55,6 +56,7 @@ void FlyCtrl_Task(u8 dT_ms)
             program_ctrl.cmd_state[0] = 0;
         }
     }
+
     switch(program_ctrl.cmd_state[0])
     {
         case FLYCTRL_CMD_TAKE_OFF:
@@ -83,6 +85,7 @@ void FlyCtrl_Task(u8 dT_ms)
             }
         }
         break;
+
         case FLYCTRL_CMD_LAND:
         {
             if(flag.auto_take_off_land == AUTO_TAKE_OFF_FINISH)
@@ -97,6 +100,7 @@ void FlyCtrl_Task(u8 dT_ms)
             }
         }
         break;
+
         case FLYCTRL_CMD_EMERGENCY_STOP:
         {
             if(flag.unlock_sta)
@@ -107,6 +111,7 @@ void FlyCtrl_Task(u8 dT_ms)
             }
         }
         break;
+
         case FLYCTRL_CMD_GO_UP:
         {
             program_ctrl.vel_cmps_ref[Z] = spd;
@@ -130,6 +135,7 @@ void FlyCtrl_Task(u8 dT_ms)
             program_ctrl.fb_process_t_ms[Z] += dT_ms;
         }
         break;
+
         case FLYCTRL_CMD_GO_DOWN:
         {
             program_ctrl.vel_cmps_ref[Z] = -spd;
@@ -153,6 +159,7 @@ void FlyCtrl_Task(u8 dT_ms)
             program_ctrl.fb_process_t_ms[Z] += dT_ms;
         }
         break;
+
         case FLYCTRL_CMD_GO_AHEAD:
         {
             program_ctrl.vel_cmps_ref[X] = spd;
@@ -176,6 +183,7 @@ void FlyCtrl_Task(u8 dT_ms)
             program_ctrl.fb_process_t_ms[X] += dT_ms;
         }
         break;
+
         case FLYCTRL_CMD_GO_BACK:
         {
             program_ctrl.vel_cmps_ref[X] = -spd;
@@ -199,6 +207,7 @@ void FlyCtrl_Task(u8 dT_ms)
             program_ctrl.fb_process_t_ms[X] += dT_ms;
         }
         break;
+
         case FLYCTRL_CMD_GO_LEFT:
         {
             program_ctrl.vel_cmps_ref[Y] = spd;
@@ -222,6 +231,7 @@ void FlyCtrl_Task(u8 dT_ms)
             program_ctrl.fb_process_t_ms[Y] += dT_ms;
         }
         break;
+
         case FLYCTRL_CMD_GO_RIGHT:
         {
             program_ctrl.vel_cmps_ref[Y] = -spd;
@@ -245,6 +255,7 @@ void FlyCtrl_Task(u8 dT_ms)
             program_ctrl.fb_process_t_ms[Y] += dT_ms;
         }
         break;
+
         case FLYCTRL_CMD_TURN_LEFT:
         {
             program_ctrl.yaw_pal_dps = spd;
@@ -268,6 +279,7 @@ void FlyCtrl_Task(u8 dT_ms)
             program_ctrl.fb_process_t_ms[FLYCTRL_AXIS_YAW] += dT_ms;
         }
         break;
+
         case FLYCTRL_CMD_TURN_RIGHT:
         {
             program_ctrl.yaw_pal_dps = -spd;
@@ -291,21 +303,25 @@ void FlyCtrl_Task(u8 dT_ms)
             program_ctrl.fb_process_t_ms[FLYCTRL_AXIS_YAW] += dT_ms;
         }
         break;
+
         default:
         {
         }
         break;
     }
-    /* ???????????????? */
+
+    /* 命令结束后立即复位过程量。 */
     if(program_ctrl.cmd_state[0] == 0)
     {
         FlyCtrlReset();
     }
-    /* ???????????????????? */
+
+    /* 保存上一拍命令状态。 */
     program_ctrl.cmd_state[1] = program_ctrl.cmd_state[0];
+
     /*
-     * ??????????????????
-     * ???????????????????????????
+     * 飞行器解锁后再进行坐标系变换。
+     * 未解锁时仅刷新参考方向，避免残留旧指令。
      */
     if(flag.unlock_sta != 0)
     {
@@ -319,10 +335,10 @@ void FlyCtrl_Task(u8 dT_ms)
         program_ctrl.ref_dir[Y] = imu_data.hx_vec[Y];
     }
 }
+
 /*
- * ??????????????
- * ???
- * ????????????????????????????
+ * 功能：复位程控控制量。
+ * 说明：清空速度、时间反馈和起飞边沿标志。
  */
 void FlyCtrlReset(void)
 {
