@@ -9,6 +9,12 @@
 
 #include "usb_serial_structs.h"
 
+/*
+ * 模块说明：
+ * 1. 封装 TM4C USB CDC 设备模式的初始化与收发接口。
+ * 2. 本轮仅整理无用声明与接口说明，不改变 USB 事件处理流程。
+ */
+
 static tLineCoding usb_linecoding = 
 {
 	500000 ,
@@ -17,16 +23,6 @@ static tLineCoding usb_linecoding =
 	8 ,
 };
 
-//*****************************************************************************
-//
-// Flags used to pass commands from interrupt context to the main loop.
-//
-//*****************************************************************************
-#define COMMAND_PACKET_RECEIVED 0x00000001
-#define COMMAND_STATUS_UPDATE   0x00000002
-
-volatile uint32_t g_ui32Flags = 0;
-char *g_pcStatus;
 //*****************************************************************************
 //
 // Global flag indicating that a USB configuration has been set.
@@ -269,7 +265,7 @@ void AnoUsbCdcInit(void)
 	USBBufferInit(&g_sTxBuffer);
 	USBBufferInit(&g_sRxBuffer);
 	USBStackModeSet(0, eUSBModeForceDevice, 0);	
-	void* usbd_instance = USBDCDCInit(0, &g_sCDCDevice);	
+	(void)USBDCDCInit(0, &g_sCDCDevice);	
 	USBIntRegister( INT_USB0 , USB0DeviceIntHandler );
 	ROM_IntPrioritySet( INT_USB0 , USER_INT7 );
 }
