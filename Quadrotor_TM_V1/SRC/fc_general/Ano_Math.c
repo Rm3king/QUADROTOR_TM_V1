@@ -73,6 +73,7 @@ const float fast_atan_table[257] =
 	7.853983e-01
 };
 
+/* ?????????? */
 float my_abs(float f)
 {
 	if (f >= 0.0f)
@@ -83,6 +84,7 @@ float my_abs(float f)
 	return -f;
 }
 
+/* ??????????? */
 REAL fast_atan2(REAL y, REAL x) 
 {
 	REAL x_abs, y_abs, z;
@@ -182,6 +184,7 @@ float my_atan(float x, float y)
 //	return a*a;
 //}
 
+/* ??????????? */
 float my_sqrt_reciprocal(float number)
 {
 //	long i;
@@ -212,6 +215,7 @@ float my_sqrt_reciprocal(float number)
 }
 
 //快速平方根算法
+/* ????????? */
 float my_sqrt(float number)
 {
 //	long i;
@@ -273,6 +277,7 @@ float my_cos(double rad)
 	return my_sin(rad)*_flag;
 }
 
+/* ?????????? */
 float my_deadzone(float x,float ref,float zoom)
 {
 	float t;
@@ -353,6 +358,7 @@ double To_180_degrees_db(double x)
 	return (x>180?(x-360):(x<-180?(x+360):x));
 }
 
+/* ?????????? */
 void length_limit(float *in1,float *in2,float limit,float out[2])
 {
 	float l = my_2_norm(*in1,*in2);
@@ -385,6 +391,7 @@ float fifo(u8 arr_num,u8 *cnt,float *arr,float in)
 |  | =  |          |   |  |
 |y2|    |sinx, cosx|   |y2|
 */
+/* ???????? 90 ?????? */
 void rot_vec_2(float in[2],float sinx,float out[2]) //x = +-90度旋转，取sin x
 {
 	out[0] = in[0] *my_sqrt(1-my_pow(sinx)) - in[1] *sinx;

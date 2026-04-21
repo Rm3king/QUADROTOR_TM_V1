@@ -11,6 +11,7 @@
 
 
 
+/* ?????????? */
 void inte_fix_filter(float dT,_inte_fix_filter_st *data)
 {
 	float ei_lim_val;
@@ -33,6 +34,7 @@ void inte_fix_filter(float dT,_inte_fix_filter_st *data)
 
 }
 
+/* ???????????? */
 void fix_inte_filter(float dT,_fix_inte_filter_st *data)
 {
 	
@@ -84,6 +86,7 @@ void limit_filter_3(float T,float hz,_lf_t *data,float in) //增量滤波，适�
 // #define STEEPEST_STEP 10  //次
 
 
+/* ?????????? */
 void steepest_descend(s32 arr[],u8 len,_steepest_st *steepest,u8 step_num,s32 in)
 {	
 	u8 updw = 1;//0 dw,1up
@@ -185,6 +188,7 @@ void steepest_descend(s32 arr[],u8 len,_steepest_st *steepest,u8 step_num,s32 in
 
 
 
+/* ???????????? */
 void fir_arrange_filter(float *arr,u16 len,u8 *fil_cnt,float in,float *arr_out) //len<=255 len >= 3
 {
 	//float arrange[len];
@@ -261,6 +265,7 @@ void LPF_1(float hz,float time,float in,float *out)
 
 }
 
+/* ????????????? */
 void LPF_1_db(float hz,float time,double in,double *out)
 {
 	*out += ( 1 / ( 1 + 1 / ( hz *6.28f *time ) ) ) *( in - *out );
@@ -316,11 +321,13 @@ void simple_3d_trans(float ref[VEC_XYZ], float in[VEC_XYZ], float out[VEC_XYZ]) 
 
 }
 
+/* ????????????????? */
 void vec_3dh_transition(float ref[VEC_XYZ], float in[VEC_XYZ], float out[VEC_XYZ])
 {
 	simple_3d_trans(ref,in,out); //
 }
 
+/* ?????????????? */
 void vec_3dh_transition_matrix(float ref[VEC_XYZ],float wh_matrix[VEC_XYZ][VEC_XYZ])
 {
 

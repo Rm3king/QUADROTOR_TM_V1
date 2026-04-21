@@ -4,7 +4,7 @@
 
 
 //数据接口定义：
-//=========mapping===========
+
 //需要引用的文件：
 #include "Drv_Paramter.h"
 #include "Ano_LED.h"
@@ -19,8 +19,9 @@
 #define LED_STA_CALI_GYR   (LED_STA.calGyr)
 
 
-//=========mapping===========
 
+
+/* ?????????????? */
 void Sensor_Basic_Init()
 {
 	/*设置重心相对传感器的偏移量*/
@@ -48,6 +49,7 @@ u16 acc_sum_cnt = 0,gyro_sum_cnt = 0,acc_z_auto_cnt;
 s16 g_old[VEC_XYZ];
 float g_d_sum[VEC_XYZ] = {500,500,500};
 
+/* ????? Z ?????? */
 void mpu_auto_az()
 {
 	if(sensor.acc_z_auto_CALIBRATE)
@@ -87,6 +89,7 @@ void mpu_auto_az()
 }
 
 
+/* ?????????? */
 void motionless_check(u8 dT_ms)
 {
 	u8 t = 0;
@@ -118,6 +121,7 @@ void motionless_check(u8 dT_ms)
 
 }
 
+/* ???????????????? */
 void MPU6050_Data_Offset()
 {
 	static u8 off_cnt;
@@ -236,6 +240,7 @@ float wh_matrix[VEC_XYZ][VEC_XYZ] =
 
 };
 
+/* ?????????????????? */
 void Center_Pos_Set()
 {
 	center_pos.center_pos_cm[X] = X_POS_OFFSET_CM;//+0.0f;
@@ -245,6 +250,7 @@ void Center_Pos_Set()
 
 static float gyr_f[5][VEC_XYZ],acc_f[5][VEC_XYZ];
 
+/* ????????????? */
 void Sensor_Data_Prepare(u8 dT_ms)
 {	
 	float hz = 0 ;

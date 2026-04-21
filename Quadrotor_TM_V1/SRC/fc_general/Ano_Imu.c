@@ -92,6 +92,7 @@ _imu_state_st imu_state = {1,1,1,1,1,1,1,1};
 static float mag_2d_w_vec[2][2] = {{1,0},{1,0}};//地理坐标中，水平面磁场方向恒为南北 (1,0)
 
 float imu_test[3];
+/* ???????????????????? */
 void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XYZ],s16 mag_val[VEC_XYZ],_imu_st *imu)
 {
 //	const float kp = 0.2f,ki = 0.001f;
@@ -353,6 +354,7 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 }
 
 static float t_temp;
+/* ?????????????? */
 void calculate_RPY()
 {
 	///////////////////////输出姿态角///////////////////////////////
