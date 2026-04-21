@@ -21,14 +21,15 @@
 #define UN_PIT_VALUE  300
 #define UN_ROL_VALUE  300
 
-static u8 RC_IN_MODE;
+/* 当前接收机输入模式。 */
+static u8 s_rc_input_mode;
 /* 遥控输入初始化 */
 void Remote_Control_Init()
 {
 	//
-	RC_IN_MODE = Ano_Parame.set.pwmInMode;
+	s_rc_input_mode = Ano_Parame.set.pwmInMode;
 	//
-	if(RC_IN_MODE == SBUS)
+	if(s_rc_input_mode == SBUS)
 	{
 		Drv_RcSbus_Init();
 	}
@@ -39,22 +40,25 @@ void Remote_Control_Init()
 	}
 }
 
-static u16 cwd_cnt[10] ;
+/* 遥控通道看门狗计数。 */
+static u16 s_channel_watchdog_cnt[10];
+
+/* 对外共享的遥控输入状态。 */
 u8 chn_en_bit = 0;
 /* 喂通道看门狗 */
 void ch_watch_dog_feed(u8 ch_n)
 {
 	ch_n = LIMIT(ch_n,0,7);
-	cwd_cnt[ch_n] = 0;
+	s_channel_watchdog_cnt[ch_n] = 0;
 }
 
-static void ch_watch_dog(u8 dT_ms)//如果是PPM/SBUS模式，也只检测前8通道
+static void RC_ChannelWatchdogTask(u8 dT_ms) // 如果是 PPM/SBUS 模式，也只检测前 8 通道
 {
 	for(u8 i = 0;i<8;i++)
 	{
-		if(cwd_cnt[i]<500)
+		if(s_channel_watchdog_cnt[i]<500)
 		{
-			cwd_cnt[i] += dT_ms;
+			s_channel_watchdog_cnt[i] += dT_ms;
 			chn_en_bit |= 0x01<<i;
 		}
 		else
@@ -68,17 +72,27 @@ static void ch_watch_dog(u8 dT_ms)//如果是PPM/SBUS模式，也只检测前8通道
 }
 
 u16 signal_intensity;
-
 s16 CH_N[CH_NUM] = {0,0,0,0};
 
-_stick_f_lp_st unlock_f;
-u8 stick_fun_0;
-u16 unlock_time = 200;
+/* 文件内部的解锁与摇杆功能状态。 */
+static _stick_f_lp_st s_unlock_hold_cnt;
+static u8 s_unlock_gesture_active;
+static u16 s_unlock_hold_time_ms = 200;
+static _stick_f_lp_st s_cali_gyro_hold_cnt;
+static _stick_f_lp_st s_cali_acc_hold_cnt;
+static _stick_f_c_st s_cali_mag_state;
+static u8 s_stick_fun_gyro_cali;
+static u8 s_stick_fun_acc_cali;
+static u8 s_stick_fun_mag_cali;
 
-/* 遥控输入初始化 */
-void unlock(u8 dT_ms)
+static void RC_ChannelWatchdogTask(u8 dT_ms);
+static void RC_StickFunctionCheck(u8 dT_ms,_stick_f_c_st *sv,u8 times_n,u16 reset_time_ms,u8 en,u8 trig_val,u8 *trig);
+static void RC_StickFunctionCheckLongPress(u8 dT_ms,u16 *time_cnt,u16 longpress_time_ms,u8 en,u8 trig_val,u8 *trig);
+static void RC_StickFunctionTask(u8 dT_ms);
+static void RC_UnlockTask(u8 dT_ms);
+
+static void RC_UpdateUnlockErrorState(void)
 {
-	
 	if( flag.power_state <=2 && para_sta.save_trig == 0)//只有电池电压非最低并且没有操作flash时，才允许进行解锁
 	{
 		if(sens_hd_check.acc_ok && sens_hd_check.gyro_ok)
@@ -112,50 +126,31 @@ void unlock(u8 dT_ms)
 	{
 		flag.unlock_err = 4;//电池电压异常，不允许解锁
 	}
-	
-	//解锁
+}
+
+static void RC_SyncUnlockCommand(void)
+{
 	if(flag.unlock_sta == 0)
 	{
 		if(flag.unlock_cmd != 0)
 		{		
 			if(flag.unlock_err == 0)
 			{
-				//
 				flag.unlock_sta = flag.unlock_cmd;
-				//
 				ANO_DT_SendString("Unlock OK!");
-				
 			}
 			else 
 			{
-				//reset
 				flag.unlock_cmd = 0;
-				//
-				if(flag.unlock_err == 1)
-				{
-					ANO_DT_SendString("Unlock Fail!");
-				}
-				else if(flag.unlock_err == 2)
-				{
-					ANO_DT_SendString("Unlock Fail!");
-				}
-				else if(flag.unlock_err == 3)
-				{
-					ANO_DT_SendString("Unlock Fail!");
-				}
-				else if(flag.unlock_err == 4)
+				if(flag.unlock_err == 4)
 				{
 					ANO_DT_SendString("Power Low,Unlock Fail!");
 				}
 				else
 				{
-				
+					ANO_DT_SendString("Unlock Fail!");
 				}
 			}
-		}
-		else
-		{
-		
 		}
 	}
 	else
@@ -166,12 +161,12 @@ void unlock(u8 dT_ms)
 		}		
 		flag.unlock_sta = flag.unlock_cmd;
 	}
-	
-	////////////////////////////////////////////
-	//所有功能判断，都要油门在低值时才进行
+}
+
+static void RC_UpdateLockGesture(u8 dT_ms)
+{
 	if(CH_N[CH_THR] < -UN_THR_VALUE  )
 	{
-		//判断用户是否想要上锁、解锁
 		if(ABS(CH_N[CH_YAW])>0.1f*UN_YAW_VALUE && CH_N[CH_PIT]< -0.1f*UN_PIT_VALUE)
 		{
 			if(flag.locking == 0)
@@ -184,49 +179,46 @@ void unlock(u8 dT_ms)
 			flag.locking = 0;
 		}
 
-		//飞控上锁、解锁检测
 		if(CH_N[CH_PIT]<-UN_PIT_VALUE && CH_N[CH_ROL]>UN_ROL_VALUE && CH_N[CH_YAW]<-UN_YAW_VALUE)
 		{
-			stick_fun_0 = 1;
+			s_unlock_gesture_active = 1;
 			flag.locking = 2;
 		}
 		else if(CH_N[CH_PIT]<-UN_PIT_VALUE && CH_N[CH_ROL]<-UN_ROL_VALUE && CH_N[CH_YAW]>UN_YAW_VALUE)
 		{
-			stick_fun_0 = 1;
+			s_unlock_gesture_active = 1;
 			flag.locking = 2;
 		}
 		else
 		{
-			stick_fun_0 = 0;
+			s_unlock_gesture_active = 0;
 		}
 			
-		
-		u8 f = 0;		
+		u8 unlock_cmd_target = 0;
 		if(flag.unlock_sta)
 		{
-			//如果为解锁状态，最终f=0，将f赋值给flag.unlock_sta，飞控完成上锁
-			f = 0;
-			unlock_time = 1000;
+			unlock_cmd_target = 0;
+			s_unlock_hold_time_ms = 1000;
 		}
 		else
 		{
-			//如果飞控为锁定状态，则f=2，将f赋值给flag.unlock_sta，飞控解锁完成
-			f = 2;
-			unlock_time = 200;
+			unlock_cmd_target = 2;
+			s_unlock_hold_time_ms = 200;
 		}
-		//进行最终的时间积分判断，摇杆必须满足条件unlock_time时间后，才会执行锁定和解锁动作
-		stick_function_check_longpress(dT_ms,&unlock_f,unlock_time,stick_fun_0,f,&flag.unlock_cmd);
+		RC_StickFunctionCheckLongPress(dT_ms,&s_unlock_hold_cnt,s_unlock_hold_time_ms,s_unlock_gesture_active,unlock_cmd_target,&flag.unlock_cmd);
 	}
 	else
 	{
-		flag.locking = 0; //油门高
+		flag.locking = 0;
 		if(flag.unlock_cmd == 2)
 		{
 			flag.unlock_cmd = 1;
 		}
 	}
+}
 
-	
+static void RC_UpdateThrottleLowState(void)
+{
 	if(CH_N[CH_THR]>-350)
 	{
 		flag.thr_low = 0;//油门非低
@@ -235,6 +227,15 @@ void unlock(u8 dT_ms)
 	{
 		flag.thr_low = 1;//油门拉低
 	}
+}
+
+/* 解锁与上锁状态更新 */
+static void RC_UnlockTask(u8 dT_ms)
+{
+	RC_UpdateUnlockErrorState();
+	RC_SyncUnlockCommand();
+	RC_UpdateLockGesture(dT_ms);
+	RC_UpdateThrottleLowState();
 }
 
 void RC_duty_task(u8 dT_ms) //建议2ms调用一次
@@ -260,7 +261,7 @@ void RC_duty_task(u8 dT_ms) //建议2ms调用一次
 //			}
 //		}
 //		else if(RC_IN_MODE == PPM)
-		if(RC_IN_MODE == PPM || RC_IN_MODE == PWM)
+		if(s_rc_input_mode == PPM || s_rc_input_mode == PWM)
 		{
 			for(u8 i=0;i<CH_NUM;i++)
 			{
@@ -295,11 +296,11 @@ void RC_duty_task(u8 dT_ms) //建议2ms调用一次
 
 		///////////////////////////////////////////////
 		//解锁监测	
-		unlock(dT_ms);
+		RC_UnlockTask(dT_ms);
 		//摇杆触发功能监测
-		stick_function(dT_ms);	
+		RC_StickFunctionTask(dT_ms);	
 		//通道看门狗
-		ch_watch_dog(dT_ms);
+		RC_ChannelWatchdogTask(dT_ms);
 
 		//失控保护检查
 		fail_safe_check(dT_ms);//3ms
@@ -308,8 +309,8 @@ void RC_duty_task(u8 dT_ms) //建议2ms调用一次
 	}
 }
 
-/* 遥控通道周期处理 */
-void fail_safe()
+/* 执行失控保护输出覆盖 */
+static void RC_FailSafeApply(void)
 {
 	for(u8 i = 0;i<4;i++)
 	{
@@ -341,8 +342,6 @@ void fail_safe()
 	}
 }
 
-u16 test_si_cnt;
-
 void fail_safe_check(u8 dT_ms) //dT秒调用一次
 {
 	static u16 cnt;
@@ -369,7 +368,7 @@ void fail_safe_check(u8 dT_ms) //dT秒调用一次
 			
 			LED_STA.noRc = 1;
 			
-			fail_safe();
+			RC_FailSafeApply();
 
 
 				
@@ -389,15 +388,14 @@ void fail_safe_check(u8 dT_ms) //dT秒调用一次
 			
 		}
 		
-		test_si_cnt = signal_intensity;
 		signal_intensity=0; //累计接收次数
 	}
 	
 	
 }
 
-/* 执行失控保护 */
-void stick_function_check(u8 dT_ms,_stick_f_c_st *sv,u8 times_n,u16 reset_time_ms,u8 en,u8 trig_val,u8 *trig)
+/* 摇杆组合触发判定 */
+static void RC_StickFunctionCheck(u8 dT_ms,_stick_f_c_st *sv,u8 times_n,u16 reset_time_ms,u8 en,u8 trig_val,u8 *trig)
 {
 	if(en)
 	{
@@ -429,8 +427,8 @@ void stick_function_check(u8 dT_ms,_stick_f_c_st *sv,u8 times_n,u16 reset_time_m
 	}
 
 }
-/* 摇杆功能触发判定 */
-void stick_function_check_longpress(u8 dT_ms,u16 *time_cnt,u16 longpress_time_ms,u8 en,u8 trig_val,u8 *trig)
+/* 摇杆长按触发判定 */
+static void RC_StickFunctionCheckLongPress(u8 dT_ms,u16 *time_cnt,u16 longpress_time_ms,u8 en,u8 trig_val,u8 *trig)
 {
 	//dT_ms：调用间隔时间
 	//time_cnt：积分时间
@@ -458,12 +456,8 @@ void stick_function_check_longpress(u8 dT_ms,u16 *time_cnt,u16 longpress_time_ms
 
 }
 
-_stick_f_lp_st cali_gyro,cali_acc,cali_surface;
-_stick_f_c_st cali_mag;
-
-u8 stick_fun_1,stick_fun_2,stick_fun_3,stick_fun_4,stick_fun_5_magcali;
 /* 摇杆组合功能处理 */
-void stick_function(u8 dT_ms)
+static void RC_StickFunctionTask(u8 dT_ms)
 {
 	//////////////状态监测
 	//未解锁才允许检测摇杆功能
@@ -474,50 +468,31 @@ void stick_function(u8 dT_ms)
 		{
 			if(CH_N[CH_PIT]<-350 && CH_N[CH_ROL]>350 && CH_N[CH_THR]<-350 && CH_N[CH_YAW]>350)
 			{
-				stick_fun_1 = stick_fun_2 = 1;
+				s_stick_fun_gyro_cali = s_stick_fun_acc_cali = 1;
 			}
 			else
 			{
-				stick_fun_1 = stick_fun_2 = 0;
-			}
-			
-			if(CH_N[CH_PIT]>350 && CH_N[CH_ROL]>350 && CH_N[CH_THR]<-350 && CH_N[CH_YAW]<-350)
-			{
-				stick_fun_3 = 1;
-			}
-			else
-			{
-				stick_fun_3 = 0;
-			}
-			
-			if(CH_N[CH_PIT]>350 && CH_N[CH_ROL]>350 && CH_N[CH_THR]<-350 && CH_N[CH_YAW]>350)
-			{
-				stick_fun_4 = 1;
-			}
-			else
-			{
-				stick_fun_4 = 0;
+				s_stick_fun_gyro_cali = s_stick_fun_acc_cali = 0;
 			}
 			
 			if(CH_N[CH_PIT]>350)
 			{
-				stick_fun_5_magcali =1;
+				s_stick_fun_mag_cali = 1;
 			}
 			else if(CH_N[CH_PIT]<50)
 			{
-				stick_fun_5_magcali =0;
+				s_stick_fun_mag_cali = 0;
 			}
 		}
 		
 			///////////////
 		//触发陀螺仪校准
-		stick_function_check_longpress(dT_ms,&cali_gyro,1000,stick_fun_1,1,&sensor.gyr_CALIBRATE);
+		RC_StickFunctionCheckLongPress(dT_ms,&s_cali_gyro_hold_cnt,1000,s_stick_fun_gyro_cali,1,&sensor.gyr_CALIBRATE);
 		//触发加速度计校准
-		stick_function_check_longpress(dT_ms,&cali_acc,1000,stick_fun_2,1,&sensor.acc_CALIBRATE);
+		RC_StickFunctionCheckLongPress(dT_ms,&s_cali_acc_hold_cnt,1000,s_stick_fun_acc_cali,1,&sensor.acc_CALIBRATE);
 		
-//		stick_function_check_longpress(dT_ms,&cali_surface,1000,stick_fun_4,1,&sensor_rot.surface_CALIBRATE );
 		//触发罗盘校准
-		stick_function_check(dT_ms,&cali_mag,5,1000,stick_fun_5_magcali,1,&mag.mag_CALIBRATE);
+		RC_StickFunctionCheck(dT_ms,&s_cali_mag_state,5,1000,s_stick_fun_mag_cali,1,&mag.mag_CALIBRATE);
 
 		
 	}

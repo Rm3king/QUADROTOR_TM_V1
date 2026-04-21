@@ -26,17 +26,16 @@ enum
     CH8
 };
 
-extern s16 CH_N[], RX_CH[CH_NUM];
+/* 当前遥控通道量，范围约为 -500~500。 */
+extern s16 CH_N[CH_NUM];
+/* 信号强度累计值，由接收中断喂入并周期采样。 */
 extern u16 signal_intensity;
+/* 当前有效通道位图。 */
 extern u8 chn_en_bit;
 
 void fail_safe_check(u8 dT_ms);
-void stick_function(u8 dT_ms);
-void stick_function_check_longpress(u8 dT_ms, u16 *time_cnt, u16 longpress_time_ms, u8 en, u8 trig_val, u8 *trig);
-void ch_watch_dog(u8 dT_ms);
 void Remote_Control_Init(void);
 void RC_duty_task(u8 dT_ms);
-void signal_check_task(u8 dT_ms);
 void ch_watch_dog_feed(u8 ch_n);
 
 #endif
