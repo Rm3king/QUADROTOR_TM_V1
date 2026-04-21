@@ -137,7 +137,7 @@ enum
 	
 };
 
-/* 保存到参数区的校准与参考数据。 */
+/* 运行时校准参数镜像。 */
 typedef struct
 {
 	u8 first_f;
@@ -207,7 +207,7 @@ typedef struct
 	float yaw_pal_limit;
 }_fc_sta_var_st;
 extern _fc_sta_var_st fc_stv;
-	
+
 /* 外设开关状态。 */
 typedef struct
 {
@@ -238,6 +238,15 @@ typedef struct
 	
 } _sensor_hd_check_st;
 extern _sensor_hd_check_st sens_hd_check;
+
+/* 共享状态实例说明：
+ * save            参数区与运行时共享的校准镜像
+ * flag            飞控核心状态标志
+ * fc_stv          控制限幅和约束量
+ * switchs         外设使能开关
+ * sens_hd_check   硬件自检结果
+ */
+
 /* 触发参数延时保存。 */
 void data_save(void);
 /* 初始化参数读取流程。 */

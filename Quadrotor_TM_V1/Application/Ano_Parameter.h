@@ -12,36 +12,40 @@
 /* 持久化参数结构，字段顺序直接决定存储布局。 */
 __packed struct Parameter_s
 {
-	u16 frist_init;	//飞控第一次初始化，需要做一些特殊工作，比如清空flash
-	
-	
-	u8		pwmInMode;				//接收机模式，分别为PWM型PPM型
-	u8		heatSwitch;				//
+	/* 版本与初始化标记。 */
+	u16 frist_init;
 
-	float 	acc_offset[VEC_XYZ];  	//加速度计零偏
-	float 	gyro_offset[VEC_XYZ]; 	//陀螺仪零偏
-	
-	float 	surface_vec[VEC_XYZ]; 	//水平面向量
-	float 	center_pos_cm[VEC_XYZ]; //重心相对传感器位置偏移量
-	
-	float 	mag_offset[VEC_XYZ];  	//磁力计零偏
-	float 	mag_gain[VEC_XYZ];    	//磁力计校正比例
-	
-	float 	pid_att_1level[VEC_RPY][PID]; //姿态控制角速度环PID参数
-	float 	pid_att_2level[VEC_RPY][PID]; //姿态控制角度环PID参数
-	float 	pid_alt_1level[PID];          //高度控制高度速度环PID参数
-	float 	pid_alt_2level[PID];           //高度控制高度环PID参数
-	float 	pid_loc_1level[PID];          //位置控制位置速度环PID参数
-	float 	pid_loc_2level[PID];           //位置控制位置环PID参数
+	/* 输入与外设开关配置。 */
+	u8 pwmInMode;
+	u8 heatSwitch;
 
-	float 	pid_gps_loc_1level[PID];          //位置控制位置速度环PID参数
-	float 	pid_gps_loc_2level[PID];           //位置控制位置环PID参数
+	/* 传感器校准参数。 */
+	float acc_offset[VEC_XYZ];
+	float gyro_offset[VEC_XYZ];
+	float surface_vec[VEC_XYZ];
+	float center_pos_cm[VEC_XYZ];
+	float mag_offset[VEC_XYZ];
+	float mag_gain[VEC_XYZ];
 
-	float   warn_power_voltage;
-	float	return_home_power_voltage;
-	float   lowest_power_voltage;
-	
-	float	auto_take_off_height;
+	/* 姿态与高度控制 PID 参数。 */
+	float pid_att_1level[VEC_RPY][PID];
+	float pid_att_2level[VEC_RPY][PID];
+	float pid_alt_1level[PID];
+	float pid_alt_2level[PID];
+
+	/* 水平位置控制 PID 参数。 */
+	float pid_loc_1level[PID];
+	float pid_loc_2level[PID];
+	float pid_gps_loc_1level[PID];
+	float pid_gps_loc_2level[PID];
+
+	/* 电压保护参数。 */
+	float warn_power_voltage;
+	float return_home_power_voltage;
+	float lowest_power_voltage;
+
+	/* 自动起降与电机准备参数。 */
+	float auto_take_off_height;
 	float auto_take_off_speed;
 	float auto_landing_speed;
 	float idle_speed_pwm;
@@ -50,7 +54,7 @@ __packed struct Parameter_s
 /* 参数存储联合体，提供结构化访问和字节级访问。 */
 union Parameter
 {
-	//这里使用联合体，长度是4KByte，联合体内部是一个结构体，该结构体内是需要保存的参数
+	/* 联合体同时提供结构化访问和字节级访问。 */
 	struct Parameter_s set;
 	u8 byte[2048];
 };

@@ -15,6 +15,7 @@
 #include "Ano_DT.h"
 
 
+/* 参数镜像与保存状态实例。 */
 union Parameter Ano_Parame;
 _parameter_state_st para_sta;
 
@@ -76,7 +77,7 @@ void PID_Rest()
 
 
 /* 将参数区中的校准数据同步到飞控运行时结构。 */
-static void Parame_Copy_Para2fc()
+static void Parame_Copy_Para2fc(void)
 {
 	for(u8 i = 0;i<3;i++)
 	{	
@@ -91,7 +92,7 @@ static void Parame_Copy_Para2fc()
 }
 
 /* 将飞控运行时校准数据回填到参数区镜像。 */
-static void Parame_Copy_Fc2para()
+static void Parame_Copy_Fc2para(void)
 {
 
 	for(u8 i = 0;i<3;i++)
