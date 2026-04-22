@@ -62,13 +62,13 @@ static u8 ANO_DT_AppendChecksum(u8 *buffer, u8 frame_len);
 static void ANO_DT_FrameSend(u8 frame_len);
 static void ANO_DT_UpdatePeriodFlags(u16 cnt, u8 *flag_send_omv);
 static void ANO_DT_Data_Receive_Anl_Task(void);
-static static void ANO_DT_Data_Receive_Prepare_USB(u8 data);
+static void ANO_DT_Data_Receive_Prepare_USB(u8 data);
 static void ANO_DT_Data_Receive_Anl(u8 *data_buf, u8 num);
-static static void ANO_DT_Send_VER(void);
-static static void ANO_DT_SendParame(u16 num);
-static static void ANO_DT_GetParame(u16 num,s32 data);
-static static void ANO_DT_ParListToParUsed(void);
-static static void ANO_DT_ParUsedToParList(void);
+static void ANO_DT_Send_VER(void);
+static void ANO_DT_SendParame(u16 num);
+static void ANO_DT_GetParame(u16 num,s32 data);
+static void ANO_DT_ParListToParUsed(void);
+static void ANO_DT_ParUsedToParList(void);
 
 /* 组帧入口：写入协议头、目标地址和消息编号，并预留长度位。 */
 static u8 ANO_DT_FrameStart(u8 dest, u8 msg_id)
