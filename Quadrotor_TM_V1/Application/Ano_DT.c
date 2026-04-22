@@ -61,6 +61,14 @@ static u8 ANO_DT_FrameStart(u8 dest, u8 msg_id);
 static u8 ANO_DT_AppendChecksum(u8 *buffer, u8 frame_len);
 static void ANO_DT_FrameSend(u8 frame_len);
 static void ANO_DT_UpdatePeriodFlags(u16 cnt, u8 *flag_send_omv);
+static void ANO_DT_Data_Receive_Anl_Task(void);
+static static void ANO_DT_Data_Receive_Prepare_USB(u8 data);
+static void ANO_DT_Data_Receive_Anl(u8 *data_buf, u8 num);
+static static void ANO_DT_Send_VER(void);
+static static void ANO_DT_SendParame(u16 num);
+static static void ANO_DT_GetParame(u16 num,s32 data);
+static static void ANO_DT_ParListToParUsed(void);
+static static void ANO_DT_ParUsedToParList(void);
 
 /* 组帧入口：写入协议头、目标地址和消息编号，并预留长度位。 */
 static u8 ANO_DT_FrameStart(u8 dest, u8 msg_id)
@@ -344,7 +352,7 @@ void ANO_DT_Data_Receive_Prepare(u8 data)
  * 功能：USB 接收状态机。
  * 说明：逻辑与串口接收一致，仅缓冲区独立。
  */
-void ANO_DT_Data_Receive_Prepare_USB(u8 data)
+static void ANO_DT_Data_Receive_Prepare_USB(u8 data)
 {
 	static u8 _data_len = 0;
 	static u8 state = 0;
@@ -396,7 +404,7 @@ void ANO_DT_Data_Receive_Prepare_USB(u8 data)
  * 功能：轮询接收缓冲区并触发协议解析。
  * 说明：串口和 USB 共用同一套解析函数。
  */
-void ANO_DT_Data_Receive_Anl_Task()
+static void ANO_DT_Data_Receive_Anl_Task(void)
 {
 	static u8 usbdatarxbuf[100];
 	
@@ -421,7 +429,7 @@ void ANO_DT_Data_Receive_Anl_Task()
  * 功能：解析单帧协议数据。
  * 说明：先做帧头和校验检查，再分发命令或参数写入请求。
  */
-void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
+static void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 {
 	u8 sum = 0;
 	for(u8 i=0;i<(num-1);i++)
@@ -506,7 +514,7 @@ void ANO_DT_SendCmd(u8 dest, u8 fun, u16 cmd1, u16 cmd2, u16 cmd3, u16 cmd4, u16
 	ANO_DT_FrameSend(_cnt);
 }
 /* 按参数编号回传单个参数值。 */
-void ANO_DT_SendParame(u16 num)
+static void ANO_DT_SendParame(u16 num)
 {
 	u8 _cnt = ANO_DT_FrameStart(SWJADDR, 0xE1);
 	int32_t data;
@@ -524,7 +532,7 @@ void ANO_DT_SendParame(u16 num)
 	ANO_DT_FrameSend(_cnt);
 }
 /* 写入单个参数并触发保存流程。 */
-void ANO_DT_GetParame(u16 num,s32 data)
+static void ANO_DT_GetParame(u16 num,s32 data)
 {
 	if(num > PARNUM)
 		return;
@@ -534,7 +542,7 @@ void ANO_DT_GetParame(u16 num,s32 data)
 	data_save();
 }
 /* 将参数列表同步到实际飞控参数结构。 */
-void ANO_DT_ParListToParUsed(void)
+static void ANO_DT_ParListToParUsed(void)
 {
 	Ano_Parame.set.pid_att_1level[ROL][KP] = (float) ParValList[PAR_PID_1_P] / 1000;
 	Ano_Parame.set.pid_att_1level[ROL][KI] = (float) ParValList[PAR_PID_1_I] / 1000;
@@ -599,7 +607,7 @@ void ANO_DT_ParListToParUsed(void)
 		Ano_Parame.set.heatSwitch = 1;
 }
 /* 将实际飞控参数结构回填到协议参数列表。 */
-void ANO_DT_ParUsedToParList(void)
+static void ANO_DT_ParUsedToParList(void)
 {
 	ParValList[PAR_PID_1_P] = Ano_Parame.set.pid_att_1level[ROL][KP] * 1000;
 	ParValList[PAR_PID_1_I] = Ano_Parame.set.pid_att_1level[ROL][KI] * 1000;
@@ -665,7 +673,7 @@ void ANO_DT_ParUsedToParList(void)
 }
 
 /* 保留的旧版版本信息发送接口。 */
-void ANO_DT_Send_VER(void)
+static void ANO_DT_Send_VER(void)
 {
 	u8 temp[14];
 	temp[0] = 0xAA;
