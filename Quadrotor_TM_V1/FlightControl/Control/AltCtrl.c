@@ -47,15 +47,15 @@ void Auto_Take_Off_Land_Task(u8 dT_ms)
 	if(flag.auto_take_off_land ==AUTO_TAKE_OFF)
 	{
 		//设置最大起飞速度
-		s16 max_take_off_vel = LIMIT(Ano_Parame.set.auto_take_off_speed,20,200);
+		s16 max_take_off_vel = LIMIT(g_fc_param.set.auto_take_off_speed,20,200);
 		//
 		take_off_ok_cnt += dT_ms;
-		auto_taking_off_speed = AUTO_TAKE_OFF_KP *(Ano_Parame.set.auto_take_off_height - wcz_hei_fus.out);
+		auto_taking_off_speed = AUTO_TAKE_OFF_KP *(g_fc_param.set.auto_take_off_height - wcz_hei_fus.out);
 		//计算起飞速度
 		auto_taking_off_speed = LIMIT(auto_taking_off_speed,0,max_take_off_vel);
 		
 		//退出起飞流程条件1，满足高度或者流程时间大于5000毫秒。
-		if(take_off_ok_cnt>=5000 || (Ano_Parame.set.auto_take_off_height - loc_ctrl_2.exp[Z] <2))//(auto_ref_height>AUTO_TAKE_OFF_HEIGHT)
+		if(take_off_ok_cnt>=5000 || (g_fc_param.set.auto_take_off_height - loc_ctrl_2.exp[Z] <2))//(auto_ref_height>AUTO_TAKE_OFF_HEIGHT)
 		{
 			flag.auto_take_off_land = AUTO_TAKE_OFF_FINISH;
 			
@@ -86,7 +86,7 @@ void Auto_Take_Off_Land_Task(u8 dT_ms)
 	if(flag.auto_take_off_land == AUTO_LAND)
 	{
 		//设置自动下降速度
-		auto_taking_off_speed = -(s16)LIMIT(Ano_Parame.set.auto_landing_speed,20,200);
+		auto_taking_off_speed = -(s16)LIMIT(g_fc_param.set.auto_landing_speed,20,200);
 
 	}
 }
@@ -98,10 +98,10 @@ _PID_val_st alt_val_2;
 /*高度环PID参数初始化*/
 void Alt_2level_PID_Init()
 {
-	alt_arg_2.kp = Ano_Parame.set.pid_alt_2level[KP];
-	alt_arg_2.ki = Ano_Parame.set.pid_alt_2level[KI];
+	alt_arg_2.kp = g_fc_param.set.pid_alt_2level[KP];
+	alt_arg_2.ki = g_fc_param.set.pid_alt_2level[KI];
 	alt_arg_2.kd_ex = 0.00f;
-	alt_arg_2.kd_fb = Ano_Parame.set.pid_alt_2level[KD];
+	alt_arg_2.kd_fb = g_fc_param.set.pid_alt_2level[KD];
 	alt_arg_2.k_ff = 0.0f;
 
 }
@@ -165,10 +165,10 @@ _PID_val_st alt_val_1;
 /*高度速度环PID参数初始化*/
 void Alt_1level_PID_Init()
 {
-	alt_arg_1.kp = Ano_Parame.set.pid_alt_1level[KP];
-	alt_arg_1.ki = Ano_Parame.set.pid_alt_1level[KI];
+	alt_arg_1.kp = g_fc_param.set.pid_alt_1level[KP];
+	alt_arg_1.ki = g_fc_param.set.pid_alt_1level[KI];
 	alt_arg_1.kd_ex = 0.00f;
-	alt_arg_1.kd_fb = 0;//Ano_Parame.set.pid_alt_1level[KD];
+	alt_arg_1.kd_fb = 0;//g_fc_param.set.pid_alt_1level[KD];
 	alt_arg_1.k_ff = 0.0f;
 
 }
@@ -188,7 +188,7 @@ void Alt_1level_Ctrl(float dT_s)
 	
 	w_acc_z_lpf += 0.2f *(imu_data.w_acc[Z] - w_acc_z_lpf); //低通滤波
 
-	loc_ctrl_1.fb[Z] = wcz_spe_fus.out + Ano_Parame.set.pid_alt_1level[KD] *w_acc_z_lpf;//微分先行，下边PID函数微分系数为0
+	loc_ctrl_1.fb[Z] = wcz_spe_fus.out + g_fc_param.set.pid_alt_1level[KD] *w_acc_z_lpf;//微分先行，下边PID函数微分系数为0
 	
 	
 	PID_calculate( dT_s,            //周期（单位：秒）

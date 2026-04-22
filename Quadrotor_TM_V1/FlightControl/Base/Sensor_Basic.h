@@ -1,5 +1,5 @@
-#ifndef __ANO_SENSOR_BASIC_H
-#define __ANO_SENSOR_BASIC_H
+#ifndef __SENSOR_BASIC_H__
+#define __SENSOR_BASIC_H__
 #include "sysconfig.h"
 #include "FcData.h"
 

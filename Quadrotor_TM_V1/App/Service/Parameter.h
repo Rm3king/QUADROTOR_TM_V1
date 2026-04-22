@@ -5,7 +5,7 @@
 #include "FcData.h"
 
 /*
- * 模块名称：Ano_Parameter
+ * 模块名称：g_fc_paramter
  * 模块职责：定义飞控参数存储结构、参数保存状态和参数读写接口。
  * 使用约束：本头文件只描述参数布局与接口，不改变参数含义与存储时序。
  */
@@ -58,7 +58,7 @@ union Parameter
 	struct Parameter_s set;
 	u8 byte[2048];
 };
-extern union Parameter Ano_Parame;
+extern union Parameter g_fc_param;
 
 /* 参数保存运行状态。 */
 typedef struct
@@ -70,9 +70,9 @@ typedef struct
 extern _parameter_state_st para_sta;
 
 /* 读取参数区，并在必要时执行默认初始化。 */
-void Ano_Parame_Read(void);
+void FC_Param_Read(void);
 /* 周期性参数保存任务。 */
-void Ano_Parame_Write_task(u16 dT_ms);
+void FC_Param_WriteTask(u16 dT_ms);
 /* 恢复默认 PID 参数。 */
 void PID_Rest(void);
 /* 恢复默认飞控参数。 */

@@ -35,16 +35,16 @@ void Loc_1level_PID_Init()
 	if(mode_f[1] == 2)
 	{
 		//normal
-		loc_arg_1[X].kp = Ano_Parame.set.pid_gps_loc_1level[KP];//0.22f  ;
+		loc_arg_1[X].kp = g_fc_param.set.pid_gps_loc_1level[KP];//0.22f  ;
 		loc_arg_1[X].ki = 0  ;
 		loc_arg_1[X].kd_ex = 0.00f ;
-		loc_arg_1[X].kd_fb = Ano_Parame.set.pid_gps_loc_1level[KD];
+		loc_arg_1[X].kd_fb = g_fc_param.set.pid_gps_loc_1level[KD];
 		loc_arg_1[X].k_ff = 0.02f;
 		
 		loc_arg_1[Y] = loc_arg_1[X];
 		//fix	
 		loc_arg_1_fix[X].kp = 0.0f  ;
-		loc_arg_1_fix[X].ki = Ano_Parame.set.pid_gps_loc_1level[KI] ;
+		loc_arg_1_fix[X].ki = g_fc_param.set.pid_gps_loc_1level[KI] ;
 		loc_arg_1_fix[X].kd_ex = 0.00f;
 		loc_arg_1_fix[X].kd_fb = 0.00f;
 		loc_arg_1_fix[X].k_ff = 0.0f;
@@ -55,16 +55,16 @@ void Loc_1level_PID_Init()
 	else if(mode_f[1] == 1)
 	{
 		//normal
-		loc_arg_1[X].kp = Ano_Parame.set.pid_loc_1level[KP];//0.22f  ;
+		loc_arg_1[X].kp = g_fc_param.set.pid_loc_1level[KP];//0.22f  ;
 		loc_arg_1[X].ki = 0.0f  ;
 		loc_arg_1[X].kd_ex = 0.00f ;
-		loc_arg_1[X].kd_fb = Ano_Parame.set.pid_loc_1level[KD];
+		loc_arg_1[X].kd_fb = g_fc_param.set.pid_loc_1level[KD];
 		loc_arg_1[X].k_ff = 0.02f;
 		
 		loc_arg_1[Y] = loc_arg_1[X];
 		//fix	
 		loc_arg_1_fix[X].kp = 0.0f  ;
-		loc_arg_1_fix[X].ki = Ano_Parame.set.pid_loc_1level[KI] ;
+		loc_arg_1_fix[X].ki = g_fc_param.set.pid_loc_1level[KI] ;
 		loc_arg_1_fix[X].kd_ex = 0.00f;
 		loc_arg_1_fix[X].kd_fb = 0.00f;
 		loc_arg_1_fix[X].k_ff = 0.0f;
@@ -75,16 +75,16 @@ void Loc_1level_PID_Init()
 	else if(mode_f[1] == 3 || mode_f[1] == 4)
 	{
 		//normal
-		loc_arg_1[X].kp = Ano_Parame.set.pid_loc_1level[KP];//0.22f  ;
+		loc_arg_1[X].kp = g_fc_param.set.pid_loc_1level[KP];//0.22f  ;
 		loc_arg_1[X].ki = 0.0f  ;
 		loc_arg_1[X].kd_ex = 0.00f ;
-		loc_arg_1[X].kd_fb = Ano_Parame.set.pid_loc_1level[KD];
+		loc_arg_1[X].kd_fb = g_fc_param.set.pid_loc_1level[KD];
 		loc_arg_1[X].k_ff = 0.02f;
 		
 		loc_arg_1[Y] = loc_arg_1[X];
 		//fix	
 		loc_arg_1_fix[X].kp = 0.0f  ;
-		loc_arg_1_fix[X].ki = Ano_Parame.set.pid_loc_1level[KI] ;
+		loc_arg_1_fix[X].ki = g_fc_param.set.pid_loc_1level[KI] ;
 		loc_arg_1_fix[X].kd_ex = 0.00f;
 		loc_arg_1_fix[X].kd_fb = 0.00f;
 		loc_arg_1_fix[X].k_ff = 0.0f;
@@ -346,8 +346,8 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 		}
 		
 		
-		loc_ctrl_1.exp[X] =  ne_pos_control[0]*Ano_Parame.set.pid_gps_loc_2level[KP] + loc_hand_exp_vel[X]*imu_data.hx_vec[0] - loc_hand_exp_vel[Y]*imu_data.hx_vec[1];		//期望速度（航向坐标转换到世界坐标NED）
-		loc_ctrl_1.exp[Y] = -ne_pos_control[1]*Ano_Parame.set.pid_gps_loc_2level[KP] + loc_hand_exp_vel[X]*imu_data.hx_vec[1] + loc_hand_exp_vel[Y]*imu_data.hx_vec[0];		
+		loc_ctrl_1.exp[X] =  ne_pos_control[0]*g_fc_param.set.pid_gps_loc_2level[KP] + loc_hand_exp_vel[X]*imu_data.hx_vec[0] - loc_hand_exp_vel[Y]*imu_data.hx_vec[1];		//期望速度（航向坐标转换到世界坐标NED）
+		loc_ctrl_1.exp[Y] = -ne_pos_control[1]*g_fc_param.set.pid_gps_loc_2level[KP] + loc_hand_exp_vel[X]*imu_data.hx_vec[1] + loc_hand_exp_vel[Y]*imu_data.hx_vec[0];		
 
 		loc_ctrl_1.fb[X] =  (Gps_information.last_N_vel) + (wcx_acc_use*0.2f);			//速度反馈+加速度提前
 		loc_ctrl_1.fb[Y] = -(Gps_information.last_E_vel) + (wcy_acc_use*0.2f);

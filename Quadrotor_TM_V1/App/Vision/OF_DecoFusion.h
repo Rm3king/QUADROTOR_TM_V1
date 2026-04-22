@@ -1,5 +1,5 @@
-#ifndef __ANO_OF_DECOFUSION_H
-#define __ANO_OF_DECOFUSION_H
+#ifndef __OF_DECOFUSION_H__
+#define __OF_DECOFUSION_H__
 #include "sysconfig.h"
 #include "FcData.h"
 

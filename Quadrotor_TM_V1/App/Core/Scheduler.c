@@ -116,7 +116,7 @@ static void Loop_Task_8(u32 dT_us)
     Mag_Update_Task(20);
     FlyCtrl_Task(20);
     ANO_OFDF_Task(20);
-    Ano_UWB_Data_Calcu_Task(20);
+    UWB_DataCalcTask(20);
     Loc_1level_Ctrl(20, CH_N);
     OpenMV_Offline_Check(20);
     ANO_CBTracking_Task(20);
@@ -131,7 +131,7 @@ static void Loop_Task_9(u32 dT_us)
     (void)dT_us;
     Power_UpdateTask(50);
     Thermostatic_Ctrl_Task(50);
-    Ano_Parame_Write_task(50);
+    FC_Param_WriteTask(50);
 }
 
 /* µ÷¶È±í¡£ */

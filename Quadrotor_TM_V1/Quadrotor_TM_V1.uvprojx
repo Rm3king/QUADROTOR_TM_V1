@@ -447,14 +447,14 @@
               <FilePath>.\App\Service\LED.h</FilePath>
             </File>
             <File>
-              <FileName>Usb.c</FileName>
+              <FileName>FcUsbCdc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Service\Usb.c</FilePath>
+              <FilePath>.\App\Service\FcUsbCdc.c</FilePath>
             </File>
             <File>
-              <FileName>Usb.h</FileName>
+              <FileName>FcUsbCdc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Service\Usb.h</FilePath>
+              <FilePath>.\App\Service\FcUsbCdc.h</FilePath>
             </File>
           </Files>
         </Group>

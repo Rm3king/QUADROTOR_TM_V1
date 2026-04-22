@@ -2,7 +2,7 @@
 #include "Parameter.h"
 
 /*
- * 模块名称：Ano_FcData
+ * 模块名称：FcData
  * 模块职责：定义飞控公共状态实例，并提供参数保存与初始化入口。
  * 使用约束：本文件只维护共享状态实例和轻量封装，不承载控制算法。
  */
@@ -26,5 +26,5 @@ void data_save(void)
 void Para_Data_Init()
 {
 
-	Ano_Parame_Read();
+	FC_Param_Read();
 }

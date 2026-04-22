@@ -1,5 +1,5 @@
-#ifndef __ANO_IMU_H
-#define __ANO_IMU_H
+#ifndef __IMU_H__
+#define __IMU_H__
 #include "FcData.h"
 
 /* 姿态解算结果与中间量 */

@@ -1,5 +1,5 @@
-#ifndef __ANO_OF_H_
-#define __ANO_OF_H_
+#ifndef __OF_H__
+#define __OF_H__
 
 #include "sysconfig.h"
 /*

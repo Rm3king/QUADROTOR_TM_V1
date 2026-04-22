@@ -1,8 +1,8 @@
-#ifndef __ANO_LED_H
-#define __ANO_LED_H
+#ifndef __LED_H__
+#define __LED_H__
 
 /*
- * 模块名称：Ano_LED
+ * 模块名称：LED
  * 模块职责：定义 LED 状态指示相关的公共数据结构、位掩码与任务入口。
  * 使用约束：本头文件仅暴露调度器实际使用的公共接口。
  */

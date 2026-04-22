@@ -1,4 +1,4 @@
-#include "Usb.h"
+#include "FcUsbCdc.h"
 #include "usb.h"
 #include "hw_ints.h"
 #include "usblib.h"
@@ -137,7 +137,7 @@ uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
  * 功能：初始化 USB CDC 设备。
  * 说明：完成 USB 引脚、缓冲区和设备栈初始化。
  */
-void AnoUsbCdcInit(void)
+void UsbCdcInit(void)
 {
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     ROM_GPIOPinTypeUSBAnalog(GPIOD_BASE, GPIO_PIN_4);
@@ -151,7 +151,7 @@ void AnoUsbCdcInit(void)
 }
 
 /* 功能：发送 USB CDC 数据。 */
-void AnoUsbCdcSend(const uint8_t *data, uint16_t length)
+void UsbCdcSend(const uint8_t *data, uint16_t length)
 {
     if(g_bUSBConfigured)
     {
@@ -160,7 +160,7 @@ void AnoUsbCdcSend(const uint8_t *data, uint16_t length)
 }
 
 /* 功能：读取 USB CDC 数据。 */
-uint16_t AnoUsbCdcRead(uint8_t *data, uint16_t length)
+uint16_t UsbCdcRead(uint8_t *data, uint16_t length)
 {
     if(g_bUSBConfigured)
     {
@@ -170,7 +170,7 @@ uint16_t AnoUsbCdcRead(uint8_t *data, uint16_t length)
 }
 
 /* 功能：查询 USB CDC 接收缓冲区可读字节数。 */
-uint16_t AnoUsbCdcDataAvailable(void)
+uint16_t UsbCdcDataAvailable(void)
 {
     return USBBufferDataAvailable(&g_sRxBuffer);
 }

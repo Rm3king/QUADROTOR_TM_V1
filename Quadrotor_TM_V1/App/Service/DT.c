@@ -1,5 +1,5 @@
 /*
- * 模块名称：Ano_DT
+ * 模块名称：DT
  * 模块职责：
  * 1. 负责匿名上位机协议的数据打包、发送、接收与解析。
  * 2. 负责参数列表与飞控参数结构之间的双向映射。
@@ -14,7 +14,7 @@
 
 #include "DT.h"
 #include "Drv_Uart.h"
-#include "Usb.h"
+#include "FcUsbCdc.h"
 #include "RC.h"
 #include "Sensor_Basic.h"
 #include "Drv_gps.h"
@@ -113,7 +113,7 @@ static void ANO_DT_FrameSend(u8 frame_len)
 void ANO_DT_Send_Data(u8 *dataToSend , u8 length)
 {
 #ifdef ANO_DT_USE_USB
-    AnoUsbCdcSend( dataToSend , length );  /* USB 数据发送。 */
+    UsbCdcSend( dataToSend , length );  /* USB 数据发送。 */
 #endif
 #ifdef ANO_DT_USE_USART2
 	Drv_UartDt_SendBuf(data_to_send, length);
@@ -413,7 +413,7 @@ static void ANO_DT_Data_Receive_Anl_Task(void)
 		ANO_DT_Data_Receive_Anl(DT_RxBuffer,DT_data_cnt+6);
 		ano_dt_data_ok = 0;
 	}
-	u8 len = AnoUsbCdcRead(usbdatarxbuf,100);
+	u8 len = UsbCdcRead(usbdatarxbuf,100);
 	if(len)
 	{
 		for(u8 i=0; i<len; i++)
@@ -544,129 +544,129 @@ static void ANO_DT_GetParame(u16 num,s32 data)
 /* 将参数列表同步到实际飞控参数结构。 */
 static void ANO_DT_ParListToParUsed(void)
 {
-	Ano_Parame.set.pid_att_1level[ROL][KP] = (float) ParValList[PAR_PID_1_P] / 1000;
-	Ano_Parame.set.pid_att_1level[ROL][KI] = (float) ParValList[PAR_PID_1_I] / 1000;
-	Ano_Parame.set.pid_att_1level[ROL][KD] = (float) ParValList[PAR_PID_1_D] / 1000;
-	Ano_Parame.set.pid_att_1level[PIT][KP] = (float) ParValList[PAR_PID_2_P] / 1000;
-	Ano_Parame.set.pid_att_1level[PIT][KI] = (float) ParValList[PAR_PID_2_I] / 1000;
-	Ano_Parame.set.pid_att_1level[PIT][KD] = (float) ParValList[PAR_PID_2_D] / 1000;
-	Ano_Parame.set.pid_att_1level[YAW][KP] = (float) ParValList[PAR_PID_3_P] / 1000;
-	Ano_Parame.set.pid_att_1level[YAW][KI] = (float) ParValList[PAR_PID_3_I] / 1000;
-	Ano_Parame.set.pid_att_1level[YAW][KD] = (float) ParValList[PAR_PID_3_D] / 1000;
+	g_fc_param.set.pid_att_1level[ROL][KP] = (float) ParValList[PAR_PID_1_P] / 1000;
+	g_fc_param.set.pid_att_1level[ROL][KI] = (float) ParValList[PAR_PID_1_I] / 1000;
+	g_fc_param.set.pid_att_1level[ROL][KD] = (float) ParValList[PAR_PID_1_D] / 1000;
+	g_fc_param.set.pid_att_1level[PIT][KP] = (float) ParValList[PAR_PID_2_P] / 1000;
+	g_fc_param.set.pid_att_1level[PIT][KI] = (float) ParValList[PAR_PID_2_I] / 1000;
+	g_fc_param.set.pid_att_1level[PIT][KD] = (float) ParValList[PAR_PID_2_D] / 1000;
+	g_fc_param.set.pid_att_1level[YAW][KP] = (float) ParValList[PAR_PID_3_P] / 1000;
+	g_fc_param.set.pid_att_1level[YAW][KI] = (float) ParValList[PAR_PID_3_I] / 1000;
+	g_fc_param.set.pid_att_1level[YAW][KD] = (float) ParValList[PAR_PID_3_D] / 1000;
 	
-	Ano_Parame.set.pid_att_2level[ROL][KP] = (float) ParValList[PAR_PID_4_P] / 1000;
-	Ano_Parame.set.pid_att_2level[ROL][KI] = (float) ParValList[PAR_PID_4_I] / 1000;
-	Ano_Parame.set.pid_att_2level[ROL][KD] = (float) ParValList[PAR_PID_4_D] / 1000;
-	Ano_Parame.set.pid_att_2level[PIT][KP] = (float) ParValList[PAR_PID_5_P] / 1000;
-	Ano_Parame.set.pid_att_2level[PIT][KI] = (float) ParValList[PAR_PID_5_I] / 1000;
-	Ano_Parame.set.pid_att_2level[PIT][KD] = (float) ParValList[PAR_PID_5_D] / 1000;
-	Ano_Parame.set.pid_att_2level[YAW][KP] = (float) ParValList[PAR_PID_6_P] / 1000;
-	Ano_Parame.set.pid_att_2level[YAW][KI] = (float) ParValList[PAR_PID_6_I] / 1000;
-	Ano_Parame.set.pid_att_2level[YAW][KD] = (float) ParValList[PAR_PID_6_D] / 1000;
+	g_fc_param.set.pid_att_2level[ROL][KP] = (float) ParValList[PAR_PID_4_P] / 1000;
+	g_fc_param.set.pid_att_2level[ROL][KI] = (float) ParValList[PAR_PID_4_I] / 1000;
+	g_fc_param.set.pid_att_2level[ROL][KD] = (float) ParValList[PAR_PID_4_D] / 1000;
+	g_fc_param.set.pid_att_2level[PIT][KP] = (float) ParValList[PAR_PID_5_P] / 1000;
+	g_fc_param.set.pid_att_2level[PIT][KI] = (float) ParValList[PAR_PID_5_I] / 1000;
+	g_fc_param.set.pid_att_2level[PIT][KD] = (float) ParValList[PAR_PID_5_D] / 1000;
+	g_fc_param.set.pid_att_2level[YAW][KP] = (float) ParValList[PAR_PID_6_P] / 1000;
+	g_fc_param.set.pid_att_2level[YAW][KI] = (float) ParValList[PAR_PID_6_I] / 1000;
+	g_fc_param.set.pid_att_2level[YAW][KD] = (float) ParValList[PAR_PID_6_D] / 1000;
 	
-	Ano_Parame.set.pid_alt_1level[KP] = (float) ParValList[PAR_PID_7_P] / 1000;
-	Ano_Parame.set.pid_alt_1level[KI] = (float) ParValList[PAR_PID_7_I] / 1000;
-	Ano_Parame.set.pid_alt_1level[KD] = (float) ParValList[PAR_PID_7_D] / 1000;
-	Ano_Parame.set.pid_alt_2level[KP] = (float) ParValList[PAR_PID_8_P] / 1000;
-	Ano_Parame.set.pid_alt_2level[KI] = (float) ParValList[PAR_PID_8_I] / 1000;
-	Ano_Parame.set.pid_alt_2level[KD] = (float) ParValList[PAR_PID_8_D] / 1000;
+	g_fc_param.set.pid_alt_1level[KP] = (float) ParValList[PAR_PID_7_P] / 1000;
+	g_fc_param.set.pid_alt_1level[KI] = (float) ParValList[PAR_PID_7_I] / 1000;
+	g_fc_param.set.pid_alt_1level[KD] = (float) ParValList[PAR_PID_7_D] / 1000;
+	g_fc_param.set.pid_alt_2level[KP] = (float) ParValList[PAR_PID_8_P] / 1000;
+	g_fc_param.set.pid_alt_2level[KI] = (float) ParValList[PAR_PID_8_I] / 1000;
+	g_fc_param.set.pid_alt_2level[KD] = (float) ParValList[PAR_PID_8_D] / 1000;
 	
-	Ano_Parame.set.pid_loc_1level[KP] = (float) ParValList[PAR_PID_9_P] / 1000; 
-	Ano_Parame.set.pid_loc_1level[KI] = (float) ParValList[PAR_PID_9_I] / 1000; 
-	Ano_Parame.set.pid_loc_1level[KD] = (float) ParValList[PAR_PID_9_D] / 1000; 
-	Ano_Parame.set.pid_loc_2level[KP] = (float) ParValList[PAR_PID_10_P] / 1000; 
-	Ano_Parame.set.pid_loc_2level[KI] = (float) ParValList[PAR_PID_10_I] / 1000; 
-	Ano_Parame.set.pid_loc_2level[KD] = (float) ParValList[PAR_PID_10_D] / 1000; 
+	g_fc_param.set.pid_loc_1level[KP] = (float) ParValList[PAR_PID_9_P] / 1000; 
+	g_fc_param.set.pid_loc_1level[KI] = (float) ParValList[PAR_PID_9_I] / 1000; 
+	g_fc_param.set.pid_loc_1level[KD] = (float) ParValList[PAR_PID_9_D] / 1000; 
+	g_fc_param.set.pid_loc_2level[KP] = (float) ParValList[PAR_PID_10_P] / 1000; 
+	g_fc_param.set.pid_loc_2level[KI] = (float) ParValList[PAR_PID_10_I] / 1000; 
+	g_fc_param.set.pid_loc_2level[KD] = (float) ParValList[PAR_PID_10_D] / 1000; 
 	
-	Ano_Parame.set.pid_gps_loc_1level[KP] = (float) ParValList[PAR_PID_11_P] / 1000; 
-	Ano_Parame.set.pid_gps_loc_1level[KI] = (float) ParValList[PAR_PID_11_I] / 1000; 
-	Ano_Parame.set.pid_gps_loc_1level[KD] = (float) ParValList[PAR_PID_11_D] / 1000; 
-	Ano_Parame.set.pid_gps_loc_2level[KP] = (float) ParValList[PAR_PID_12_P] / 1000; 
-	Ano_Parame.set.pid_gps_loc_2level[KI] = (float) ParValList[PAR_PID_12_I] / 1000; 
-	Ano_Parame.set.pid_gps_loc_2level[KD] = (float) ParValList[PAR_PID_12_D] / 1000; 
+	g_fc_param.set.pid_gps_loc_1level[KP] = (float) ParValList[PAR_PID_11_P] / 1000; 
+	g_fc_param.set.pid_gps_loc_1level[KI] = (float) ParValList[PAR_PID_11_I] / 1000; 
+	g_fc_param.set.pid_gps_loc_1level[KD] = (float) ParValList[PAR_PID_11_D] / 1000; 
+	g_fc_param.set.pid_gps_loc_2level[KP] = (float) ParValList[PAR_PID_12_P] / 1000; 
+	g_fc_param.set.pid_gps_loc_2level[KI] = (float) ParValList[PAR_PID_12_I] / 1000; 
+	g_fc_param.set.pid_gps_loc_2level[KD] = (float) ParValList[PAR_PID_12_D] / 1000; 
 	
 	if(ParValList[PAR_RCINMODE] == 0)
-		Ano_Parame.set.pwmInMode = PWM;
+		g_fc_param.set.pwmInMode = PWM;
 	else if(ParValList[PAR_RCINMODE] == 1)
-		Ano_Parame.set.pwmInMode = PPM;
+		g_fc_param.set.pwmInMode = PPM;
 	else
-		Ano_Parame.set.pwmInMode = SBUS;
+		g_fc_param.set.pwmInMode = SBUS;
 	
-	Ano_Parame.set.warn_power_voltage = (float) ParValList[PAR_LVWARN] / 10;
-	Ano_Parame.set.return_home_power_voltage = (float) ParValList[PAR_LVRETN] / 10;
-	Ano_Parame.set.lowest_power_voltage = (float) ParValList[PAR_LVDOWN] / 10;
+	g_fc_param.set.warn_power_voltage = (float) ParValList[PAR_LVWARN] / 10;
+	g_fc_param.set.return_home_power_voltage = (float) ParValList[PAR_LVRETN] / 10;
+	g_fc_param.set.lowest_power_voltage = (float) ParValList[PAR_LVDOWN] / 10;
 	
-	Ano_Parame.set.auto_take_off_height = ParValList[PAR_TAKEOFFHIGH];	/* cm */
-	Ano_Parame.set.auto_take_off_speed = ParValList[PAR_TAKEOFFSPEED];	/* cm/s */
-	Ano_Parame.set.auto_landing_speed = ParValList[PAR_LANDSPEED];	/* cm/s */
-	Ano_Parame.set.idle_speed_pwm	 = ParValList[PAR_UNLOCKPWM];
+	g_fc_param.set.auto_take_off_height = ParValList[PAR_TAKEOFFHIGH];	/* cm */
+	g_fc_param.set.auto_take_off_speed = ParValList[PAR_TAKEOFFSPEED];	/* cm/s */
+	g_fc_param.set.auto_landing_speed = ParValList[PAR_LANDSPEED];	/* cm/s */
+	g_fc_param.set.idle_speed_pwm	 = ParValList[PAR_UNLOCKPWM];
 	
 	if(ParValList[PAR_HEATSWITCH] == 0)
-		Ano_Parame.set.heatSwitch = 0;
+		g_fc_param.set.heatSwitch = 0;
 	else
-		Ano_Parame.set.heatSwitch = 1;
+		g_fc_param.set.heatSwitch = 1;
 }
 /* 将实际飞控参数结构回填到协议参数列表。 */
 static void ANO_DT_ParUsedToParList(void)
 {
-	ParValList[PAR_PID_1_P] = Ano_Parame.set.pid_att_1level[ROL][KP] * 1000;
-	ParValList[PAR_PID_1_I] = Ano_Parame.set.pid_att_1level[ROL][KI] * 1000;
-	ParValList[PAR_PID_1_D] = Ano_Parame.set.pid_att_1level[ROL][KD] * 1000;
-	ParValList[PAR_PID_2_P] = Ano_Parame.set.pid_att_1level[PIT][KP] * 1000;
-	ParValList[PAR_PID_2_I] = Ano_Parame.set.pid_att_1level[PIT][KI] * 1000;
-	ParValList[PAR_PID_2_D] = Ano_Parame.set.pid_att_1level[PIT][KD] * 1000;
-	ParValList[PAR_PID_3_P] = Ano_Parame.set.pid_att_1level[YAW][KP] * 1000;
-	ParValList[PAR_PID_3_I] = Ano_Parame.set.pid_att_1level[YAW][KI] * 1000;
-	ParValList[PAR_PID_3_D] = Ano_Parame.set.pid_att_1level[YAW][KD] * 1000;
+	ParValList[PAR_PID_1_P] = g_fc_param.set.pid_att_1level[ROL][KP] * 1000;
+	ParValList[PAR_PID_1_I] = g_fc_param.set.pid_att_1level[ROL][KI] * 1000;
+	ParValList[PAR_PID_1_D] = g_fc_param.set.pid_att_1level[ROL][KD] * 1000;
+	ParValList[PAR_PID_2_P] = g_fc_param.set.pid_att_1level[PIT][KP] * 1000;
+	ParValList[PAR_PID_2_I] = g_fc_param.set.pid_att_1level[PIT][KI] * 1000;
+	ParValList[PAR_PID_2_D] = g_fc_param.set.pid_att_1level[PIT][KD] * 1000;
+	ParValList[PAR_PID_3_P] = g_fc_param.set.pid_att_1level[YAW][KP] * 1000;
+	ParValList[PAR_PID_3_I] = g_fc_param.set.pid_att_1level[YAW][KI] * 1000;
+	ParValList[PAR_PID_3_D] = g_fc_param.set.pid_att_1level[YAW][KD] * 1000;
 	
-	ParValList[PAR_PID_4_P] = Ano_Parame.set.pid_att_2level[ROL][KP] * 1000;
-	ParValList[PAR_PID_4_I] = Ano_Parame.set.pid_att_2level[ROL][KI] * 1000;
-	ParValList[PAR_PID_4_D] = Ano_Parame.set.pid_att_2level[ROL][KD] * 1000;
-	ParValList[PAR_PID_5_P] = Ano_Parame.set.pid_att_2level[PIT][KP] * 1000;
-	ParValList[PAR_PID_5_I] = Ano_Parame.set.pid_att_2level[PIT][KI] * 1000;
-	ParValList[PAR_PID_5_D] = Ano_Parame.set.pid_att_2level[PIT][KD] * 1000;
-	ParValList[PAR_PID_6_P] = Ano_Parame.set.pid_att_2level[YAW][KP] * 1000;
-	ParValList[PAR_PID_6_I] = Ano_Parame.set.pid_att_2level[YAW][KI] * 1000;
-	ParValList[PAR_PID_6_D] = Ano_Parame.set.pid_att_2level[YAW][KD] * 1000;
+	ParValList[PAR_PID_4_P] = g_fc_param.set.pid_att_2level[ROL][KP] * 1000;
+	ParValList[PAR_PID_4_I] = g_fc_param.set.pid_att_2level[ROL][KI] * 1000;
+	ParValList[PAR_PID_4_D] = g_fc_param.set.pid_att_2level[ROL][KD] * 1000;
+	ParValList[PAR_PID_5_P] = g_fc_param.set.pid_att_2level[PIT][KP] * 1000;
+	ParValList[PAR_PID_5_I] = g_fc_param.set.pid_att_2level[PIT][KI] * 1000;
+	ParValList[PAR_PID_5_D] = g_fc_param.set.pid_att_2level[PIT][KD] * 1000;
+	ParValList[PAR_PID_6_P] = g_fc_param.set.pid_att_2level[YAW][KP] * 1000;
+	ParValList[PAR_PID_6_I] = g_fc_param.set.pid_att_2level[YAW][KI] * 1000;
+	ParValList[PAR_PID_6_D] = g_fc_param.set.pid_att_2level[YAW][KD] * 1000;
 	
-	ParValList[PAR_PID_7_P] = Ano_Parame.set.pid_alt_1level[KP] * 1000;
-	ParValList[PAR_PID_7_I] = Ano_Parame.set.pid_alt_1level[KI] * 1000;
-	ParValList[PAR_PID_7_D] = Ano_Parame.set.pid_alt_1level[KD] * 1000;
-	ParValList[PAR_PID_8_P] = Ano_Parame.set.pid_alt_2level[KP] * 1000;
-	ParValList[PAR_PID_8_I] = Ano_Parame.set.pid_alt_2level[KI] * 1000;
-	ParValList[PAR_PID_8_D] = Ano_Parame.set.pid_alt_2level[KD] * 1000;
+	ParValList[PAR_PID_7_P] = g_fc_param.set.pid_alt_1level[KP] * 1000;
+	ParValList[PAR_PID_7_I] = g_fc_param.set.pid_alt_1level[KI] * 1000;
+	ParValList[PAR_PID_7_D] = g_fc_param.set.pid_alt_1level[KD] * 1000;
+	ParValList[PAR_PID_8_P] = g_fc_param.set.pid_alt_2level[KP] * 1000;
+	ParValList[PAR_PID_8_I] = g_fc_param.set.pid_alt_2level[KI] * 1000;
+	ParValList[PAR_PID_8_D] = g_fc_param.set.pid_alt_2level[KD] * 1000;
 	
-	ParValList[PAR_PID_9_P] = Ano_Parame.set.pid_loc_1level[KP] * 1000;
-	ParValList[PAR_PID_9_I] = Ano_Parame.set.pid_loc_1level[KI] * 1000;
-	ParValList[PAR_PID_9_D] = Ano_Parame.set.pid_loc_1level[KD] * 1000;
-	ParValList[PAR_PID_10_P] = Ano_Parame.set.pid_loc_2level[KP] * 1000;
-	ParValList[PAR_PID_10_I] = Ano_Parame.set.pid_loc_2level[KI] * 1000;
-	ParValList[PAR_PID_10_D] = Ano_Parame.set.pid_loc_2level[KD] * 1000;
+	ParValList[PAR_PID_9_P] = g_fc_param.set.pid_loc_1level[KP] * 1000;
+	ParValList[PAR_PID_9_I] = g_fc_param.set.pid_loc_1level[KI] * 1000;
+	ParValList[PAR_PID_9_D] = g_fc_param.set.pid_loc_1level[KD] * 1000;
+	ParValList[PAR_PID_10_P] = g_fc_param.set.pid_loc_2level[KP] * 1000;
+	ParValList[PAR_PID_10_I] = g_fc_param.set.pid_loc_2level[KI] * 1000;
+	ParValList[PAR_PID_10_D] = g_fc_param.set.pid_loc_2level[KD] * 1000;
 
-	ParValList[PAR_PID_11_P] = Ano_Parame.set.pid_gps_loc_1level[KP] * 1000;
-	ParValList[PAR_PID_11_I] = Ano_Parame.set.pid_gps_loc_1level[KI] * 1000;
-	ParValList[PAR_PID_11_D] = Ano_Parame.set.pid_gps_loc_1level[KD] * 1000;
-	ParValList[PAR_PID_12_P] = Ano_Parame.set.pid_gps_loc_2level[KP] * 1000;
-	ParValList[PAR_PID_12_I] = Ano_Parame.set.pid_gps_loc_2level[KI] * 1000;
-	ParValList[PAR_PID_12_D] = Ano_Parame.set.pid_gps_loc_2level[KD] * 1000;
+	ParValList[PAR_PID_11_P] = g_fc_param.set.pid_gps_loc_1level[KP] * 1000;
+	ParValList[PAR_PID_11_I] = g_fc_param.set.pid_gps_loc_1level[KI] * 1000;
+	ParValList[PAR_PID_11_D] = g_fc_param.set.pid_gps_loc_1level[KD] * 1000;
+	ParValList[PAR_PID_12_P] = g_fc_param.set.pid_gps_loc_2level[KP] * 1000;
+	ParValList[PAR_PID_12_I] = g_fc_param.set.pid_gps_loc_2level[KI] * 1000;
+	ParValList[PAR_PID_12_D] = g_fc_param.set.pid_gps_loc_2level[KD] * 1000;
 	
-	if(Ano_Parame.set.pwmInMode == PWM)
+	if(g_fc_param.set.pwmInMode == PWM)
 		ParValList[PAR_RCINMODE] = 0;
-	else if(Ano_Parame.set.pwmInMode == PPM)
+	else if(g_fc_param.set.pwmInMode == PPM)
 		ParValList[PAR_RCINMODE] = 1;
 	else
 		ParValList[PAR_RCINMODE] = 2;
 
-	ParValList[PAR_LVWARN] = Ano_Parame.set.warn_power_voltage * 10;
-	ParValList[PAR_LVRETN] = Ano_Parame.set.return_home_power_voltage * 10;
-	ParValList[PAR_LVDOWN] = Ano_Parame.set.lowest_power_voltage * 10;
+	ParValList[PAR_LVWARN] = g_fc_param.set.warn_power_voltage * 10;
+	ParValList[PAR_LVRETN] = g_fc_param.set.return_home_power_voltage * 10;
+	ParValList[PAR_LVDOWN] = g_fc_param.set.lowest_power_voltage * 10;
 	
-	ParValList[PAR_TAKEOFFHIGH] = Ano_Parame.set.auto_take_off_height;
-	ParValList[PAR_TAKEOFFSPEED] = Ano_Parame.set.auto_take_off_speed;
-	ParValList[PAR_LANDSPEED] = Ano_Parame.set.auto_landing_speed;
-	ParValList[PAR_UNLOCKPWM] = Ano_Parame.set.idle_speed_pwm;
+	ParValList[PAR_TAKEOFFHIGH] = g_fc_param.set.auto_take_off_height;
+	ParValList[PAR_TAKEOFFSPEED] = g_fc_param.set.auto_take_off_speed;
+	ParValList[PAR_LANDSPEED] = g_fc_param.set.auto_landing_speed;
+	ParValList[PAR_UNLOCKPWM] = g_fc_param.set.idle_speed_pwm;
 	
-	if(Ano_Parame.set.heatSwitch == 0)
+	if(g_fc_param.set.heatSwitch == 0)
 		ParValList[PAR_HEATSWITCH] = 0;
 	else
 		ParValList[PAR_HEATSWITCH] = 1;

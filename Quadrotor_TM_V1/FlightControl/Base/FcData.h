@@ -1,10 +1,10 @@
-#ifndef __ANO_FCDATA_H
-#define __ANO_FCDATA_H
+#ifndef __FCDATA_H__
+#define __FCDATA_H__
 
 #include "config.h"
 
 /*
- * 模块名称：Ano_FcData
+ * 模块名称：FcData
  * 模块职责：集中声明飞控全局状态、参数镜像、传感器索引和公共状态结构。
  * 使用约束：本头文件定义的是跨模块共享状态，重构时只允许补充说明，不允许随意改变字段语义。
  */

@@ -1,5 +1,5 @@
-#ifndef __ANO_ALTCTRL_2_H
-#define __ANO_ALTCTRL_2_H
+#ifndef __ALTCTRL_2_H__
+#define __ALTCTRL_2_H__
 
 //==ÒýÓÃ
 #include "sysconfig.h"

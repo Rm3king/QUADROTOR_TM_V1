@@ -31,9 +31,9 @@ extern _uwb_data_st uwb_data;
 
 
 //==º¯ÊýÉùÃ÷
-void Ano_UWB_Get_Byte(u8 data);
-void Ano_UWB_Get_Data_Task(u8 dT_ms);
-void Ano_UWB_Data_Calcu_Task(u8 dT_ms);
+void UWB_GetByte(u8 data);
+void UWB_GetDataTask(u8 dT_ms);
+void UWB_DataCalcTask(u8 dT_ms);
 
 
 

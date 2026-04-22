@@ -1,5 +1,5 @@
-#ifndef __ANO_OPMV_CBTRACKING_CTRL_H
-#define __ANO_OPMV_CBTRACKING_CTRL_H
+#ifndef __OPMV_CBTRACKING_CTRL_H__
+#define __OPMV_CBTRACKING_CTRL_H__
 #include "sysconfig.h"
 #include "FcData.h"
 /*

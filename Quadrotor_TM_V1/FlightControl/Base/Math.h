@@ -1,5 +1,5 @@
-#ifndef __ANO_MATH_H__
-#define __ANO_MATH_H__
+#ifndef __MATH_H__
+#define __MATH_H__
 #include "sysconfig.h"
 
 #define REAL              float

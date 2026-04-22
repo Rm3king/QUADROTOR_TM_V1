@@ -27,7 +27,7 @@ static u8 s_rc_input_mode;
 void Remote_Control_Init()
 {
 	//
-	s_rc_input_mode = Ano_Parame.set.pwmInMode;
+	s_rc_input_mode = g_fc_param.set.pwmInMode;
 	//
 	if(s_rc_input_mode == SBUS)
 	{

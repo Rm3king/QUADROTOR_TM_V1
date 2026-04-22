@@ -10,9 +10,9 @@
 #include "LED.h"
 
 //需要调用引用的外部变量：
-#define X_POS_OFFSET_CM    (0)//(Ano_Parame.set.center_pos_cm[X]); //X轴中心偏移存储值
-#define Y_POS_OFFSET_CM    (0)//(Ano_Parame.set.center_pos_cm[Y]); //Y轴中心偏移存储值
-#define Z_POS_OFFSET_CM    (0)//(Ano_Parame.set.center_pos_cm[Z]); //Z轴中心偏移存储值
+#define X_POS_OFFSET_CM    (0)//(g_fc_param.set.center_pos_cm[X]); //X轴中心偏移存储值
+#define Y_POS_OFFSET_CM    (0)//(g_fc_param.set.center_pos_cm[Y]); //Y轴中心偏移存储值
+#define Z_POS_OFFSET_CM    (0)//(g_fc_param.set.center_pos_cm[Z]); //Z轴中心偏移存储值
 
 //需要操作赋值的外部变量：
 #define LED_STA_CALI_ACC   (LED_STA.calAcc)

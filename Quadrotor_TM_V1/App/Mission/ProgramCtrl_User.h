@@ -1,5 +1,5 @@
-#ifndef __ANO_PROGRAMCTRL_USER_H
-#define __ANO_PROGRAMCTRL_USER_H
+#ifndef __PROGRAMCTRL_USER_H__
+#define __PROGRAMCTRL_USER_H__
 #include "sysconfig.h"
 #include "FcData.h"
 /*

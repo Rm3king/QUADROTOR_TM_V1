@@ -35,22 +35,22 @@ _PID_val_st val_1[VEC_RPY];
 /* 姿态角外环 PID 参数初始化 */
 void Att_2level_PID_Init()
 {
-	arg_2[ROL].kp = Ano_Parame.set.pid_att_2level[ROL][KP];
-	arg_2[ROL].ki = Ano_Parame.set.pid_att_2level[ROL][KI];
-	arg_2[ROL].kd_ex = Ano_Parame.set.pid_att_2level[ROL][KD];
-	arg_2[ROL].kd_fb = Ano_Parame.set.pid_att_2level[ROL][KD];
+	arg_2[ROL].kp = g_fc_param.set.pid_att_2level[ROL][KP];
+	arg_2[ROL].ki = g_fc_param.set.pid_att_2level[ROL][KI];
+	arg_2[ROL].kd_ex = g_fc_param.set.pid_att_2level[ROL][KD];
+	arg_2[ROL].kd_fb = g_fc_param.set.pid_att_2level[ROL][KD];
 	arg_2[ROL].k_ff = 0.0f;
 	
-	arg_2[PIT].kp = Ano_Parame.set.pid_att_2level[PIT][KP];
-	arg_2[PIT].ki = Ano_Parame.set.pid_att_2level[PIT][KI];
-	arg_2[PIT].kd_ex = Ano_Parame.set.pid_att_2level[PIT][KD];
-	arg_2[PIT].kd_fb = Ano_Parame.set.pid_att_2level[PIT][KD];
+	arg_2[PIT].kp = g_fc_param.set.pid_att_2level[PIT][KP];
+	arg_2[PIT].ki = g_fc_param.set.pid_att_2level[PIT][KI];
+	arg_2[PIT].kd_ex = g_fc_param.set.pid_att_2level[PIT][KD];
+	arg_2[PIT].kd_fb = g_fc_param.set.pid_att_2level[PIT][KD];
 	arg_2[PIT].k_ff = 0.0f;
 
-	arg_2[YAW].kp = Ano_Parame.set.pid_att_2level[YAW][KP];
-	arg_2[YAW].ki = Ano_Parame.set.pid_att_2level[YAW][KI];
-	arg_2[YAW].kd_ex = Ano_Parame.set.pid_att_2level[YAW][KD];
-	arg_2[YAW].kd_fb = Ano_Parame.set.pid_att_2level[YAW][KD];
+	arg_2[YAW].kp = g_fc_param.set.pid_att_2level[YAW][KP];
+	arg_2[YAW].ki = g_fc_param.set.pid_att_2level[YAW][KI];
+	arg_2[YAW].kd_ex = g_fc_param.set.pid_att_2level[YAW][KD];
+	arg_2[YAW].kd_fb = g_fc_param.set.pid_att_2level[YAW][KD];
 	arg_2[YAW].k_ff = 0.0f;		
 }
 
@@ -69,22 +69,22 @@ arg_1_kp：调整角速度响应速度，不震荡的前提下，尽量越高越好。
 /* 角速度内环 PID 参数初始化 */
 void Att_1level_PID_Init()
 {
-	arg_1[ROL].kp = Ano_Parame.set.pid_att_1level[ROL][KP];
-	arg_1[ROL].ki = Ano_Parame.set.pid_att_1level[ROL][KI];
+	arg_1[ROL].kp = g_fc_param.set.pid_att_1level[ROL][KP];
+	arg_1[ROL].ki = g_fc_param.set.pid_att_1level[ROL][KI];
 	arg_1[ROL].kd_ex = 0;//0.000f   ;
-	arg_1[ROL].kd_fb = Ano_Parame.set.pid_att_1level[ROL][KD];
+	arg_1[ROL].kd_fb = g_fc_param.set.pid_att_1level[ROL][KD];
 	arg_1[ROL].k_ff = 0.0f;
 	
-	arg_1[PIT].kp = Ano_Parame.set.pid_att_1level[PIT][KP];
-	arg_1[PIT].ki = Ano_Parame.set.pid_att_1level[PIT][KI];
+	arg_1[PIT].kp = g_fc_param.set.pid_att_1level[PIT][KP];
+	arg_1[PIT].ki = g_fc_param.set.pid_att_1level[PIT][KI];
 	arg_1[PIT].kd_ex = 0;//0.000f   ;
-	arg_1[PIT].kd_fb = Ano_Parame.set.pid_att_1level[PIT][KD];
+	arg_1[PIT].kd_fb = g_fc_param.set.pid_att_1level[PIT][KD];
 	arg_1[PIT].k_ff = 0.0f;
 
-	arg_1[YAW].kp = Ano_Parame.set.pid_att_1level[YAW][KP];
-	arg_1[YAW].ki = Ano_Parame.set.pid_att_1level[YAW][KI];
+	arg_1[YAW].kp = g_fc_param.set.pid_att_1level[YAW][KP];
+	arg_1[YAW].ki = g_fc_param.set.pid_att_1level[YAW][KI];
 	arg_1[YAW].kd_ex = 0;//0.00f   ;
-	arg_1[YAW].kd_fb = Ano_Parame.set.pid_att_1level[YAW][KD];
+	arg_1[YAW].kd_fb = g_fc_param.set.pid_att_1level[YAW][KD];
 	arg_1[YAW].k_ff = 0.00f;	
 	
 #if (MOTOR_ESC_TYPE == 2)
@@ -111,8 +111,8 @@ void Set_Att_1level_Ki(u8 mode)
 	}
 	else if(mode == 1)
 	{
-		arg_1[ROL].ki = Ano_Parame.set.pid_att_1level[ROL][KI];
-		arg_1[PIT].ki = Ano_Parame.set.pid_att_1level[PIT][KI];
+		arg_1[ROL].ki = g_fc_param.set.pid_att_1level[ROL][KI];
+		arg_1[PIT].ki = g_fc_param.set.pid_att_1level[PIT][KI];
 	}
 	else 
 	{
@@ -129,8 +129,8 @@ void Set_Att_2level_Ki(u8 mode)
 	}
 	else
 	{
-		arg_2[ROL].ki = Ano_Parame.set.pid_att_2level[ROL][KI];
-		arg_2[PIT].ki = Ano_Parame.set.pid_att_2level[PIT][KI];
+		arg_2[ROL].ki = g_fc_param.set.pid_att_2level[ROL][KI];
+		arg_2[PIT].ki = g_fc_param.set.pid_att_2level[PIT][KI];
 	}
 }
 

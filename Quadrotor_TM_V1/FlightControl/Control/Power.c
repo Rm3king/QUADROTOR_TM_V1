@@ -40,7 +40,7 @@ void Power_UpdateTask(u8 dT_ms)
 
 
 		
-	if(Plane_Votage<Ano_Parame.set.lowest_power_voltage)
+	if(Plane_Votage<g_fc_param.set.lowest_power_voltage)
 	{
 		flag.power_state = 3;//½«½ûÖ¹½âËø		
 	}
@@ -49,16 +49,16 @@ void Power_UpdateTask(u8 dT_ms)
 		flag.power_state = 1;
 	}
 
-	if(Plane_Votage<Ano_Parame.set.warn_power_voltage)
+	if(Plane_Votage<g_fc_param.set.warn_power_voltage)
 	{
 		LED_STA.lowVt = 1;
 	}
-	else if(Plane_Votage>Ano_Parame.set.warn_power_voltage+0.2f)
+	else if(Plane_Votage>g_fc_param.set.warn_power_voltage+0.2f)
 	{
 		LED_STA.lowVt = 0;
 	}
 		
-	if(Plane_Votage<Ano_Parame.set.return_home_power_voltage)
+	if(Plane_Votage<g_fc_param.set.return_home_power_voltage)
 	{
 		
 	

@@ -34,7 +34,7 @@ s16 motor_step[MOTORSNUM];
 
 static u16 motor_prepara_cnt;
 _mc_st mc;
-u16 IDLING;//10*Ano_Parame.set.idle_speed_pwm  //200
+u16 IDLING;//10*g_fc_param.set.idle_speed_pwm  //200
 /* 电机控制任务 */
 void Motor_Ctrl_Task(u8 dT_ms)
 {
@@ -48,7 +48,7 @@ void Motor_Ctrl_Task(u8 dT_ms)
 	
 	if(flag.unlock_sta)
 	{		
-		IDLING = 10*LIMIT(Ano_Parame.set.idle_speed_pwm,0,30);
+		IDLING = 10*LIMIT(g_fc_param.set.idle_speed_pwm,0,30);
 		
 		if(flag.motor_preparation == 0)
 		{

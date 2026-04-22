@@ -9,10 +9,10 @@ void Dvr_ParamterInit(void)
 
 void Dvr_ParamterRead(void)
 {
-	ROM_EEPROMRead((uint32_t *)Ano_Parame.byte,0X00,2048);
+	ROM_EEPROMRead((uint32_t *)g_fc_param.byte,0X00,2048);
 }
 
 void Dvr_ParamterSave(void)
 {
-	ROM_EEPROMProgram((uint32_t *)Ano_Parame.byte,0X00,2048);
+	ROM_EEPROMProgram((uint32_t *)g_fc_param.byte,0X00,2048);
 }

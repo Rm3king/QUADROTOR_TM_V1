@@ -15,7 +15,7 @@
 #include "RC.h"
 #include "FlightCtrl.h"
 #include "Drv_gps.h"
-#include "Usb.h"
+#include "FcUsbCdc.h"
 #include "Drv_UP_Flow.h"
 #include "Drv_laser.h"
 
@@ -68,7 +68,7 @@ void Drv_BspInit(void)
 	ROM_FPUEnable();
 	
 	//板载USB虚拟串口初始化
-	AnoUsbCdcInit();	
+	UsbCdcInit();	
 	//先初始化数传串口，以便通信
 	Drv_UartDt_Init(500000);	//接数传
 	//数据初始化

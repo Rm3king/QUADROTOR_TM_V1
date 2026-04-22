@@ -1,6 +1,6 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __ANO_MOTIONCAL_H
-#define __ANO_MOTIONCAL_H
+#ifndef __MOTIONCAL_H__
+#define __MOTIONCAL_H__
 /* Includes ------------------------------------------------------------------*/
 #include "FcData.h"
 #include "Filter.h"
