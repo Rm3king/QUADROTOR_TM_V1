@@ -1,7 +1,7 @@
 #include "sysconfig.h"
 #include "Drv_Bsp.h"
-#include "Ano_Scheduler.h"
-#include "Ano_FcData.h"
+#include "Scheduler.h"
+#include "FcData.h"
 
 int main(void)
 {

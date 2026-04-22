@@ -7,10 +7,10 @@
 //#include "bsp_T265.h"
 
 //画矩形
-#include "Ano_RC.h"
-#include "Ano_DT.h"
-#include "Ano_ProgramCtrl_User.h"
-#include "Ano_FlightCtrl.h"
+#include "RC.h"
+#include "DT.h"
+#include "ProgramCtrl_User.h"
+#include "FlightCtrl.h"
 
 u32 TimeStamp = 0, time = 0;
 static u8 stage = 0, switchflag = 0;
@@ -220,10 +220,10 @@ void InspectionTask(u8 dT_ms)
 }
 
 //一键起飞接入手动
-//#include "Ano_RC.h"
-//#include "Ano_DT.h"
-//#include "Ano_ProgramCtrl_User.h"
-//#include "Ano_FlightCtrl.h"
+//#include "RC.h"
+//#include "DT.h"
+//#include "ProgramCtrl_User.h"
+//#include "FlightCtrl.h"
 
 //u32 TimeStamp = 0, time = 0;
 //static u8 stage = 0, switchflag = 0;

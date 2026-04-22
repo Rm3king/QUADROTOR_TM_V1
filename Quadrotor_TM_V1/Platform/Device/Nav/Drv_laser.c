@@ -4,7 +4,7 @@
  * 说明：不改变串口解析流程，仅统一注释风格。
  */
 #include "Drv_laser.h"
-#include "Ano_FcData.h"
+#include "FcData.h"
 
 
 u8 LASER_LINKOK = 0;	//0:无效，1：有效，2：测试中

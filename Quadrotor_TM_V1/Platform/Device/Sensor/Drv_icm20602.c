@@ -8,7 +8,7 @@
 #include "Drv_Bsp.h"
 #include "hw_ints.h"
 //
-#include "Ano_Scheduler.h"
+#include "Scheduler.h"
 
 void Drv_Icm20602IrqHandler(void)
 {
@@ -188,7 +188,7 @@ void Drv_Icm20602_Read( void )
 	ICM_Get_Data();
 }
 
-#include "Ano_Sensor_Basic.h"
+#include "Sensor_Basic.h"
 void ICM_Get_Data()
 {
 	s16 temp[2][3];

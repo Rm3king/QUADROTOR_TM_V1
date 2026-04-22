@@ -14,10 +14,10 @@ void Drv_HeatingSet(u8 val)
 //		TIM10->CCR1 = val;
 }
 
-#include "Ano_DT.h"
-#include "Ano_Sensor_Basic.h"
-#include "Ano_Parameter.h"
-#include "Ano_math.h"
+#include "DT.h"
+#include "Sensor_Basic.h"
+#include "Parameter.h"
+#include "Math.h"
 
 //用上位机设置恒温功能开关  
 //#define USE_THERMOSTATIC 
