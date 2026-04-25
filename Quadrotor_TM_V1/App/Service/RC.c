@@ -26,9 +26,7 @@ static u8 s_rc_input_mode;
 /* 遥控输入初始化 */
 void Remote_Control_Init()
 {
-	//
 	s_rc_input_mode = g_fc_param.set.pwmInMode;
-	//
 	if(s_rc_input_mode == SBUS)
 	{
 		Drv_RcSbus_Init();
@@ -36,7 +34,6 @@ void Remote_Control_Init()
 	else
 	{
 		Drv_RcPpm_Init();
-//		PWM_IN_Init(RC_IN_MODE);
 	}
 }
 
@@ -64,9 +61,6 @@ static void RC_ChannelWatchdogTask(u8 dT_ms) // 如果是 PPM/SBUS 模式，也只检测前
 		else
 		{
 			chn_en_bit &= ~(0x01<<i);
-//			Rc_Pwm_In[i] = 0;  //把捕获值复位
-//			Rc_Ppm_In[i] = 0;
-//			Rc_Sbus_In[i] = 0;
 		}
 	}
 }

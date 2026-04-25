@@ -34,21 +34,16 @@ s16 motor_step[MOTORSNUM];
 
 static u16 motor_prepara_cnt;
 _mc_st mc;
-u16 IDLING;//10*g_fc_param.set.idle_speed_pwm  //200
+u16 motor_idle_pwm;
 /* 电机控制任务 */
 void Motor_Ctrl_Task(u8 dT_ms)
 {
 	u8 i;
 	
-//	if(flag.taking_off)
-//	{
-//		flag.motor_preparation = 1;
-//		motor_prepara_cnt = 0;			
-//	}
 	
 	if(flag.unlock_sta)
 	{		
-		IDLING = 10*LIMIT(g_fc_param.set.idle_speed_pwm,0,30);
+		motor_idle_pwm = 10*LIMIT(g_fc_param.set.idle_speed_pwm,0,30);
 		
 		if(flag.motor_preparation == 0)
 		{
@@ -58,19 +53,19 @@ void Motor_Ctrl_Task(u8 dT_ms)
 			{			
 				if(motor_prepara_cnt<300)
 				{
-					motor[m1] = IDLING;
+					motor[m1] = motor_idle_pwm;
 				}
 				else if(motor_prepara_cnt<600)
 				{
-					motor[m2] = IDLING;
+					motor[m2] = motor_idle_pwm;
 				}
 				else if(motor_prepara_cnt<900)
 				{
-					motor[m3] = IDLING;
+					motor[m3] = motor_idle_pwm;
 				}	
 				else if(motor_prepara_cnt<1200)
 				{	
-					motor[m4] = IDLING;
+					motor[m4] = motor_idle_pwm;
 				}
 				else
 				{
@@ -98,8 +93,7 @@ void Motor_Ctrl_Task(u8 dT_ms)
 	
 		for(i=0;i<MOTORSNUM;i++)
 		{	
-			motor_step[i] = LIMIT(motor_step[i],IDLING,1000);
-//			motor_lpf[i] += 0.5f *(motor_step[i] - motor_lpf[i]) ;		
+			motor_step[i] = LIMIT(motor_step[i],motor_idle_pwm,1000);
 			
 		}
 		
@@ -113,7 +107,7 @@ void Motor_Ctrl_Task(u8 dT_ms)
 		{
 			if(flag.motor_preparation == 1)
 			{
-				motor[i] = LIMIT(motor_step[i],IDLING,999);
+				motor[i] = LIMIT(motor_step[i],motor_idle_pwm,999);
 			}
 	
 		}
@@ -140,8 +134,6 @@ void Motor_Ctrl_Task(u8 dT_ms)
 	}
 	
 #endif
-	//test
-//	Drv_MotorPWMSet(4,200);
 
 }
 

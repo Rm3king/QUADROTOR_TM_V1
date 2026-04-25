@@ -41,7 +41,6 @@ void Power_UpdateTask(u8 dT_ms)
 
 	
 	Plane_Votage = s_voltage_lpf_mv * 0.001f;
-//	Plane_Votage = 15;
 
 
 		

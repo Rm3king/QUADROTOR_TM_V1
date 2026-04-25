@@ -186,27 +186,9 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 	}
 	else
 	{
-														//if(LED_state ==4 || LED_state ==5) LED_state = 0;
-		
 		s_mag_cal_step = 0;
-		
-//////////////////////////////////////////////	
-		field_strength = my_3_norm(mag.val[X],mag.val[Y],mag.val[Z]);
-		
-		if(field_strength<150||field_strength>350)
-		{
-			//state[3] |= (1<<3);//罗盘严重干扰
-																											//LED_state = 6;
-		}
-		else
-		{
-			//state[3] &= ~(1<<3);//罗盘无严重干扰
-			
-//			if(LED_state == 6)
-//			{
-//				LED_state = 0;
-//			}
-		}
-///////////////////////////////////////////////	
+		field_strength = my_3_norm(mag.val[X], mag.val[Y], mag.val[Z]);
+		(void)field_strength;
+		/* 预留磁场强度有效性判定扩展点。 */
 	}
 }
