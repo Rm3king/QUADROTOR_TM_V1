@@ -115,7 +115,7 @@ static void OpenMV_Data_Analysis(u8 *buf_data, u8 len)
         opmv.cb.pos_y = (s16)((*(buf_data + 9) << 8) | *(buf_data + 10));
         opmv.cb.dT_ms = *(buf_data + 11);
         opmv.mode_sta = 1;
-        f.send_omv_ct = 1;
+        g_dt_flag.send_omv_ct = 1;
     }
     else if(*(buf_data + 3) == 0x42)
     {
@@ -127,7 +127,7 @@ static void OpenMV_Data_Analysis(u8 *buf_data, u8 len)
         opmv.lt.pos_y = (s16)((*(buf_data + 13) << 8) | *(buf_data + 14));
         opmv.lt.dT_ms = *(buf_data + 15);
         opmv.mode_sta = 2;
-        f.send_omv_lt = 1;
+        g_dt_flag.send_omv_lt = 1;
     }
     OpenMV_Check_Reset();
 }

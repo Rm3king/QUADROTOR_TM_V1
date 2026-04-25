@@ -1,7 +1,7 @@
 /*
- * 模块：遥控输入处理
- * 职责：完成遥控通道解码、解锁判定、失控保护和摇杆功能触发
- * 说明：保持通道映射、解锁条件和失控保护流程不变。
+ * 模块名称：RC
+ * 模块职责：完成遥控通道解码、解锁判定、失控保护和摇杆功能触发。
+ * 使用约束：保持通道映射、解锁条件和失控保护流程不变。
  */
 #include "sysconfig.h"
 #include "Parameter.h"
@@ -15,7 +15,7 @@
 #include "Sensor_Basic.h"
 #include "LED.h"
 
-//摇杆触发值，摇杆值范围为+-500，超过300属于触发范围
+/* 摇杆触发阈值。摇杆范围约为 +/-500，超过 300 视为有效触发。 */
 #define UN_YAW_VALUE  300
 #define UN_THR_VALUE  300
 #define UN_PIT_VALUE  300
@@ -93,7 +93,7 @@ static void RC_UnlockTask(u8 dT_ms);
 
 static void RC_UpdateUnlockErrorState(void)
 {
-	if( flag.power_state <=2 && para_sta.save_trig == 0)//只有电池电压非最低并且没有操作flash时，才允许进行解锁
+	if( flag.power_state <=2 && g_param_state.save_trig == 0)//只有电池电压非最低并且没有操作flash时，才允许进行解锁
 	{
 		if(sens_hd_check.acc_ok && sens_hd_check.gyro_ok)
 		{

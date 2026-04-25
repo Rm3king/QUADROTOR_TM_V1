@@ -2,9 +2,9 @@
 #define _DATA_TRANSFER_H
 #include "sysconfig.h"
 /*
- * 模块说明。
- * 数据传输与上位机协议接口。
- * 负责调试串口数据的发送标志管理、参数索引映射和协议收发接口声明。
+ * 模块名称：DT
+ * 模块职责：声明调试协议的数据收发接口、发送标志和参数索引映射。
+ * 使用约束：协议帧格式、参数编号和对外发送接口在重构中保持不变。
  */
 typedef struct
 {
@@ -100,8 +100,8 @@ typedef struct
 #define PAR_LANDSPEED       71
 #define PAR_HEATSWITCH      72
 
-extern s32 ParValList[100];
-extern dt_flag_t f;
+extern s32 g_dt_param_list[100];
+extern dt_flag_t g_dt_flag;
 
 /* 调度入口与接收入口。 */
 void ANO_DT_Data_Exchange(void);

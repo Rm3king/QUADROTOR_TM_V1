@@ -17,8 +17,8 @@ _sensor_hd_check_st sens_hd_check;
 /* 根据当前解锁状态触发参数保存请求。 */
 void data_save(void)
 {
-	para_sta.save_en = !flag.unlock_sta;
-	para_sta.save_trig = 1;
+	g_param_state.save_en = !flag.unlock_sta;
+	g_param_state.save_trig = 1;
 }
 
 

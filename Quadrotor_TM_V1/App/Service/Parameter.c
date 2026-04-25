@@ -1,5 +1,5 @@
 /*
- * 模块名称：g_fc_paramter
+ * 模块名称：Parameter
  * 模块职责：维护默认参数、参数镜像同步和延时保存流程。
  * 使用约束：本文件直接关联参数含义与存储时序，重构时不允许改变默认值语义和写入触发逻辑。
  */
@@ -17,11 +17,11 @@
 
 /* 参数镜像与保存状态实例。 */
 union Parameter g_fc_param;
-_parameter_state_st para_sta;
+param_state_t g_param_state;
 
-/* 注意：这里定义的是参数区默认值。修改代码后若未触发写入，存储区中的旧值不会自动更新。 */
-/* 恢复默认 PID 参数。 */
-void PID_Rest()
+/* 注意：这里定义的是参数默认值。若未触发保存，存储区中的旧值不会自动更新。 */
+/* 恢复默认 PID 参数，不改变参数项语义。 */
+void FC_Param_ResetPid(void)
 {
 /* 姿态控制角速度环 PID 参数。 */
 	g_fc_param.set.pid_att_1level[ROL][KP] = 4.0f;
@@ -76,8 +76,8 @@ void PID_Rest()
 }
 
 
-/* 将参数区中的校准数据同步到飞控运行时结构。 */
-static void Parame_Copy_Para2fc(void)
+/* 将参数镜像中的校准数据同步到飞控运行时状态。 */
+static void FC_Param_CopyParamToRuntime(void)
 {
 	for(u8 i = 0;i<3;i++)
 	{	
@@ -91,8 +91,8 @@ static void Parame_Copy_Para2fc(void)
 	}
 }
 
-/* 将飞控运行时校准数据回填到参数区镜像。 */
-static void Parame_Copy_Fc2para(void)
+/* 将飞控运行时校准数据回填到参数镜像。 */
+static void FC_Param_CopyRuntimeToParam(void)
 {
 
 	for(u8 i = 0;i<3;i++)
@@ -105,8 +105,8 @@ static void Parame_Copy_Fc2para(void)
 		
 	}
 }
-/* 恢复默认飞控参数。 */
-void Parame_Reset(void)
+/* 恢复默认飞控参数，不改变外部参数编号和含义。 */
+void FC_Param_Reset(void)
 {
 	g_fc_param.set.pwmInMode = SBUS;
 	g_fc_param.set.heatSwitch = 0;
@@ -130,37 +130,37 @@ void Parame_Reset(void)
 		g_fc_param.set.center_pos_cm[i] = 0;
 	}
 	
-	Parame_Copy_Para2fc();
+	FC_Param_CopyParamToRuntime();
 		
 	ANO_DT_SendString("parameter reset!");
 }
 
 
 
-/* 将当前参数镜像写入存储区。 */
+/* 将当前参数镜像写入存储区。写入后重新装载控制器参数。 */
 static void FC_Param_Write(void)
 {
 	All_PID_Init();	/* 存储 PID 参数后重新初始化控制器。 */
 	g_fc_param.set.frist_init = SOFT_VER;
 
-	Parame_Copy_Fc2para();
+	FC_Param_CopyRuntimeToParam();
 
 	Dvr_ParamterSave();
 }
 
-/* 读取参数区，必要时执行默认初始化并写回。 */
+/* 读取参数区。若检测到版本不匹配，则恢复默认值并写回。 */
 void FC_Param_Read(void)
 {
 	Dvr_ParamterRead();
 	
 	if(g_fc_param.set.frist_init != SOFT_VER)
 	{		
-		Parame_Reset();
-		PID_Rest();
+		FC_Param_Reset();
+		FC_Param_ResetPid();
 		FC_Param_Write();
 	}
 	
-	Parame_Copy_Para2fc();
+	FC_Param_CopyParamToRuntime();
 	
 	
 }
@@ -172,27 +172,27 @@ void FC_Param_Read(void)
  */
 void FC_Param_WriteTask(u16 dT_ms)
 {
-	if(para_sta.save_en )
+	if(g_param_state.save_en )
 	{
-		if(para_sta.save_trig == 1)
+		if(g_param_state.save_trig == 1)
 		{
 			/* 收到保存请求后，先进入延时等待。 */
 			LED_STA.saving = 1;
 			
-			para_sta.time_delay = 0;
-			para_sta.save_trig = 2;
+			g_param_state.time_delay = 0;
+			g_param_state.save_trig = 2;
 		}
 		
-		if(para_sta.save_trig == 2)
+		if(g_param_state.save_trig == 2)
 		{
-			if(para_sta.time_delay<3000)
+			if(g_param_state.time_delay<3000)
 			{
-				para_sta.time_delay += dT_ms;
+				g_param_state.time_delay += dT_ms;
 			}
 			else
 			{
 				/* 延时到达后再真正写入参数区。 */
-				para_sta.save_trig = 0;
+				g_param_state.save_trig = 0;
 				FC_Param_Write();
 				ANO_DT_SendString("Set save OK!");
 				LED_STA.saving = 0;
@@ -200,14 +200,14 @@ void FC_Param_WriteTask(u16 dT_ms)
 		}
 		else
 		{
-			para_sta.time_delay = 0;
+			g_param_state.time_delay = 0;
 		}
 		
 	}
 	else
 	{
-		para_sta.time_delay = 0;
-		para_sta.save_trig = 0;
+		g_param_state.time_delay = 0;
+		g_param_state.save_trig = 0;
 	}
 }
 

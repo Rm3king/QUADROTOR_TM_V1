@@ -5,7 +5,7 @@
 #include "FcData.h"
 
 /*
- * 模块名称：g_fc_paramter
+ * 模块名称：Parameter
  * 模块职责：定义飞控参数存储结构、参数保存状态和参数读写接口。
  * 使用约束：本头文件只描述参数布局与接口，不改变参数含义与存储时序。
  */
@@ -66,17 +66,17 @@ typedef struct
 	u8 save_en;
 	u8 save_trig;
 	u16 time_delay;
-}_parameter_state_st ;
-extern _parameter_state_st para_sta;
+} param_state_t;
+extern param_state_t g_param_state;
 
 /* 读取参数区，并在必要时执行默认初始化。 */
 void FC_Param_Read(void);
 /* 周期性参数保存任务。 */
 void FC_Param_WriteTask(u16 dT_ms);
 /* 恢复默认 PID 参数。 */
-void PID_Rest(void);
+void FC_Param_ResetPid(void);
 /* 恢复默认飞控参数。 */
-void Parame_Reset(void);
+void FC_Param_Reset(void);
 
 #endif 
 

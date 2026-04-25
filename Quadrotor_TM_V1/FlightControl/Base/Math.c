@@ -105,7 +105,7 @@ REAL fast_atan2(REAL y, REAL x)
 		else
 			z = x_abs / y_abs;
 		/* when ratio approaches the table resolution, the angle is */
-		/*      best approximated with the argument itself...       */
+		/*      best approximated with the argument itselg_dt_flag...       */
 		if (z < TAN_MAP_RES)
 			base_angle = z;
 		else 
