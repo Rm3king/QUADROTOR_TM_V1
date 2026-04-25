@@ -1,6 +1,7 @@
-/******************** +++++++++++++++++++++++++++ ********************************
- * ÃèÊö    £º¿ìËÙ¼ÆËã
-**********************************************************************************/
+/*
+ * ?????Math
+ * ?????????????????????????????????
+ */
 
 #include "Math.h"
 
@@ -105,7 +106,7 @@ REAL fast_atan2(REAL y, REAL x)
 		else
 			z = x_abs / y_abs;
 		/* when ratio approaches the table resolution, the angle is */
-		/*      best approximated with the argument itselg_dt_flag...       */
+		/*      best approximated with the argument itself...       */
 		if (z < TAN_MAP_RES)
 			base_angle = z;
 		else 
@@ -384,8 +385,6 @@ float fifo(u8 arr_num,u8 *cnt,float *arr,float in)
 	return (*(arr + *cnt));
 }
 
-//=========================================
-//====================vector===============
 /*
 |x2|    |cosx,-sinx|   |x1|
 |  | =  |          |   |  |

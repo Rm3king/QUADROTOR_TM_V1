@@ -22,24 +22,10 @@
 #include "Drv_OpenMV.h"
 
 /*
- * 模块：飞行控制
- * 职责：飞行模式、起降流程和状态切换管理
- * 说明：保持原有状态机条件与控制流程，仅做可读性整理。
+ * ?????FlightCtrl
+ * ?????????????????????????????
+ * ?????????????????????????????????????
  */
-
-
-/*============================================================================
-更新：
-201908012059-Jyoun：修正因高度失效判定光流失效的条件bug，以更好兼容超声波。
-
-
-
-===========================================================================*/
-/////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////
 
 /* 所有控制环 PID 参数初始化 */
 void All_PID_Init(void)
@@ -106,18 +92,18 @@ void one_key_roll()
 
 }
 
-static u16 one_key_taof_start;
+static u16 s_one_key_takeoff_delay_ms;
 /* 一键起飞延时任务 */
 void one_key_take_off_task(u16 dt_ms)
 {
-	if(one_key_taof_start != 0)
+	if(s_one_key_takeoff_delay_ms != 0)
 	{
-		one_key_taof_start += dt_ms;
+		s_one_key_takeoff_delay_ms += dt_ms;
 		
 		
-		if(one_key_taof_start > 1400 && flag.motor_preparation == 1)
+		if(s_one_key_takeoff_delay_ms > 1400 && flag.motor_preparation == 1)
 		{
-			one_key_taof_start = 0;
+			s_one_key_takeoff_delay_ms = 0;
 				if(flag.auto_take_off_land == AUTO_TAKE_OFF_NULL)
 				{
 					flag.auto_take_off_land = AUTO_TAKE_OFF;
@@ -128,10 +114,9 @@ void one_key_take_off_task(u16 dt_ms)
 			
 		}
 	}
-	//reset
 	if(flag.unlock_sta == 0)
 	{
-		one_key_taof_start = 0;
+		s_one_key_takeoff_delay_ms = 0;
 	}
 
 }
@@ -140,9 +125,9 @@ void one_key_take_off()
 {
 	if(flag.unlock_err == 0)
 	{	
-		if(flag.auto_take_off_land == AUTO_TAKE_OFF_NULL && one_key_taof_start == 0)
+		if(flag.auto_take_off_land == AUTO_TAKE_OFF_NULL && s_one_key_takeoff_delay_ms == 0)
 		{
-			one_key_taof_start = 1;
+			s_one_key_takeoff_delay_ms = 1;
 			flag.unlock_cmd = 1;
 		}
 	}
@@ -162,11 +147,6 @@ void Sudden_Stop_Task(void)
 
     FlyCtrlReset();
 }
-//////////////////////////////////////////////////////////////////
-
-
-
-//////////////////////////////////////////////////////////////////
 _flight_state_st fs;
 
 s16 flying_cnt,landing_cnt;
@@ -175,30 +155,27 @@ extern s32 ref_height_get;
 
 float stop_baro_hpf;
 
-static s16 ld_delay_cnt ;
+static s16 s_land_detect_delay_ms ;
 /* 降落状态判定 */
-void land_discriminat(s16 dT_ms)
+static void LandDiscriminate(s16 dT_ms)
 {
-//	static s16 acc_delta,acc_old;
 	
-//	acc_delta = imu_data.w_acc[Z]- acc_old;
-//	acc_old = imu_data.w_acc[Z];
 	
 	/*油门归一值小于0.1  或者启动自动降落*/
 	if((fs.speed_set_h_norm[Z] < 0.1f) || flag.auto_take_off_land == AUTO_LAND)
 	{
-		if(ld_delay_cnt>0)
+		if(s_land_detect_delay_ms>0)
 		{
-			ld_delay_cnt -= dT_ms;
+			s_land_detect_delay_ms -= dT_ms;
 		}
 	}
 	else
 	{
-		ld_delay_cnt = 200;
+		s_land_detect_delay_ms = 200;
 	}
 	
 	/*意义是：如果向上推了油门，就需要等垂直方向加速度小于200cm/s2 保持200ms才开始检测*/	
-	if(ld_delay_cnt <= 0 && (flag.thr_low || flag.auto_take_off_land == AUTO_LAND) )
+	if(s_land_detect_delay_ms <= 0 && (flag.thr_low || flag.auto_take_off_land == AUTO_LAND) )
 	{
 		/*油门最终输出量小于250并且没有在手动解锁上锁过程中，持续1秒，认为着陆，然后上锁*/
 		if(mc.ct_val_thr<250 && flag.unlock_sta == 1 && flag.locking != 2)//ABS(wz_spe_f1.out <20 ) //还应当 与上速度条件，速度小于正20厘米每秒。
@@ -212,7 +189,6 @@ void land_discriminat(s16 dT_ms)
 
 				flying_cnt = 0;
 				flag.taking_off = 0;
-				///////
 					landing_cnt =0;	
 					flag.unlock_cmd =0;				
 
@@ -320,7 +296,7 @@ void Flight_State_Task(u8 dT_ms,s16 *CH_N)
 	fs.speed_set_h[Y] = fs.speed_set_h_cms[Y];	
 	
 	/*调用检测着陆的函数*/
-	land_discriminat(dT_ms);
+	LandDiscriminate(dT_ms);
 	
 	/*倾斜过大上锁*/
 	if(rolling_flag.rolling_step == ROLL_END)
@@ -535,14 +511,6 @@ void Swtich_State_Task(u8 dT_ms)
 
 static void Speed_Mode_Switch()
 {
-//	if( ubx_user_data.s_acc_cms > 60)// || ubx_user_data.svs_used < 6)
-//	{
-//		flag.speed_mode = 0;
-//	}
-//	else
-//	{
-//		flag.speed_mode = 1;
-//	}
 
 }
 
@@ -558,7 +526,6 @@ void Flight_Mode_Set(u8 dT_ms)
 	if(speed_mode_old != flag.speed_mode) //状态改变
 	{
 		speed_mode_old = flag.speed_mode;
-		//xy_speed_pid_init(flag.speed_mode);////////////
 	}
 
 ///////////////////////////////////////////////////////

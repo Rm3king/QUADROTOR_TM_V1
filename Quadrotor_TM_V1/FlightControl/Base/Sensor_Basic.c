@@ -1,27 +1,22 @@
-//默认引用：
+/*
+ * ?????Sensor_Basic
+ * ??????????????????????????????????
+ * ??????????????????????????
+ */
+
 #include "Sensor_Basic.h"
 #include "Math.h"
-
-
-//数据接口定义：
-
-//需要引用的文件：
 #include "Drv_Paramter.h"
 #include "LED.h"
 
-//需要调用引用的外部变量：
-#define X_POS_OFFSET_CM    (0)//(g_fc_param.set.center_pos_cm[X]); //X轴中心偏移存储值
-#define Y_POS_OFFSET_CM    (0)//(g_fc_param.set.center_pos_cm[Y]); //Y轴中心偏移存储值
-#define Z_POS_OFFSET_CM    (0)//(g_fc_param.set.center_pos_cm[Z]); //Z轴中心偏移存储值
+#define X_POS_OFFSET_CM    (0)
+#define Y_POS_OFFSET_CM    (0)
+#define Z_POS_OFFSET_CM    (0)
 
-//需要操作赋值的外部变量：
 #define LED_STA_CALI_ACC   (LED_STA.calAcc)
 #define LED_STA_CALI_GYR   (LED_STA.calGyr)
 
-
-
-
-/* 基础传感器初始化 */
+/* ???????? */
 void Sensor_Basic_Init()
 {
 	/*设置重心相对传感器的偏移量*/
@@ -37,7 +32,6 @@ _sensor_st sensor;
 s32 sensor_val[6];
 s32 sensor_val_rot[6];
 s32 sensor_val_ref[6];
-//float sensor_val_lpf[2][6];
 
 
 s32 sum_temp[7]={0,0,0,0,0,0,0};
@@ -50,7 +44,7 @@ s16 g_old[VEC_XYZ];
 float g_d_sum[VEC_XYZ] = {500,500,500};
 
 /* Z轴加速度静态修正 */
-void mpu_auto_az()
+static void Sensor_AutoCalibrateAccZ(void)
 {
 	if(sensor.acc_z_auto_CALIBRATE)
 	{
@@ -90,7 +84,7 @@ void mpu_auto_az()
 
 
 /* 静止状态检测 */
-void motionless_check(u8 dT_ms)
+static void MotionlessCheck(u8 dT_ms)
 {
 	u8 t = 0;
 
@@ -122,7 +116,7 @@ void motionless_check(u8 dT_ms)
 }
 
 /* MPU6050 零偏校准 */
-void MPU6050_Data_Offset()
+static void Sensor_UpdateOffsets(void)
 {
 	static u8 off_cnt;
 
@@ -188,7 +182,6 @@ void MPU6050_Data_Offset()
 						}
 					}
 					sensor.gyr_CALIBRATE = 0;
-//					ANO_DT_SendString("GYR init OK!");
 
 				}
 			}
@@ -218,7 +211,6 @@ void MPU6050_Data_Offset()
 
 					acc_sum_cnt =0;
 					sensor.acc_CALIBRATE = 0;
-//					ANO_DT_SendString("ACC init OK!");
 
 					data_save();
 				}	
@@ -231,7 +223,6 @@ void MPU6050_Data_Offset()
 
 	
 
-s16 roll_gz_comp;
 float wh_matrix[VEC_XYZ][VEC_XYZ] = 
 {
 	{1,0,0},
@@ -255,14 +246,12 @@ void Sensor_Data_Prepare(u8 dT_ms)
 {	
 	float hz = 0 ;
 	if(dT_ms != 0) hz = 1000/dT_ms;
-//	MPU6050_Read();
 	
-//	sensor_rotate_func(dT);
 	
 	/*静止检测*/
-	motionless_check(dT_ms);
+	MotionlessCheck(dT_ms);
 			
-	MPU6050_Data_Offset(); //校准函数
+	Sensor_UpdateOffsets(); //校准函数
 
 
 	/*得出校准后的数据*/
@@ -319,7 +308,7 @@ void Sensor_Data_Prepare(u8 dT_ms)
 	sensor_val_ref[A_Z] =  (sensor_val_rot[A_Z] - save.acc_offset[Z] ) ;
 	
 	/*单独校准z轴模长*/
-	mpu_auto_az();
+	Sensor_AutoCalibrateAccZ();
 
 //======================================================================
 	
@@ -337,8 +326,6 @@ void Sensor_Data_Prepare(u8 dT_ms)
 			acc_f[j-1][X +i] += GYR_ACC_FILTER *(acc_f[j][X +i] - acc_f[j-1][X +i]);
 		}
 		
-//		LPF_1_(100,dT_ms*1e-3f,sensor_val_ref[G_X + i],sensor.Gyro[X +i]);
-//		LPF_1_(100,dT_ms*1e-3f,sensor_val_ref[A_X + i],sensor.Acc[X +i]);
 				
 	}
 	

@@ -7,9 +7,6 @@
 #include "Math.h"
 #include "Filter.h"
 
-//#include "RC.h"
-
-
 
 /*参考坐标，定义为ANO坐标*
 
@@ -52,16 +49,6 @@ void a2w_3d_trans(float a[VEC_XYZ],float w[VEC_XYZ])
 		}
 }
 
-//float mag_yaw_calculate(float dT,float mag_val[VEC_XYZ],float g_z_vec[VEC_XYZ],float h_mag_val[VEC_XYZ])//
-//{
-
-//	vec_3dh_transition(g_z_vec, mag_val, h_mag_val);
-
-//	return (fast_atan2(h_mag_val[Y], h_mag_val[X]) *57.3f) ;// 	
-//}
-	
-
-
 #define USE_MAG
 #define USE_LENGTH_LIM
 
@@ -78,15 +65,15 @@ _imu_st imu_data =  {1,0,0,0,
 
 static float vec_err[VEC_XYZ];
 static float vec_err_i[VEC_XYZ];
-static float q0q1,q0q2,q1q1,q1q3,q2q2,q2q3,q3q3,q1q2,q0q3;//q0q0,				
-static float mag_yaw_err,mag_err_dot_prudoct,mag_val_f[VEC_XYZ];					
-static float imu_reset_val;		
+static float q0q1,q0q2,q1q1,q1q3,q2q2,q2q3,q3q3,q1q2,q0q3;
+static float mag_yaw_err,mag_err_dot_product,mag_val_f[VEC_XYZ];					
+static float s_imu_reset_error_sum;
 
 static u16 reset_cnt;
 					 
 _imu_state_st imu_state = {1,1,1,1,1,1,1,1};
 
-static float mag_2d_w_vec[2][2] = {{1,0},{1,0}};//地理坐标中，水平面磁场方向恒为南北 (1,0)
+static float s_mag_heading_ref[2][2] = {{1,0},{1,0}};//地理坐标中，水平面磁场方向恒为南北 (1,0)
 
 float imu_test[3];
 /* 姿态解算主更新函数 */
@@ -106,7 +93,6 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 
 
 	
-//		q0q0 = imu->w * imu->w;							
 		q0q1 = imu->w * imu->x;
 		q0q2 = imu->w * imu->y;
 		q1q1 = imu->x * imu->x;
@@ -218,14 +204,14 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 			//计算方向向量归一化系数（模的倒数）
 			float l_re_tmp = my_sqrt_reciprocal(my_pow(imu->w_mag[0]) + my_pow(imu->w_mag[1]));
 			//计算南北朝向向量
-			mag_2d_w_vec[1][0] = imu->w_mag[0] *l_re_tmp;
-			mag_2d_w_vec[1][1] = imu->w_mag[1] *l_re_tmp;
+			s_mag_heading_ref[1][0] = imu->w_mag[0] *l_re_tmp;
+			s_mag_heading_ref[1][1] = imu->w_mag[1] *l_re_tmp;
 			//计算南北朝向误差(叉乘)，地理坐标中，水平面磁场方向向量应恒为南北 (1,0)
-			mag_yaw_err = vec_2_cross_product(mag_2d_w_vec[1],mag_2d_w_vec[0]);
+			mag_yaw_err = vec_2_cross_product(s_mag_heading_ref[1],s_mag_heading_ref[0]);
 			//计算南北朝向向量点乘，判断同向或反向
-			mag_err_dot_prudoct = vec_2_dot_product(mag_2d_w_vec[1],mag_2d_w_vec[0]);
+			mag_err_dot_product = vec_2_dot_product(s_mag_heading_ref[1],s_mag_heading_ref[0]);
 			//若反向，直接给最大误差
-			if(mag_err_dot_prudoct<0)
+			if(mag_err_dot_product<0)
 			{
 				mag_yaw_err = my_sign(mag_yaw_err) *1.0f;
 			}			
@@ -255,10 +241,7 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 
 		
 	// 构造增量旋转（含融合纠正）。	
-	//    d_angle[X] = (gyr[X] + (vec_err[X]  + vec_err_i[X]) * kp_use - mag_yaw_err *imu->z_vec[X] *kmp_use *RAD_PER_DEG) * dT / 2 ;
-	//    d_angle[Y] = (gyr[Y] + (vec_err[Y]  + vec_err_i[Y]) * kp_use - mag_yaw_err *imu->z_vec[Y] *kmp_use *RAD_PER_DEG) * dT / 2 ;
-	//    d_angle[Z] = (gyr[Z] + (vec_err[Z]  + vec_err_i[Z]) * kp_use - mag_yaw_err *imu->z_vec[Z] *kmp_use *RAD_PER_DEG) * dT / 2 ;
-			
+						
 			
 #ifdef USE_MAG
 			d_angle[i] = (gyr[i] + (vec_err[i]  + vec_err_i[i]) * kp_use + mag_yaw_err *imu->z_vec[i] *mkp_use) * dT / 2 ;
@@ -326,13 +309,13 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 //				imu->est_acc_h[X] = imu->est_acc_h[Y] =0;
 				
 				//计算静态误差是否缩小
-//				imu_reset_val += (ABS(vec_err[X]) + ABS(vec_err[Y])) *1000 *dT;
-//				imu_reset_val -= 0.01f;
-				imu_reset_val = (ABS(vec_err[X]) + ABS(vec_err[Y]));
+//				s_imu_reset_error_sum += (ABS(vec_err[X]) + ABS(vec_err[Y])) *1000 *dT;
+//				s_imu_reset_error_sum -= 0.01f;
+				s_imu_reset_error_sum = (ABS(vec_err[X]) + ABS(vec_err[Y]));
 				
-				imu_reset_val = LIMIT(imu_reset_val,0,1.0f);
+				s_imu_reset_error_sum = LIMIT(s_imu_reset_error_sum,0,1.0f);
 				
-				if((imu_reset_val < 0.02f) && (state->M_reset == 0))
+				if((s_imu_reset_error_sum < 0.02f) && (state->M_reset == 0))
 				{
 					//计时
 					reset_cnt += 2;

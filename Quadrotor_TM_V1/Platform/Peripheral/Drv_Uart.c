@@ -7,17 +7,16 @@
 #include "Drv_OpenMV.h"
 #include "Drv_laser.h"
 
-//TM4C的串口0对应底板串口1
-//TM4C的串口2对应底板串口5
-//TM4C的串口4对应底板串口2
-//TM4C的串口5对应底板串口3
-//TM4C的串口7对应底板串口4
-//这里都以底板的串口标号为准，比如Drv_Uart1Init，为底板串口1的初始化，即TM4C的串口0
-/////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+ * ?????Drv_Uart
+ * ??????????? 1~5 ???????????????
+ * ?????????1/2/3/4/5 ???? TM4C UART0/4/2/7/5?
+ * ????????????????????????????
+ */
 #include "Drv_gps.h"
-u8 U1TxDataTemp[256];
-u8 U1TxInCnt = 0;
-u8 U1TxOutCnt = 0;
+u8 s_uart1_tx_buf[256];
+u8 s_uart1_tx_write_idx = 0;
+u8 s_uart1_tx_read_idx = 0;
 /* 底板串口1中断服务，接收 GPS 数据 */
 void UART1_IRQHandler(void)
 {
@@ -64,19 +63,19 @@ void Drv_Uart1SendBuf(u8 *data, u8 len)
 {
 	for(u8 i=0; i<len; i++)
 	{
-		U1TxDataTemp[U1TxInCnt++] = * ( data + i );
+		s_uart1_tx_buf[s_uart1_tx_write_idx++] = * ( data + i );
 	}
 	Drv_Uart1TxCheck();
 }
 void Drv_Uart1TxCheck(void)
 {
-	while( (U1TxOutCnt != U1TxInCnt) && (ROM_UARTCharPutNonBlocking(UART0_BASE,U1TxDataTemp[U1TxOutCnt])) )
-		U1TxOutCnt++;
+	while( (s_uart1_tx_read_idx != s_uart1_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART0_BASE,s_uart1_tx_buf[s_uart1_tx_read_idx])) )
+		s_uart1_tx_read_idx++;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////
-u8 U2TxDataTemp[256];
-u8 U2TxInCnt = 0;
-u8 U2TxOutCnt = 0;
+u8 s_uart2_tx_buf[256];
+u8 s_uart2_tx_write_idx = 0;
+u8 s_uart2_tx_read_idx = 0;
 /* 底板串口2中断服务，接收数传数据 */
 void UART2_IRQHandler(void)
 {
@@ -123,19 +122,19 @@ void Drv_Uart2SendBuf(u8 *data, u8 len)
 {
 	for(u8 i=0; i<len; i++)
 	{
-		U2TxDataTemp[U2TxInCnt++] = * ( data + i );
+		s_uart2_tx_buf[s_uart2_tx_write_idx++] = * ( data + i );
 	}
 	Drv_Uart2TxCheck();
 }
 void Drv_Uart2TxCheck(void)
 {
-	while( (U2TxOutCnt != U2TxInCnt) && (ROM_UARTCharPutNonBlocking(UART4_BASE,U2TxDataTemp[U2TxOutCnt])) )
-		U2TxOutCnt++;
+	while( (s_uart2_tx_read_idx != s_uart2_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART4_BASE,s_uart2_tx_buf[s_uart2_tx_read_idx])) )
+		s_uart2_tx_read_idx++;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////
-u8 U3TxDataTemp[256];
-u8 U3TxInCnt = 0;
-u8 U3TxOutCnt = 0;
+u8 s_uart3_tx_buf[256];
+u8 s_uart3_tx_write_idx = 0;
+u8 s_uart3_tx_read_idx = 0;
 /* 底板串口3中断服务，接收 OpenMV 数据 */
 void UART3_IRQHandler(void)
 {
@@ -182,21 +181,21 @@ void Drv_Uart3SendBuf(u8 *data, u8 len)
 {
 	for(u8 i=0; i<len; i++)
 	{
-		U3TxDataTemp[U3TxInCnt++] = * ( data + i );
+		s_uart3_tx_buf[s_uart3_tx_write_idx++] = * ( data + i );
 	}
 	Drv_Uart3TxCheck();
 }
 void Drv_Uart3TxCheck(void)
 {
-	while( (U3TxOutCnt != U3TxInCnt) && (ROM_UARTCharPutNonBlocking(UART2_BASE,U3TxDataTemp[U3TxOutCnt])) )
-		U3TxOutCnt++;
+	while( (s_uart3_tx_read_idx != s_uart3_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART2_BASE,s_uart3_tx_buf[s_uart3_tx_read_idx])) )
+		s_uart3_tx_read_idx++;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////
 #include "OF.h"
 #include "Drv_UP_Flow.h"
-u8 U4TxDataTemp[256];
-u8 U4TxInCnt = 0;
-u8 U4TxOutCnt = 0;
+u8 s_uart4_tx_buf[256];
+u8 s_uart4_tx_write_idx = 0;
+u8 s_uart4_tx_read_idx = 0;
 /* 底板串口4中断服务，接收光流数据 */
 void UART4_IRQHandler(void)
 {
@@ -263,19 +262,19 @@ void Drv_Uart4SendBuf(u8 *data, u8 len)
 {
 	for(u8 i=0; i<len; i++)
 	{
-		U4TxDataTemp[U4TxInCnt++] = * ( data + i );
+		s_uart4_tx_buf[s_uart4_tx_write_idx++] = * ( data + i );
 	}
 	Drv_Uart4TxCheck();
 }
 void Drv_Uart4TxCheck(void)
 {
-	while( (U4TxOutCnt != U4TxInCnt) && (ROM_UARTCharPutNonBlocking(UART7_BASE,U4TxDataTemp[U4TxOutCnt])) )
-		U4TxOutCnt++;
+	while( (s_uart4_tx_read_idx != s_uart4_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART7_BASE,s_uart4_tx_buf[s_uart4_tx_read_idx])) )
+		s_uart4_tx_read_idx++;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////
-u8 U5TxDataTemp[256];
-u8 U5TxInCnt = 0;
-u8 U5TxOutCnt = 0;
+u8 s_uart5_tx_buf[256];
+u8 s_uart5_tx_write_idx = 0;
+u8 s_uart5_tx_read_idx = 0;
 /* 底板串口5中断服务，接收激光测距数据 */
 void UART5_IRQHandler(void)
 {
@@ -288,7 +287,6 @@ void UART5_IRQHandler(void)
 	while(ROM_UARTCharsAvail(UART5_BASE))		
 	{			
 		com_data=ROM_UARTCharGet(UART5_BASE);
-		//ANO_DT_Data_Receive_Prepare(com_data);
 		Drv_Laser_GetOneByte(com_data);
 	}
 	if(flag & UART_INT_TX)
@@ -327,13 +325,13 @@ void Drv_Uart5SendBuf(u8 *data, u8 len)
 {
 	for(u8 i=0; i<len; i++)
 	{
-		U5TxDataTemp[U5TxInCnt++] = * ( data + i );
+		s_uart5_tx_buf[s_uart5_tx_write_idx++] = * ( data + i );
 	}
 	Drv_Uart5TxCheck();
 }
 void Drv_Uart5TxCheck(void)
 {
-	while( (U5TxOutCnt != U5TxInCnt) && (ROM_UARTCharPutNonBlocking(UART5_BASE,U5TxDataTemp[U5TxOutCnt])) )
-		U5TxOutCnt++;
+	while( (s_uart5_tx_read_idx != s_uart5_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART5_BASE,s_uart5_tx_buf[s_uart5_tx_read_idx])) )
+		s_uart5_tx_read_idx++;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////

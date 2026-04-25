@@ -11,16 +11,15 @@
 #include "OF.h"
 #include "Drv_Laser.h"
 
-
-/*============================================================================
-更新：
-201908022235-Jyoun：调整wcz_acc_use的滤波系数。
-
-
-===========================================================================*/
+/*
+ * ?????FlightDataCal
+ * ??????????????????????????????????
+ * ???????????????????????????????
+ */
 
 u16 test_time_cnt;
-void Fc_Sensor_Get()//1ms
+/* ???1ms ???? IMU????????????? */
+void Fc_Sensor_Get(void)
 {
 	static u8 cnt;
 	if(flag.start_ok)
@@ -44,7 +43,7 @@ void Fc_Sensor_Get()//1ms
 
 extern s32 sensor_val_ref[];
 
-static u8 reset_imu_f;
+static u8 s_imu_reset_armed;
 void IMU_Update_Task(u8 dT_ms)
 {
 
@@ -55,23 +54,16 @@ void IMU_Update_Task(u8 dT_ms)
 				if(flag.unlock_sta )
 				{
 					imu_state.G_reset = imu_state.M_reset = 0;
-					reset_imu_f = 0;
+					s_imu_reset_armed = 0;
 				}
 				else 
 				{
-					if(flag.motionless == 0)
+					if(s_imu_reset_armed == 0)
 					{
-//						imu_state.G_reset = 1;//自动复位
-						//sensor.gyr_CALIBRATE = 2;
-					}	
-					
-					if(reset_imu_f==0 )//&& flag.motionless == 1)
-					{
-						imu_state.G_reset = 1;//自动复位	
-						sensor.gyr_CALIBRATE = 2;//校准陀螺仪，不保存
-						reset_imu_f = 1;     //已经置位复位标记
+						imu_state.G_reset = 1;
+						sensor.gyr_CALIBRATE = 2;
+						s_imu_reset_armed = 1;
 					}
-								
 				}
 									
 				if(0) 
@@ -89,7 +81,7 @@ void IMU_Update_Task(u8 dT_ms)
 					else
 					{
 						/*设置重力互补融合修正kp系数*/
-						imu_state.gkp = 0.2f;//0.4f;
+						imu_state.gkp = 0.2f;
 					}
 					
 					/*设置重力互补融合修正ki系数*/
@@ -103,7 +95,7 @@ void IMU_Update_Task(u8 dT_ms)
 	
 				
 				/*姿态计算，更新，融合*/
-				IMU_update(dT_ms *1e-3f, &imu_state,sensor.Gyro_rad, sensor.Acc_cmss, mag.val,&imu_data);//x3_dT_1[2] * 0.000001f
+				IMU_update(dT_ms *1e-3f, &imu_state, sensor.Gyro_rad, sensor.Acc_cmss, mag.val, &imu_data);
 //////////////////////////////////////////////////////////////////////	
 }
 
@@ -131,45 +123,40 @@ void WCZ_Acc_Get_Task()//最小周期
 	wcz_acc_use += 0.03f *(imu_data.w_acc[Z] - wcz_acc_use);
 }
 
-//void Baro_Get_Task()
-//{
-////			ref_height_get += LIMIT((s32)user_spl0601_get() - ref_height_get,-20,20 );
-////	baro_height =(s32)user_spl0601_get();
-//}
 
 u16 ref_tof_height;
-static u8 baro_offset_ok,tof_offset_ok;
+static u8 s_baro_ref_state, s_tof_ref_ready;
 void WCZ_Fus_Task(u8 dT_ms)
 {
 
 	
 	if(flag.taking_off)
 	{
-		baro_offset_ok = 2;
+		s_baro_ref_state = 2;
 	}
 	else
 	{
-		if(baro_offset_ok == 2)
+		if(s_baro_ref_state == 2)
 		{
-			baro_offset_ok = 0;
+			s_baro_ref_state = 0;
 		}
 		//reset
 		tof2baro_offset = 0;
 	}
 	
-	if(baro_offset_ok >= 1)//(flag.taking_off)
+	if(s_baro_ref_state >= 1)//(flag.taking_off)
 	{
 		ref_height_get_1 = baro_height - baro_h_offset + baro_fix  + tof2baro_offset;//气压计相对高度，切换点跟随TOF
-		//baro_offset_ok = 0;
+		//s_baro_ref_state = 0;
 	}
 	else
 	{
-		if(baro_offset_ok == 0 )
+		if(s_baro_ref_state == 0 )
 		{
 			baro_h_offset = baro_height;
 			if(flag.sensor_imu_ok)
 			{
-				baro_offset_ok = 1;
+				s_baro_ref_state = 1;
 			}
 		}
 	}
@@ -196,7 +183,7 @@ void WCZ_Fus_Task(u8 dT_ms)
 		baro_fix = baro_fix1 + baro_fix2 - BARO_FIX;//+ baro_fix3;
 	}
 	
-	if((sens_hd_check.of_df_ok || sens_hd_check.of_ok) && baro_offset_ok) //TOF或者OF硬件正常，且气压计记录相对值以后
+	if((sens_hd_check.of_df_ok || sens_hd_check.of_ok) && s_baro_ref_state) //TOF或者OF硬件正常，且气压计记录相对值以后
 	{
 		if(switchs.tof_on || switchs.of_tof_on) //TOF数据有效
 		{
@@ -204,17 +191,13 @@ void WCZ_Fus_Task(u8 dT_ms)
 			{
 				ref_tof_height = jsdata.valid_of_alt_cm ;
 			}
-			else//switchs.tof_on
-			{
-//				ref_tof_height = Laser_height_mm/10;
-			}
-			
+						
 			
 			//
-			if(tof_offset_ok == 0)
+			if(s_tof_ref_ready == 0)
 			{
 				baro2tof_offset = ref_height_get_1 - ref_tof_height ; //记录TOF切换点		
-				tof_offset_ok = 1;
+				s_tof_ref_ready = 1;
 			}
 			//
 			ref_height_get_2 = ref_tof_height + baro2tof_offset;//TOF参考高度，切换点跟随气压计				
@@ -228,7 +211,7 @@ void WCZ_Fus_Task(u8 dT_ms)
 		else
 		{
 			
-			tof_offset_ok = 0;
+			s_tof_ref_ready = 0;
 			
 			ref_height_used = ref_height_get_1 ;
 		}
@@ -243,10 +226,6 @@ void WCZ_Fus_Task(u8 dT_ms)
 
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
 
 
 
