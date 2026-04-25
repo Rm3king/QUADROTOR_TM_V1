@@ -1,64 +1,69 @@
+/*
+ * 模块名称：MagProcess
+ * 模块职责：处理磁力计校准流程、运行时补偿和磁场强度有效性检查。
+ * 使用约束：校准步骤、LED 指示和参数保存触发逻辑保持不变。
+ */
 #include "MagProcess.h"
 #include "LED.h"
 
-static s16 max_t[VEC_XYZ];
-static s16 min_t[VEC_XYZ];
+static s16 s_mag_max_raw[VEC_XYZ];
+static s16 s_mag_min_raw[VEC_XYZ];
 
 
 _mag_cal_st mag;
 
-static void Mag_Cal_Reset(u8 mode)
+static void MagCalReset(u8 mode)
 {
 	if(mode == 2)
 	{
 		for(u8 i = 0;i<2;i++)
 		{
-			max_t[i] = -30000;
-			min_t[i] = 30000;
+			s_mag_max_raw[i] = -30000;
+			s_mag_min_raw[i] = 30000;
 
 		}
 	}
 	else if(mode == 1)
 	{
-			max_t[Z] = -30000;
-			min_t[Z] = 30000;		
+			s_mag_max_raw[Z] = -30000;
+			s_mag_min_raw[Z] = 30000;		
 	}
 	else
 	{
 		for(u8 i = 0;i<3;i++)
 		{
-			max_t[i] = -30000;
-			min_t[i] = 30000;
+			s_mag_max_raw[i] = -30000;
+			s_mag_min_raw[i] = 30000;
 
 		}	
 	}
 }
 
-static void Mag_Cal_XY(s16 mag_in[])
+static void MagCalUpdateXY(s16 mag_in[])
 {
 	for(u8 i = 0;i<2;i++)
 	{
-		max_t[i] = _MAX(max_t[i],mag_in[i]);
-		min_t[i] = _MIN(min_t[i],mag_in[i]);
+		s_mag_max_raw[i] = _MAX(s_mag_max_raw[i],mag_in[i]);
+		s_mag_min_raw[i] = _MIN(s_mag_min_raw[i],mag_in[i]);
 	}
 	
 
 	
 }
 
-static void Mag_Cal_Z(s16 mag_in[])
+static void MagCalUpdateZ(s16 mag_in[])
 {
-	max_t[Z] = _MAX(max_t[Z],mag_in[Z]);
-	min_t[Z] = _MIN(min_t[Z],mag_in[Z]);
+	s_mag_max_raw[Z] = _MAX(s_mag_max_raw[Z],mag_in[Z]);
+	s_mag_min_raw[Z] = _MIN(s_mag_min_raw[Z],mag_in[Z]);
 }
 
-static u8 mag_cal_step;
+static u8 s_mag_cal_step;
 
 void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,float gyro_deg_z)
 {	
-	static u16 cali_cnt;
-	static float mag_cal_angle[2];
-	float t_length;
+	static u16 s_mag_cal_timeout_ms;
+	static float s_mag_cal_angle_deg[2];
+	float field_strength;
 	
 	for(u8 i = 0;i<3;i++)
 	{
@@ -69,84 +74,84 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 ///////////////////cali//////////////////////////////////////////////////////	
 	if(mag.mag_CALIBRATE!= 0 && flag.unlock_sta == 0)
 	{	
-		switch(mag_cal_step)
+		switch(s_mag_cal_step)
 		{
 			case 0://第一步，水平旋转
 
-				Mag_Cal_XY(mag_in);			
+				MagCalUpdateXY(mag_in);			
 			
 				if(z_vec_z<0.985f)//+-10deg	
 				{
 					LED_STA.calMag = 100;
-					mag_cal_step = 1;
-					mag_cal_angle[0] = 0;
+					s_mag_cal_step = 1;
+					s_mag_cal_angle_deg[0] = 0;
 				}
 				else
 				{	
 					LED_STA.calMag = 1;
-					mag_cal_angle[0] += dT_ms *1e-3f *(gyro_deg_z); //角度积分，旋转360度
-					if(ABS(mag_cal_angle[0])>360)
+					s_mag_cal_angle_deg[0] += dT_ms *1e-3f *(gyro_deg_z); //角度积分，旋转360度
+					if(ABS(s_mag_cal_angle_deg[0])>360)
 					{
-						mag_cal_angle[0] = 0;
-						mag_cal_step = 2;
+						s_mag_cal_angle_deg[0] = 0;
+						s_mag_cal_step = 2;
 					}
 				}
 			break;
 			
 			case 1://error
 				
-				Mag_Cal_Reset(2);
-				mag_cal_angle[0] = 0;
-				mag_cal_step = 0;
+				MagCalReset(2);
+				s_mag_cal_angle_deg[0] = 0;
+				s_mag_cal_step = 0;
 			break;
 			
 			case 2://第二步，竖直旋转，机头朝下
 				LED_STA.calMag = 2;
 				if(z_vec_z<0.1f)//5.7deg
 				{
-					mag_cal_step = 3;
+					s_mag_cal_step = 3;
 				}
 			break;
 			
 			case 3:
 				mag.mag_CALIBRATE = 2;																					
 				
-				Mag_Cal_Z(mag_in);
+				MagCalUpdateZ(mag_in);
 
 				if(z_vec_z>0.17f)//10deg
 				{
 					LED_STA.calMag = 2;
-					mag_cal_step = 4;
-					mag_cal_angle[1] = 0;
+					s_mag_cal_step = 4;
+					s_mag_cal_angle_deg[1] = 0;
 				}
 				else
 				{
 					LED_STA.calMag = 3;
-					mag_cal_angle[1] += dT_ms *1e-3f *(gyro_deg_x);	//角度积分，旋转360度
-					if(ABS(mag_cal_angle[1])>360)
+					s_mag_cal_angle_deg[1] += dT_ms *1e-3f *(gyro_deg_x);	//角度积分，旋转360度
+					if(ABS(s_mag_cal_angle_deg[1])>360)
 					{
-						mag_cal_angle[1] = 0;
-						mag_cal_step = 5;
+						s_mag_cal_angle_deg[1] = 0;
+						s_mag_cal_step = 5;
 					}
 				}			
 			break;
 			
 			case 4://error_2，重新开始竖直旋转
-				Mag_Cal_Reset(1);
-				mag_cal_angle[1] = 0;
-				mag_cal_step = 2;				
+				MagCalReset(1);
+				s_mag_cal_angle_deg[1] = 0;
+				s_mag_cal_step = 2;				
 			break;
 			
 			case 5:
 				for(u8 i = 0;i<3;i++)
 				{
-					save.mag_offset[i] = 0.5f *(max_t[i] + min_t[i]);		//中值校准
-					save.mag_gain[i] = safe_div(200.0f ,(0.5f *(max_t[i] - min_t[i])),0);		//幅值校准
+					save.mag_offset[i] = 0.5f *(s_mag_max_raw[i] + s_mag_min_raw[i]);		//中值校准
+					save.mag_gain[i] = safe_div(200.0f ,(0.5f *(s_mag_max_raw[i] - s_mag_min_raw[i])),0);		//幅值校准
 				}
 				
-				Mag_Cal_Reset(3);		
-				mag_cal_angle[0] = mag_cal_angle[1] = 0;		
-				mag_cal_step = 0;
+				MagCalReset(3);		
+				s_mag_cal_angle_deg[0] = s_mag_cal_angle_deg[1] = 0;		
+				s_mag_cal_step = 0;
 				mag.mag_CALIBRATE = 0;			
 				LED_STA.calMag = 0;
 				
@@ -157,18 +162,18 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 		}
 		
 		
-		if(mag_cal_step == 0 || mag_cal_step == 3)
+		if(s_mag_cal_step == 0 || s_mag_cal_step == 3)
 		{
 			//长时间出错，退出校准逻辑
-			if(cali_cnt<15000)
+			if(s_mag_cal_timeout_ms<15000)
 			{
-				cali_cnt+= dT_ms;
+				s_mag_cal_timeout_ms+= dT_ms;
 				
 			}
 			else////校准错误
 			{
 				LED_STA.errOneTime = 1;
-				cali_cnt = 0;
+				s_mag_cal_timeout_ms = 0;
 				LED_STA.calMag = 0;				
 				mag.mag_CALIBRATE = 0;
 
@@ -176,19 +181,19 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 		}
 		else
 		{
-			cali_cnt = 0;
+			s_mag_cal_timeout_ms = 0;
 		}
 	}
 	else
 	{
 														//if(LED_state ==4 || LED_state ==5) LED_state = 0;
 		
-		mag_cal_step = 0;
+		s_mag_cal_step = 0;
 		
 //////////////////////////////////////////////	
-		t_length = my_3_norm(mag.val[X],mag.val[Y],mag.val[Z]);
+		field_strength = my_3_norm(mag.val[X],mag.val[Y],mag.val[Z]);
 		
-		if(t_length<150||t_length>350)
+		if(field_strength<150||field_strength>350)
 		{
 			//state[3] |= (1<<3);//罗盘严重干扰
 																											//LED_state = 6;

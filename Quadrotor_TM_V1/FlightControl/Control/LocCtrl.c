@@ -8,9 +8,9 @@
 #include "UWB.h"
 
 /*
- * 模块：水平位置控制
- * 职责：融合 GPS、UWB、光流等源计算水平控制输出
- * 说明：不改变位置环算法与数据来源切换逻辑，仅整理注释。
+ * 模块名称：LocCtrl
+ * 模块职责：融合 GPS、UWB、光流等观测源，计算水平位置控制输出。
+ * 使用约束：控制算法、数据来源切换逻辑和坐标变换流程保持不变。
  */
 
 
@@ -26,13 +26,13 @@ _PID_arg_st loc_arg_1_fix[2] ;
 //位置速度环修正控制数据
 _PID_val_st loc_val_1_fix[2] ; 
 
-static u8 mode_f[2];
+static u8 s_loc_mode[2];
 
 /* 水平位置/速度环 PID 参数初始化 */
 void Loc_1level_PID_Init()
 {
 	//GPS
-	if(mode_f[1] == 2)
+	if(s_loc_mode[1] == 2)
 	{
 		//normal
 		loc_arg_1[X].kp = g_fc_param.set.pid_gps_loc_1level[KP];//0.22f  ;
@@ -52,7 +52,7 @@ void Loc_1level_PID_Init()
 		loc_arg_1_fix[Y] = loc_arg_1_fix[X];	
 	}
 	//OF
-	else if(mode_f[1] == 1)
+	else if(s_loc_mode[1] == 1)
 	{
 		//normal
 		loc_arg_1[X].kp = g_fc_param.set.pid_loc_1level[KP];//0.22f  ;
@@ -72,7 +72,7 @@ void Loc_1level_PID_Init()
 		loc_arg_1_fix[Y] = loc_arg_1_fix[X];	
 	}
 	//UWB 、UWB AND OF
-	else if(mode_f[1] == 3 || mode_f[1] == 4)
+	else if(s_loc_mode[1] == 3 || s_loc_mode[1] == 4)
 	{
 		//normal
 		loc_arg_1[X].kp = g_fc_param.set.pid_loc_1level[KP];//0.22f  ;
@@ -120,11 +120,11 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 	//仅有UWB(暂无)
 	if(switchs.uwb_on && (!switchs.of_flow_on) && (!switchs.gps_on))
 	{
-		mode_f[1] = 3;
-		if(mode_f[1] != mode_f[0])
+		s_loc_mode[1] = 3;
+		if(s_loc_mode[1] != s_loc_mode[0])
 		{
 			Loc_1level_PID_Init();
-			mode_f[0] = mode_f[1];
+			s_loc_mode[0] = s_loc_mode[1];
 		}	
 		//==
 		////
@@ -135,11 +135,11 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 	//仅有光流和UWB
 	else if(switchs.uwb_on && switchs.of_flow_on && (!switchs.gps_on))
 	{
-		mode_f[1] = 4;
-		if(mode_f[1] != mode_f[0])
+		s_loc_mode[1] = 4;
+		if(s_loc_mode[1] != s_loc_mode[0])
 		{
 			Loc_1level_PID_Init();
-			mode_f[0] = mode_f[1];
+			s_loc_mode[0] = s_loc_mode[1];
 		}	
 		//==	
 		//期望赋值
@@ -203,11 +203,11 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 	//仅有光流
 	else if(switchs.of_flow_on && (!switchs.gps_on))
 	{
-		mode_f[1] = 1;
-		if(mode_f[1] != mode_f[0])
+		s_loc_mode[1] = 1;
+		if(s_loc_mode[1] != s_loc_mode[0])
 		{
 			Loc_1level_PID_Init();
-			mode_f[0] = mode_f[1];
+			s_loc_mode[0] = s_loc_mode[1];
 		}
 		////
 		loc_ctrl_1.exp[X] = fs.speed_set_h[X];
@@ -264,11 +264,11 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 	//仅有GPS
 	else if (switchs.gps_on)
 	{
-		mode_f[1] = 2;
-		if(mode_f[1] != mode_f[0])
+		s_loc_mode[1] = 2;
+		if(s_loc_mode[1] != s_loc_mode[0])
 		{
 			Loc_1level_PID_Init();
-			mode_f[0] = mode_f[1];
+			s_loc_mode[0] = s_loc_mode[1];
 		}
 		////
 		for(u8 j = 0; j < 2; j++)
@@ -393,11 +393,11 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 	//姿态模式，直接用期望速度转为角度（期望角度）
 	else
 	{
-		mode_f[1] = 255;
-		if(mode_f[1] != mode_f[0])
+		s_loc_mode[1] = 255;
+		if(s_loc_mode[1] != s_loc_mode[0])
 		{
 			Loc_1level_PID_Init();
-			mode_f[0] = mode_f[1];
+			s_loc_mode[0] = s_loc_mode[1];
 		}
 		////
 		loc_ctrl_1.out[X] = (float)MAX_ANGLE/MAX_SPEED *fs.speed_set_h[X] ;

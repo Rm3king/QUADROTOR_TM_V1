@@ -11,11 +11,11 @@
 #include "Parameter.h"
 
 /*
- * 模块：高度控制
- * 职责：自动起降、高度环和高度速度环控制
- * 说明：仅整理注释和职责分区，不调整高度控制流程。
+ * 模块名称：AltCtrl
+ * 模块职责：执行自动起降、高度外环和高度速度内环控制。
+ * 使用约束：自动起降状态流、PID 结构和控制输出含义保持不变。
  */
-static s16 auto_taking_off_speed;
+static s16 s_auto_takeoff_speed_cmps;
 
 #define AUTO_TAKE_OFF_KP 2.0f
 ////extern _filter_1_st wz_spe_f1;
@@ -39,7 +39,7 @@ void Auto_Take_Off_Land_Task(u8 dT_ms)
 	}
 	else
 	{
-		auto_taking_off_speed = 0;	
+		s_auto_takeoff_speed_cmps = 0;	
 		flag.auto_take_off_land = AUTO_TAKE_OFF_NULL;	
 	}
 ////////////////
@@ -50,9 +50,9 @@ void Auto_Take_Off_Land_Task(u8 dT_ms)
 		s16 max_take_off_vel = LIMIT(g_fc_param.set.auto_take_off_speed,20,200);
 		//
 		take_off_ok_cnt += dT_ms;
-		auto_taking_off_speed = AUTO_TAKE_OFF_KP *(g_fc_param.set.auto_take_off_height - wcz_hei_fus.out);
+		s_auto_takeoff_speed_cmps = AUTO_TAKE_OFF_KP *(g_fc_param.set.auto_take_off_height - wcz_hei_fus.out);
 		//计算起飞速度
-		auto_taking_off_speed = LIMIT(auto_taking_off_speed,0,max_take_off_vel);
+		s_auto_takeoff_speed_cmps = LIMIT(s_auto_takeoff_speed_cmps,0,max_take_off_vel);
 		
 		//退出起飞流程条件1，满足高度或者流程时间大于5000毫秒。
 		if(take_off_ok_cnt>=5000 || (g_fc_param.set.auto_take_off_height - loc_ctrl_2.exp[Z] <2))//(auto_ref_height>AUTO_TAKE_OFF_HEIGHT)
@@ -74,7 +74,7 @@ void Auto_Take_Off_Land_Task(u8 dT_ms)
 		
 		if(flag.auto_take_off_land ==AUTO_TAKE_OFF_FINISH)
 		{
-			auto_taking_off_speed = 0;
+			s_auto_takeoff_speed_cmps = 0;
 			
 		}
 		
@@ -86,7 +86,7 @@ void Auto_Take_Off_Land_Task(u8 dT_ms)
 	if(flag.auto_take_off_land == AUTO_LAND)
 	{
 		//设置自动下降速度
-		auto_taking_off_speed = -(s16)LIMIT(g_fc_param.set.auto_landing_speed,20,200);
+		s_auto_takeoff_speed_cmps = -(s16)LIMIT(g_fc_param.set.auto_landing_speed,20,200);
 
 	}
 }
@@ -114,7 +114,7 @@ void Alt_2level_Ctrl(float dT_s)
 {
 	Auto_Take_Off_Land_Task(1000*dT_s);
 	
-	fs.alt_ctrl_speed_set = fs.speed_set_h[Z] + auto_taking_off_speed;
+	fs.alt_ctrl_speed_set = fs.speed_set_h[Z] + s_auto_takeoff_speed_cmps;
 	//
 	loc_ctrl_2.exp[Z] += fs.alt_ctrl_speed_set *dT_s;
 	loc_ctrl_2.exp[Z] = LIMIT(loc_ctrl_2.exp[Z],loc_ctrl_2.fb[Z]-200,loc_ctrl_2.fb[Z]+200);

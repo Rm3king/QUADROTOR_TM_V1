@@ -1,5 +1,5 @@
-#ifndef __ATT_CTRL_H
-#define __ATT_CTRL_H
+#ifndef __ATT_CTRL_H__
+#define __ATT_CTRL_H__
 #include "FcData.h"
 #include "Filter.h"
 #include "Math.h"

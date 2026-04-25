@@ -1,3 +1,8 @@
+/*
+ * 模块名称：Power
+ * 模块职责：更新电池电压估计，并据此刷新低压与返航相关状态。
+ * 使用约束：ADC 触发顺序、电压滤波节奏和阈值判定保持不变。
+ */
 #include "Power.h"
 #include "Parameter.h"
 #include "Filter.h"
@@ -6,36 +11,36 @@
 #include "LED.h"
 
 float Plane_Votage = 0;
-static float voltage_f = 30000;
-static u8 voltage_init_ok;
+static float s_voltage_lpf_mv = 30000;
+static u8 s_voltage_ready;
 void Power_UpdateTask(u8 dT_ms)
 {
-	static s16 voltage_s16;
-	float cut_off_freq;
+	static s16 s_voltage_sample_mv;
+	float cutoff_hz;
 	//触发ADC采样
 	Drv_Adc0Trigger();
 	//赋值电压数据
-	voltage_s16 = Voltage*1000;
+	s_voltage_sample_mv = Voltage * 1000;
 	
-	if(voltage_init_ok == 0)
+	if(s_voltage_ready == 0)
 	{
-		cut_off_freq = 2.0f;
+		cutoff_hz = 2.0f;
 		
-		if(voltage_f >2000 && ABS(voltage_s16 - voltage_f) <200)
+		if(s_voltage_lpf_mv > 2000 && ABS(s_voltage_sample_mv - s_voltage_lpf_mv) < 200)
 		{
-			voltage_init_ok = 1;
+			s_voltage_ready = 1;
 		}
 	}	
 	else
 	{
-		cut_off_freq = 0.02f;
+		cutoff_hz = 0.02f;
 	}
 	
-	LPF_1_(cut_off_freq,dT_ms*1e-3f,voltage_s16,voltage_f);
+	LPF_1_(cutoff_hz, dT_ms * 1e-3f, s_voltage_sample_mv, s_voltage_lpf_mv);
 	
 
 	
-	Plane_Votage = voltage_f *0.001f;
+	Plane_Votage = s_voltage_lpf_mv * 0.001f;
 //	Plane_Votage = 15;
 
 
