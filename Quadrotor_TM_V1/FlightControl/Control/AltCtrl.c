@@ -100,7 +100,8 @@ void Alt_2level_Ctrl(float dT_s)
 	loc_ctrl_2.exp[Z] += fs.alt_ctrl_speed_set *dT_s;
 	loc_ctrl_2.exp[Z] = LIMIT(loc_ctrl_2.exp[Z],loc_ctrl_2.fb[Z]-200,loc_ctrl_2.fb[Z]+200);
 	//
-	loc_ctrl_2.fb[Z] = (s32)wcz_hei_fus.out;/	if(fs.alt_ctrl_speed_set != 0)
+	loc_ctrl_2.fb[Z] = (s32)wcz_hei_fus.out;
+	if(fs.alt_ctrl_speed_set != 0)
 	{
 		flag.ct_alt_hold = 0;
 	}
