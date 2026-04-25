@@ -72,7 +72,6 @@ void Drv_Uart1TxCheck(void)
 	while( (s_uart1_tx_read_idx != s_uart1_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART0_BASE,s_uart1_tx_buf[s_uart1_tx_read_idx])) )
 		s_uart1_tx_read_idx++;
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////
 u8 s_uart2_tx_buf[256];
 u8 s_uart2_tx_write_idx = 0;
 u8 s_uart2_tx_read_idx = 0;
@@ -131,7 +130,6 @@ void Drv_Uart2TxCheck(void)
 	while( (s_uart2_tx_read_idx != s_uart2_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART4_BASE,s_uart2_tx_buf[s_uart2_tx_read_idx])) )
 		s_uart2_tx_read_idx++;
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////
 u8 s_uart3_tx_buf[256];
 u8 s_uart3_tx_write_idx = 0;
 u8 s_uart3_tx_read_idx = 0;
@@ -190,7 +188,6 @@ void Drv_Uart3TxCheck(void)
 	while( (s_uart3_tx_read_idx != s_uart3_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART2_BASE,s_uart3_tx_buf[s_uart3_tx_read_idx])) )
 		s_uart3_tx_read_idx++;
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "OF.h"
 #include "Drv_UP_Flow.h"
 u8 s_uart4_tx_buf[256];
@@ -208,27 +205,7 @@ void UART4_IRQHandler(void)
 	while(ROM_UARTCharsAvail(UART7_BASE))		
 	{			
 		com_data=ROM_UARTCharGet(UART7_BASE);
-		
-//		UARTCharPut(UART7_BASE, com_data); //DDD，将收到的数据发回去，用来测试串口		
-		//匿名光流解析
-//		if(of_init_type!=2)
-//		{
-		
-		
-		//------------------------------
-		//匿名光流解析函数
-			//OFGetByte(com_data);
-		
-			//新光流解析函数 写在原来优像光流处
-			OFGetByte(com_data);
-		//------------------------------		
-		
-//		}
-//		//优像光流解析
-//		if(of_init_type!=1)
-//		{
-//			OFGetByte(com_data);
-//		}
+		OFGetByte(com_data);
 	}
 	if(flag & UART_INT_TX)
 	{
@@ -271,7 +248,6 @@ void Drv_Uart4TxCheck(void)
 	while( (s_uart4_tx_read_idx != s_uart4_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART7_BASE,s_uart4_tx_buf[s_uart4_tx_read_idx])) )
 		s_uart4_tx_read_idx++;
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////
 u8 s_uart5_tx_buf[256];
 u8 s_uart5_tx_write_idx = 0;
 u8 s_uart5_tx_read_idx = 0;
@@ -334,4 +310,3 @@ void Drv_Uart5TxCheck(void)
 	while( (s_uart5_tx_read_idx != s_uart5_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART5_BASE,s_uart5_tx_buf[s_uart5_tx_read_idx])) )
 		s_uart5_tx_read_idx++;
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////

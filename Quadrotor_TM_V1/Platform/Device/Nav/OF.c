@@ -35,12 +35,6 @@ static u8 _data_cnt = 0;
 
 void AnoOF_DataAnl_Task(u8 dT_ms)
 {
-//	if(anoof_data_ok)
-//	{
-//		anoof_data_ok = 0;
-//		AnoOF_DataAnl(_datatemp,_data_cnt+5);
-//	}
-	
 	AnoOF_Check(dT_ms);
 }
 

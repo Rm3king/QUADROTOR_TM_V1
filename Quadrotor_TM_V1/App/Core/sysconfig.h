@@ -17,18 +17,17 @@ typedef	int8_t 		s8;
 #include "pin_map.h"
 #include "Drv_Bsp.h"
 
-//======
+/* ???????????? */
 #define Delay_ms MyDelayMs
 #define ANO_DT_USE_USART2
 //#define ANO_DT_USE_USB
-//======
 #define HW_TYPE	05
 #define HW_VER	1
 #define SOFT_VER 26
 #define BL_VER	0
 #define PT_VER	400
 
-//======
+/* ?? LED ?????? */
 #define LED_R	0x01
 #define LED_G	0x02
 #define LED_B	0x04
