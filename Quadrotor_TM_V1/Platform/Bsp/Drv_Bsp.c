@@ -18,9 +18,7 @@
 #include "FcUsbCdc.h"
 #include "Drv_UP_Flow.h"
 #include "Drv_laser.h"
-
 static uint64_t SysRunTimeMs = 0;
-
 void SysTick_Init(void )
 {
 	ROM_SysTickPeriodSet(ROM_SysCtlClockGet()/1000);
@@ -39,12 +37,10 @@ uint32_t GetSysRunTimeUs(void)
 {
 	return SysRunTimeMs*1000 + (SysTick->LOAD - SysTick->VAL) * 1000 / SysTick->LOAD;
 }
-
 void MyDelayMs(u32 time)
 {
 	ROM_SysCtlDelay(80000 * time /3);
 }
-
 void Drv_SenserCsPinInit(void)
 {
 	Drv_Icm20602CSPinInit();
@@ -55,7 +51,6 @@ void Drv_SenserCsPinInit(void)
 	ROM_GPIOPinTypeGPIOOutput(FLASH_CS_PORT,FLASH_CS_PIN);
 	ROM_GPIOPinWrite(FLASH_CS_PORT, FLASH_CS_PIN,FLASH_CS_PIN);
 }
-
 u8 of_init_type;
 void Drv_BspInit(void)
 {
@@ -80,7 +75,6 @@ void Drv_BspInit(void)
 	
 	//遥控接收模式初始化
 	Remote_Control_Init();
-
 	//spi通信初始化
 	Drv_Spi0Init();
 	Drv_SenserCsPinInit();
@@ -100,27 +94,11 @@ void Drv_BspInit(void)
 	//
 	Drv_UartOpenMv_Init(500000);  //接OPMV
 	Drv_GpsPin_Init();//
+	/* 当前默认使用新光流串口配置，of_init_type 仅用于兼容原状态标记。 */
 	
-	//Drv_UartOpticalFlow_Init(500000);	//接匿名光流
 	Drv_UartOpticalFlow_Init(115200);	//接新光流
 	//	
-//	Drv_UartOpticalFlow_Init(19200);	//接优像光流
-//	Drv_UartLaser_Init(115200);//接大功率激光	
-////	MyDelayMs(200);	
 //	//优像光流初始化
-//	of_init_type = (Drv_OFInit()==0)?0:2;
-//	if(of_init_type==2)//优像光流初始化成功
-//	{
-//		//大功率激光初始化
-//		Drv_Laser_Init();	
-//	}
-//	else if(of_init_type==0)//优像光流初始化失败
-//	{
-//		Drv_UartOpticalFlow_Init(500000);	//接匿名光流
-//	}
-
-
-	//====fc
 	//飞控传感器计算初始化
 	Sensor_Basic_Init();	
 	//飞控PID初始化
@@ -128,7 +106,3 @@ void Drv_BspInit(void)
 	//电机输出初始化
 	Drv_PwmOutInit();
 }
-
-
-
-

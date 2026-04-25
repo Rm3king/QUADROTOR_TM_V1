@@ -7,13 +7,9 @@
 #include "Drv_Uart.h"
 #include "Drv_gps.h"
 #include "Imu.h"
-
-
 #define GPS_UART	USART1
-
 GPS_INF Gps_information;
 unsigned short len;
-
 /* 计算 UBX 协议校验 */
 unsigned char GPS_ubx_check_sum(unsigned char *Buffer)
 {
@@ -39,7 +35,6 @@ unsigned char GPS_ubx_check_sum(unsigned char *Buffer)
 		return 0;
 	}
 }
-
 static void UART_Write_D(const unsigned char *send_buff, unsigned char len)
 {
 //	unsigned char i;
@@ -52,15 +47,11 @@ static void UART_Write_D(const unsigned char *send_buff, unsigned char len)
 	//
 	Drv_UartGps_SendBuf((u8 *)send_buff, len);
 }
-
-
-
 const unsigned char gps_petrol_out_config[28]=
 {
 //	0xB5,0x62,0x06,0x00,0x14,0x00,0x01,0x00,0x00,0x00,0xD0,0x08,0x00,0x00,0x80,0x25,0x00,0x00,0x07,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0xA0,0xA9
 	0xB5,0x62,0x06,0x00,0x14,0x00,0x01,0x00,0x00,0x00,0xD0,0x08,0x00,0x00,0x00,0xC2,0x01,0x00,0x01,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0xB8,0x42
 };
-
 const unsigned char gps_pvt_out_config[90]=
 {
 	0xB5,0x62,0x06,0x01,0x08,0x00,0x01,0x07,0x00,0x01,0x00,0x00,0x00,0x00,0x18,0xE1,
@@ -70,43 +61,34 @@ const unsigned char gps_pvt_out_config[90]=
 	0xB5,0x62,0x06,0x01,0x08,0x00,0x01,0x06,0x00,0x00,0x00,0x00,0x00,0x00,0x16,0xD5,
 	0xB5,0x62,0x06,0x01,0x08,0x00,0x01,0x12,0x00,0x00,0x00,0x00,0x00,0x00,0x22,0x29
 };
-
 const unsigned char gps_rate_out_config[16]=
 {
 	0xB5,0x62,0x06,0x08,0x06,0x00,0x64,0x00,0x01,0x00,0x01,0x00,0x7A,0x12  //len 14
 };
-
 const unsigned char Enter_Send[]={0xB5,0x62,0x06,0x00,0x01,0x00,0x01,0x08,0x22};
-
 /* 配置 GPS 输出波特率 */
 void gps_baudrate_config(void)
 {
 	Delay_ms(200);
 //		UART_Write_D(gps_rate_out_config,14);
 	UART_Write_D(gps_petrol_out_config,28);
-
 	UART_Write_D(Enter_Send,sizeof(Enter_Send));
 		Delay_ms(20);
 }
-
 /* 配置 GPS 输出报文 */
 void gps_config(void)
 {
 	Delay_ms(100);
-
 	UART_Write_D(gps_pvt_out_config,90);
 		Delay_ms(20);
-
 	UART_Write_D(gps_rate_out_config,14);
 		Delay_ms(20);
-
 //	UART_Write_D(gps_petrol_out_config,28);
 //		Delay_ms(20);
 	
 	UART_Write_D(Enter_Send,sizeof(Enter_Send));
 		Delay_ms(20);
 }
-
 #define BYTE0(dwTemp)       ( *( (char *)(&dwTemp)		) )
 #define BYTE1(dwTemp)       ( *( (char *)(&dwTemp) + 1) )
 #define BYTE2(dwTemp)       ( *( (char *)(&dwTemp) + 2) )
@@ -117,38 +99,6 @@ extern void ANO_DT_Send_Data(u8 *dataToSend , u8 length);
 short Gps_send_Temp[10];
 float wcx_acc_use;		
 float wcy_acc_use;
-
-//void ANO_DT_Send_Gps_data(void)
-//{
-//	u8 _cnt=0;
-//	vs16 _temp;
-//	
-//	data_to_send[_cnt++]=0xAA;
-//	data_to_send[_cnt++]=0xAA;
-//	data_to_send[_cnt++]=0xF1;
-//	data_to_send[_cnt++]=8;
-//	
-//	_temp = (short)(Gps_send_Temp[0]);
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-//	_temp = (short)(Gps_send_Temp[1]);
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-//	_temp = (short)(Gps_send_Temp[2]);
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-//	_temp = (short)(Gps_send_Temp[3]);
-//	data_to_send[_cnt++]=BYTE1(_temp);
-//	data_to_send[_cnt++]=BYTE0(_temp);
-//	
-//	u8 sum = 0;
-//	for(u8 i=0;i<_cnt;i++)
-//		sum += data_to_send[i];
-//	data_to_send[_cnt++]=sum;
-//	
-//	ANO_DT_Send_Data(data_to_send, _cnt);
-//}
-
 /* 初始化 GPS 引脚与串口 */
 void Drv_GpsPin_Init(void)
 {
@@ -160,10 +110,8 @@ void Drv_GpsPin_Init(void)
 	Drv_UartGps_Init(115200);
 	gps_config();
 }
-
 unsigned char GPS_data_buff[100];
 unsigned char GPS_get_cnt = 0;
-
 /* 解析 GPS 缓冲区数据 */
 void GPS_data_analysis(void)
 {
@@ -178,7 +126,6 @@ void GPS_data_analysis(void)
 	
 	Gps_information.N_vel /=10;								//单位换算 cm/s
 	Gps_information.E_vel /=10;								//单位换算 cm/s	
-
 	if (Gps_information.satellite_num >= 6 && Gps_information.new_pos_get == 0)			//卫星数量到达6颗,且第一次获取经纬度点
 	{
 		Gps_information.new_pos_get = 1;
@@ -186,7 +133,6 @@ void GPS_data_analysis(void)
 		Gps_information.start_latitude  = Gps_information.latitude;
 		Gps_information.hope_latitude  = 0;
 		Gps_information.hope_longitude = 0;
-
 	}
 	
 	if (Gps_information.new_pos_get)
@@ -194,10 +140,8 @@ void GPS_data_analysis(void)
 		Gps_information.latitude_offset  = Gps_information.latitude  - Gps_information.start_latitude;
 		Gps_information.longitude_offset = Gps_information.longitude - Gps_information.start_longitude;
 	}
-
 	Gps_information.run_heart++;	
 }
-
 /* 接收一个 GPS 字节 */
 void Drv_GpsGetOneByte(u8 data)
 {
@@ -236,63 +180,12 @@ void Drv_GpsGetOneByte(u8 data)
 		}
 	}			
 }
-
-//void Uart1_GPS_IRQ(void)  
-//{  
-////	unsigned char RX_dat;  
-
-////	if ( GPS_UART->SR & USART_SR_ORE ) //ORE??
-////    {
-////        RX_dat = GPS_UART->DR;
-////    }
-////	
-////	if(USART_GetITStatus(GPS_UART,USART_IT_RXNE)==SET)//USART_IT_RXNE: 接收中断  ////	{   
-////		USART_ClearITPendingBit(GPS_UART,USART_IT_RXNE);  
-////		RX_dat=USART_ReceiveData(GPS_UART); 
-////		if (GPS_get_cnt == 0)
-////		{
-////			if (RX_dat == 0xB5)									//帧头1
-////			{
-////				GPS_data_buff[GPS_get_cnt] = RX_dat;
-////				GPS_get_cnt = 1;
-////			}
-////		}
-////		else if (GPS_get_cnt == 1)
-////		{
-////			if (RX_dat == 0x62)									//帧头2
-////			{
-////				GPS_data_buff[GPS_get_cnt] = RX_dat;
-////				GPS_get_cnt = 2;
-////			}
-////			else
-////			{
-////				GPS_get_cnt = 0;
-////			}
-////		}
-////		else
-////		{
-////			GPS_data_buff[GPS_get_cnt] = RX_dat;
-////			GPS_get_cnt++;
-////			if (GPS_get_cnt >= 100)
-////			{
-////				GPS_get_cnt = 0;
-////				
-////				if (GPS_ubx_check_sum(GPS_data_buff))			//GPS数据校验
-////				{
-////					GPS_data_analysis();						//GPS数据解析
-////				}
-////			}
-////		}			
-////	}	
 //} 
-
-
 void WCXY_Acc_Get_Task(void)//最小周期
 {
 	wcx_acc_use += 0.015f *(imu_data.w_acc[X] - wcx_acc_use);
 	wcy_acc_use += 0.015f *(imu_data.w_acc[Y] - wcy_acc_use);
 }
-
 static u8 home_locked;
 static u8 update_cnt = 10;
 void GPS_Data_Processing_Task(u8 dT_ms)
@@ -371,4 +264,3 @@ void GPS_Data_Processing_Task(u8 dT_ms)
 		}			
 	}
 }
-

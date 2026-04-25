@@ -1,18 +1,14 @@
 /*
- * ?????UWB
- * ??????? UWB ????????????????????????
- * ????????????????????????????
+ * 模块：UWB 数据解析
+ * 职责：接收并解析 UWB 定位数据，更新位置与速度观测量。
+ * 约束：保持当前报文格式、坐标含义和状态更新流程不变。
  */
-
 #include "UWB.h"
 #include "Imu.h"
 #include "FcData.h"
-
 #define fc_sta flag
-
 _uwb_data_st uwb_data;
-
-/* ?????????? UWB ??? */
+/* UWB 接收缓冲区。 */
 static u8 UWB_RxBuffer[256],UWB_data_len = 0,UWB_Data_OK;
 void UWB_GetByte(u8 data)
 {
@@ -65,13 +61,11 @@ void UWB_GetByte(u8 data)
 				UWB_RxBuffer[i] = _rx_buf[i];
 			UWB_data_len = _rx_buf_len+1;
 			UWB_Data_OK = 1;
-
 		}
 	}
 	else
 		_sta = 0;
 }
-
 /**********************************************************************************************************
 *函 数 名: UWB_GetDataTask
 *功能说明: UWB数据获取任务
@@ -115,7 +109,6 @@ void UWB_GetDataTask(u8 dT_ms)
 	}
 	
 }
-
 /**********************************************************************************************************
 *函 数 名: UWB_DataCalcTask
 *功能说明: UWB数据计算任务
@@ -132,7 +125,6 @@ void UWB_DataCalcTask(u8 dT_ms)
 		uwb_data.init_ok = 0;
 		uwb_data.ref_dir[X] = imu_data.hx_vec[X];
 		uwb_data.ref_dir[Y] = imu_data.hx_vec[Y];
-
 	}
 	else
 	{

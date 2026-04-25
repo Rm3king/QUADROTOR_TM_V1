@@ -5,14 +5,12 @@
  */
 #include "drv_spl06.h"
 #include "Drv_spi.h"
-
 void Drv_SPL06CSPinInit ( void )
 {
     ROM_SysCtlPeripheralEnable(SPL_CSPIN_SYSCTL);
 	ROM_GPIOPinTypeGPIOOutput(SPL06_CS_PORT,SPL06_CS_PIN);
 	ROM_GPIOPinWrite(SPL06_CS_PORT, SPL06_CS_PIN,SPL06_CS_PIN);
 }
-
 static void spl06_enable ( u8 ena )
 {
     if(ena)
@@ -20,15 +18,10 @@ static void spl06_enable ( u8 ena )
 	else
 		ROM_GPIOPinWrite(SPL06_CS_PORT, SPL06_CS_PIN,SPL06_CS_PIN);
 }
-
 #define uint32 unsigned int
-
 static struct spl0601_t spl0601;
 static struct spl0601_t *p_spl0601;
-
 void spl0601_get_calib_param ( void );
-
-
 /*****************************************************************************
  函 数 名  : spl0601_write
  功能描述  : I2C 寄存器写入子函数
@@ -39,12 +32,10 @@ void spl0601_get_calib_param ( void );
  返 回 值  :
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月30日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 static void spl0601_write ( unsigned char regadr, unsigned char val )
 {
@@ -53,7 +44,6 @@ static void spl0601_write ( unsigned char regadr, unsigned char val )
     Drv_Spi0SingleWirteAndRead ( val );
     spl06_enable ( 0 );
 }
-
 /*****************************************************************************
  函 数 名  : spl0601_read
  功能描述  : I2C 寄存器读取子函数
@@ -63,12 +53,10 @@ static void spl0601_write ( unsigned char regadr, unsigned char val )
  返 回 值  : uint8 读出值
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月30日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 static u8 spl0601_read ( unsigned char regadr )
 {
@@ -89,12 +77,10 @@ static u8 spl0601_read ( unsigned char regadr )
  返 回 值  : 无
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月24日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 void spl0601_rateset ( u8 iSensor, u8 u8SmplRate, u8 u8OverSmpl )
 {
@@ -162,7 +148,6 @@ void spl0601_rateset ( u8 iSensor, u8 u8SmplRate, u8 u8OverSmpl )
         i32kPkT = 524288;
         break;
     }
-
     if ( iSensor == 0 )
     {
         p_spl0601->i32kP = i32kPkT;
@@ -183,7 +168,6 @@ void spl0601_rateset ( u8 iSensor, u8 u8SmplRate, u8 u8OverSmpl )
             spl0601_write ( 0x09, reg | 0x08 );
         }
     }
-
 }
 /*****************************************************************************
  函 数 名  : spl0601_get_calib_param
@@ -193,12 +177,10 @@ void spl0601_rateset ( u8 iSensor, u8 u8SmplRate, u8 u8OverSmpl )
  返 回 值  :
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月30日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 void spl0601_get_calib_param ( void )
 {
@@ -247,18 +229,15 @@ void spl0601_get_calib_param ( void )
  返 回 值  :
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月30日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 void spl0601_start_temperature ( void )
 {
     spl0601_write ( 0x08, 0x02 );
 }
-
 /*****************************************************************************
  函 数 名  : spl0601_start_pressure
  功能描述  : 发起一次压力值测量
@@ -267,18 +246,15 @@ void spl0601_start_temperature ( void )
  返 回 值  :
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月30日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 void spl0601_start_pressure ( void )
 {
     spl0601_write ( 0x08, 0x01 );
 }
-
 /*****************************************************************************
  函 数 名  : spl0601_start_continuous
  功能描述  : Select node for the continuously measurement
@@ -287,12 +263,10 @@ void spl0601_start_pressure ( void )
  返 回 值  :
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月25日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 void spl0601_start_continuous ( u8 mode )
 {
@@ -306,25 +280,20 @@ void spl0601_start_continuous ( u8 mode )
  返 回 值  :
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月30日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 void spl0601_get_raw_temp ( void )
 {
     u8 h[3] = {0};
-
     h[0] = spl0601_read ( 0x03 );
     h[1] = spl0601_read ( 0x04 );
     h[2] = spl0601_read ( 0x05 );
-
     p_spl0601->i32rawTemperature = ( int32_t ) h[0] << 16 | ( int32_t ) h[1] << 8 | ( int32_t ) h[2];
     p_spl0601->i32rawTemperature = ( p_spl0601->i32rawTemperature & 0x800000 ) ? ( 0xFF000000 | p_spl0601->i32rawTemperature ) : p_spl0601->i32rawTemperature;
 }
-
 /*****************************************************************************
  函 数 名  : spl0601_get_raw_pressure
  功能描述  : 获取压力原始值，并转换成32bits整数
@@ -333,21 +302,17 @@ void spl0601_get_raw_temp ( void )
  返 回 值  :
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月30日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 void spl0601_get_raw_pressure ( void )
 {
     u8 h[3];
-
     h[0] = spl0601_read ( 0x00 );
     h[1] = spl0601_read ( 0x01 );
     h[2] = spl0601_read ( 0x02 );
-
     p_spl0601->i32rawPressure = ( int32_t ) h[0] << 16 | ( int32_t ) h[1] << 8 | ( int32_t ) h[2];
     p_spl0601->i32rawPressure = ( p_spl0601->i32rawPressure & 0x800000 ) ? ( 0xFF000000 | p_spl0601->i32rawPressure ) : p_spl0601->i32rawPressure;
 }
@@ -359,12 +324,10 @@ void spl0601_get_raw_pressure ( void )
  返 回 值  :
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月30日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 //u8 test_spi[5];
 u8 Drv_Spl0601Init ( void )
@@ -375,11 +338,8 @@ u8 Drv_Spl0601Init ( void )
     p_spl0601->chip_id = spl0601_read ( 0x0D );// 0x34  0x10
 	
     spl0601_get_calib_param();
-
     spl0601_rateset ( PRESSURE_SENSOR, 128, 16 );
-
     spl0601_rateset ( TEMPERATURE_SENSOR, 8, 8 );
-
     spl0601_start_continuous ( CONTINUOUS_P_AND_T );
 	
 	if(p_spl0601->chip_id == 0x10)
@@ -403,23 +363,19 @@ u8 Drv_Spl0601Init ( void )
  返 回 值  :
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月30日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 float spl0601_get_temperature ( void )
 {
     float fTCompensate;
     float fTsc;
-
     fTsc = p_spl0601->i32rawTemperature / ( float ) p_spl0601->i32kT;
     fTCompensate =  p_spl0601->calib_param.c0 * 0.5 + p_spl0601->calib_param.c1 * fTsc;
     return fTCompensate;
 }
-
 /*****************************************************************************
  函 数 名  : spl0601_get_pressure
  功能描述  : 在获取原始值的基础上，返回浮点校准后的压力值
@@ -428,62 +384,39 @@ float spl0601_get_temperature ( void )
  返 回 值  :
  调用函数  :
  被调函数  :
-
  修改历史      :
   1.日    期   : 2015年11月30日
     作    者   : WL
     修改内容   : 新生成函数
-
 *****************************************************************************/
 float spl0601_get_pressure ( void )
 {
     float fTsc, fPsc;
     float qua2, qua3;
     float fPCompensate;
-
     fTsc = p_spl0601->i32rawTemperature / ( float ) p_spl0601->i32kT;
     fPsc = p_spl0601->i32rawPressure / ( float ) p_spl0601->i32kP;
     qua2 = p_spl0601->calib_param.c10 + fPsc * ( p_spl0601->calib_param.c20 + fPsc * p_spl0601->calib_param.c30 );
     qua3 = fTsc * fPsc * ( p_spl0601->calib_param.c11 + fPsc * p_spl0601->calib_param.c21 );
     //qua3 = 0.9f *fTsc * fPsc * (p_spl0601->calib_param.c11 + fPsc * p_spl0601->calib_param.c21);
-
     fPCompensate = p_spl0601->calib_param.c00 + fPsc * qua2 + fTsc * p_spl0601->calib_param.c01 + qua3;
     //fPCompensate = p_spl0601->calib_param.c00 + fPsc * qua2 + 0.9f *fTsc  * p_spl0601->calib_param.c01 + qua3;
     return fPCompensate;
 }
-
-
-
 float baro_Offset, alt_3, height;
 unsigned char baro_start;
 float temperature, alt_high;
 float baro_pressure;
-
 float Drv_Spl0601_Read ( void )
 {
-
-
     spl0601_get_raw_temp();
     temperature = spl0601_get_temperature();
-
     spl0601_get_raw_pressure();
     baro_pressure = spl0601_get_pressure();
-
     //alt_high = powf((temp/101325),1/5.255f);
 /////////////////////////////////////////////////////////////
-
     alt_3 = ( 101400 - baro_pressure ) / 1000.0f;
     height = 0.82f * alt_3 * alt_3 * alt_3 + 0.09f * ( 101400 - baro_pressure ) * 100.0f ;
-
-
     alt_high = ( height - baro_Offset ) ; //cm +
-
-
-
-
-/////////////////////////////////////////////////////////////
-
-
-
     return alt_high;
 }

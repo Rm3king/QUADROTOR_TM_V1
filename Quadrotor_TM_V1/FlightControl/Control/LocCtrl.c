@@ -6,35 +6,25 @@
 #include "OF_DecoFusion.h"
 #include "Parameter.h"
 #include "UWB.h"
-
 /*
  * 模块名称：LocCtrl
  * 模块职责：融合 GPS、UWB、光流等观测源，计算水平位置控制输出。
  * 使用约束：控制算法、数据来源切换逻辑和坐标变换流程保持不变。
  */
-
-
 //位置速度环控制参数
 _PID_arg_st loc_arg_1[2] ; 
-
 //位置速度环控制数据
 _PID_val_st loc_val_1[2] ; 
-
 //位置速度环修正控制参数
 _PID_arg_st loc_arg_1_fix[2] ; 
-
 //位置速度环修正控制数据
 _PID_val_st loc_val_1_fix[2] ; 
-
 static u8 s_loc_mode[2];
-
 /* 水平位置/速度环 PID 参数初始化 */
 void Loc_1level_PID_Init()
 {
-	//GPS
 	if(s_loc_mode[1] == 2)
 	{
-		//normal
 		loc_arg_1[X].kp = g_fc_param.set.pid_gps_loc_1level[KP];//0.22f  ;
 		loc_arg_1[X].ki = 0  ;
 		loc_arg_1[X].kd_ex = 0.00f ;
@@ -42,7 +32,6 @@ void Loc_1level_PID_Init()
 		loc_arg_1[X].k_ff = 0.02f;
 		
 		loc_arg_1[Y] = loc_arg_1[X];
-		//fix	
 		loc_arg_1_fix[X].kp = 0.0f  ;
 		loc_arg_1_fix[X].ki = g_fc_param.set.pid_gps_loc_1level[KI] ;
 		loc_arg_1_fix[X].kd_ex = 0.00f;
@@ -51,10 +40,8 @@ void Loc_1level_PID_Init()
 		
 		loc_arg_1_fix[Y] = loc_arg_1_fix[X];	
 	}
-	//OF
 	else if(s_loc_mode[1] == 1)
 	{
-		//normal
 		loc_arg_1[X].kp = g_fc_param.set.pid_loc_1level[KP];//0.22f  ;
 		loc_arg_1[X].ki = 0.0f  ;
 		loc_arg_1[X].kd_ex = 0.00f ;
@@ -62,7 +49,6 @@ void Loc_1level_PID_Init()
 		loc_arg_1[X].k_ff = 0.02f;
 		
 		loc_arg_1[Y] = loc_arg_1[X];
-		//fix	
 		loc_arg_1_fix[X].kp = 0.0f  ;
 		loc_arg_1_fix[X].ki = g_fc_param.set.pid_loc_1level[KI] ;
 		loc_arg_1_fix[X].kd_ex = 0.00f;
@@ -74,7 +60,6 @@ void Loc_1level_PID_Init()
 	//UWB 、UWB AND OF
 	else if(s_loc_mode[1] == 3 || s_loc_mode[1] == 4)
 	{
-		//normal
 		loc_arg_1[X].kp = g_fc_param.set.pid_loc_1level[KP];//0.22f  ;
 		loc_arg_1[X].ki = 0.0f  ;
 		loc_arg_1[X].kd_ex = 0.00f ;
@@ -82,7 +67,6 @@ void Loc_1level_PID_Init()
 		loc_arg_1[X].k_ff = 0.02f;
 		
 		loc_arg_1[Y] = loc_arg_1[X];
-		//fix	
 		loc_arg_1_fix[X].kp = 0.0f  ;
 		loc_arg_1_fix[X].ki = g_fc_param.set.pid_loc_1level[KI] ;
 		loc_arg_1_fix[X].kd_ex = 0.00f;
@@ -94,15 +78,11 @@ void Loc_1level_PID_Init()
 	//
 	else
 	{
-		//null	
 	}
 	
-
 }
-
 _loc_ctrl_st loc_ctrl_1;
 static float fb_speed_fix[2];
-
 float vel_fb_d_lpf[2];
 float vel_fb_h[2],vel_fb_w[2];
 float vel_fb_fix_w[2];
@@ -115,7 +95,6 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 	unsigned char vel_diff = 5;
 	float pos_ctrl_h_out[2];
 	float pos_ctrl_w_out[2];
-
 	
 	//仅有UWB(暂无)
 	if(switchs.uwb_on && (!switchs.of_flow_on) && (!switchs.gps_on))
@@ -139,7 +118,6 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 			Loc_1level_PID_Init();
 			s_loc_mode[0] = s_loc_mode[1];
 		}	
-		//==	
 		//期望赋值
 		h2w_2d_trans(fs.speed_set_h,imu_data.hx_vec,loc_ctrl_1.exp);
 		//低通滤波
@@ -174,18 +152,17 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 										&loc_arg_1[i], //PID参数结构体
 										&loc_val_1[i],	//PID数据结构体
 										50,//积分误差限幅
-										10 *flag.taking_off			//integration limit，积分限幅
+										10 *flag.taking_off
 										 )	;	
 			
-			//fix
-			PID_calculate( dT_ms*1e-3f,            //周期（单位：秒）
+				PID_calculate( dT_ms*1e-3f,            //周期（单位：秒）
 										loc_ctrl_1.exp[i] ,				//前馈值
 										loc_ctrl_1.exp[i] ,				//期望值（设定值）
 										fb_speed_fix[i] ,			//反馈值（）
 										&loc_arg_1_fix[i], //PID参数结构体
 										&loc_val_1_fix[i],	//PID数据结构体
 										50,//积分误差限幅
-										10 *flag.taking_off			//integration limit，积分限幅
+										10 *flag.taking_off
 										 )	;	
 			
 			pos_ctrl_w_out[i] = loc_val_1[i].out + loc_val_1_fix[i].out;	//(PD)+(I)	
@@ -205,7 +182,6 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 			Loc_1level_PID_Init();
 			s_loc_mode[0] = s_loc_mode[1];
 		}
-		////
 		loc_ctrl_1.exp[X] = fs.speed_set_h[X];
 		loc_ctrl_1.exp[Y] = fs.speed_set_h[Y];
 		//
@@ -238,24 +214,21 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 										&loc_arg_1[i], //PID参数结构体
 										&loc_val_1[i],	//PID数据结构体
 										50,//积分误差限幅
-										10 *flag.taking_off			//integration limit，积分限幅
+										10 *flag.taking_off
 										 )	;	
 			
-			//fix
-			PID_calculate( dT_ms*1e-3f,            //周期（单位：秒）
+				PID_calculate( dT_ms*1e-3f,            //周期（单位：秒）
 										loc_ctrl_1.exp[i] ,				//前馈值
 										loc_ctrl_1.exp[i] ,				//期望值（设定值）
 										fb_speed_fix[i] ,			//反馈值（）
 										&loc_arg_1_fix[i], //PID参数结构体
 										&loc_val_1_fix[i],	//PID数据结构体
 										50,//积分误差限幅
-										10 *flag.taking_off			//integration limit，积分限幅
+										10 *flag.taking_off
 										 )	;	
 			
 			loc_ctrl_1.out[i] = loc_val_1[i].out + loc_val_1_fix[i].out;	//(PD)+(I)	
 		}		
-
-
 	}
 	//仅有GPS
 	else if (switchs.gps_on)
@@ -266,7 +239,6 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 			Loc_1level_PID_Init();
 			s_loc_mode[0] = s_loc_mode[1];
 		}
-		////
 		for(u8 j = 0; j < 2; j++)
 		{
 			if (fs.speed_set_h[j] != 0)				//判读是否动控制摇杆
@@ -344,7 +316,6 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 		
 		loc_ctrl_1.exp[X] =  ne_pos_control[0]*g_fc_param.set.pid_gps_loc_2level[KP] + loc_hand_exp_vel[X]*imu_data.hx_vec[0] - loc_hand_exp_vel[Y]*imu_data.hx_vec[1];		//期望速度（航向坐标转换到世界坐标NED）
 		loc_ctrl_1.exp[Y] = -ne_pos_control[1]*g_fc_param.set.pid_gps_loc_2level[KP] + loc_hand_exp_vel[X]*imu_data.hx_vec[1] + loc_hand_exp_vel[Y]*imu_data.hx_vec[0];		
-
 		loc_ctrl_1.fb[X] =  (Gps_information.last_N_vel) + (wcx_acc_use*0.2f);			//速度反馈+加速度提前
 		loc_ctrl_1.fb[Y] = -(Gps_information.last_E_vel) + (wcy_acc_use*0.2f);
 		
@@ -360,18 +331,17 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 										&loc_arg_1[i], //PID参数结构体
 										&loc_val_1[i],	//PID数据结构体
 										50,//积分误差限幅
-										10 *flag.taking_off			//integration limit，积分限幅
+										10 *flag.taking_off
 										 )	;		
 			
-			//fix
-			PID_calculate( dT_ms*1e-3f,            //周期（单位：秒）
+				PID_calculate( dT_ms*1e-3f,            //周期（单位：秒）
 										loc_ctrl_1.exp[i] ,				//前馈值
 										loc_ctrl_1.exp[i] ,				//期望值（设定值）
 										fb_speed_fix[i] ,			//反馈值（）
 										&loc_arg_1_fix[i], //PID参数结构体
 										&loc_val_1_fix[i],	//PID数据结构体
 										50,//积分误差限幅
-										10 *flag.taking_off			//integration limit，积分限幅
+										10 *flag.taking_off
 										 )	;	
 			
 			if (!flag.taking_off)
@@ -395,11 +365,8 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 			Loc_1level_PID_Init();
 			s_loc_mode[0] = s_loc_mode[1];
 		}
-		////
 		loc_ctrl_1.out[X] = (float)MAX_ANGLE/MAX_SPEED *fs.speed_set_h[X] ;
 		loc_ctrl_1.out[Y] = (float)MAX_ANGLE/MAX_SPEED *fs.speed_set_h[Y] ;
 	}
 }
-
 _loc_ctrl_st loc_ctrl_2;
-

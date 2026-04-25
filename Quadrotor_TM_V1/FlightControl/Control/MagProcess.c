@@ -5,13 +5,9 @@
  */
 #include "MagProcess.h"
 #include "LED.h"
-
 static s16 s_mag_max_raw[VEC_XYZ];
 static s16 s_mag_min_raw[VEC_XYZ];
-
-
 _mag_cal_st mag;
-
 static void MagCalReset(u8 mode)
 {
 	if(mode == 2)
@@ -20,7 +16,6 @@ static void MagCalReset(u8 mode)
 		{
 			s_mag_max_raw[i] = -30000;
 			s_mag_min_raw[i] = 30000;
-
 		}
 	}
 	else if(mode == 1)
@@ -34,11 +29,9 @@ static void MagCalReset(u8 mode)
 		{
 			s_mag_max_raw[i] = -30000;
 			s_mag_min_raw[i] = 30000;
-
 		}	
 	}
 }
-
 static void MagCalUpdateXY(s16 mag_in[])
 {
 	for(u8 i = 0;i<2;i++)
@@ -47,18 +40,14 @@ static void MagCalUpdateXY(s16 mag_in[])
 		s_mag_min_raw[i] = _MIN(s_mag_min_raw[i],mag_in[i]);
 	}
 	
-
 	
 }
-
 static void MagCalUpdateZ(s16 mag_in[])
 {
 	s_mag_max_raw[Z] = _MAX(s_mag_max_raw[Z],mag_in[Z]);
 	s_mag_min_raw[Z] = _MIN(s_mag_min_raw[Z],mag_in[Z]);
 }
-
 static u8 s_mag_cal_step;
-
 void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,float gyro_deg_z)
 {	
 	static u16 s_mag_cal_timeout_ms;
@@ -70,14 +59,12 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 		save.mag_gain[i] = LIMIT(save.mag_gain[i],0.05f,100);
 		mag.val[i] = (mag_in[i] - save.mag_offset[i]) *save.mag_gain[i];
 	}
-
-///////////////////cali//////////////////////////////////////////////////////	
+	/* ??????? */
 	if(mag.mag_CALIBRATE!= 0 && flag.unlock_sta == 0)
 	{	
 		switch(s_mag_cal_step)
 		{
 			case 0://第一步，水平旋转
-
 				MagCalUpdateXY(mag_in);			
 			
 				if(z_vec_z<0.985f)//+-10deg	
@@ -117,7 +104,6 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 				mag.mag_CALIBRATE = 2;																					
 				
 				MagCalUpdateZ(mag_in);
-
 				if(z_vec_z>0.17f)//10deg
 				{
 					LED_STA.calMag = 2;
@@ -176,7 +162,6 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 				s_mag_cal_timeout_ms = 0;
 				LED_STA.calMag = 0;				
 				mag.mag_CALIBRATE = 0;
-
 			}
 		}
 		else

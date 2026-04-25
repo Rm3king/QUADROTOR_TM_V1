@@ -14,13 +14,11 @@
 #include "DT.h"
 #include "Sensor_Basic.h"
 #include "LED.h"
-
 /* 摇杆触发阈值。摇杆范围约为 +/-500，超过 300 视为有效触发。 */
 #define UN_YAW_VALUE  300
 #define UN_THR_VALUE  300
 #define UN_PIT_VALUE  300
 #define UN_ROL_VALUE  300
-
 /* 当前接收机输入模式。 */
 static u8 s_rc_input_mode;
 /* 遥控输入初始化 */
@@ -36,10 +34,8 @@ void Remote_Control_Init()
 		Drv_RcPpm_Init();
 	}
 }
-
 /* 遥控通道看门狗计数。 */
 static u16 s_channel_watchdog_cnt[10];
-
 /* 对外共享的遥控输入状态。 */
 u8 chn_en_bit = 0;
 /* 喂通道看门狗 */
@@ -48,7 +44,6 @@ void ch_watch_dog_feed(u8 ch_n)
 	ch_n = LIMIT(ch_n,0,7);
 	s_channel_watchdog_cnt[ch_n] = 0;
 }
-
 static void RC_ChannelWatchdogTask(u8 dT_ms) // 如果是 PPM/SBUS 模式，也只检测前 8 通道
 {
 	for(u8 i = 0;i<8;i++)
@@ -64,10 +59,8 @@ static void RC_ChannelWatchdogTask(u8 dT_ms) // 如果是 PPM/SBUS 模式，也只检测前
 		}
 	}
 }
-
 u16 signal_intensity;
 s16 CH_N[CH_NUM] = {0,0,0,0};
-
 /* 文件内部的解锁与摇杆功能状态。 */
 static _stick_f_lp_st s_unlock_hold_cnt;
 static u8 s_unlock_gesture_active;
@@ -78,13 +71,11 @@ static _stick_f_c_st s_cali_mag_state;
 static u8 s_stick_fun_gyro_cali;
 static u8 s_stick_fun_acc_cali;
 static u8 s_stick_fun_mag_cali;
-
 static void RC_ChannelWatchdogTask(u8 dT_ms);
 static void RC_StickFunctionCheck(u8 dT_ms,_stick_f_c_st *sv,u8 times_n,u16 reset_time_ms,u8 en,u8 trig_val,u8 *trig);
 static void RC_StickFunctionCheckLongPress(u8 dT_ms,u16 *time_cnt,u16 longpress_time_ms,u8 en,u8 trig_val,u8 *trig);
 static void RC_StickFunctionTask(u8 dT_ms);
 static void RC_UnlockTask(u8 dT_ms);
-
 static void RC_UpdateUnlockErrorState(void)
 {
 	if( flag.power_state <=2 && g_param_state.save_trig == 0)//只有电池电压非最低并且没有操作flash时，才允许进行解锁
@@ -96,12 +87,10 @@ static void RC_UpdateUnlockErrorState(void)
 				if(flag.sensor_imu_ok  )//imu传感器正常时，才允许解锁
 				{
 					flag.unlock_err = 0;	//允许解锁标志位
-
 				}
 				else
 				{
 					flag.unlock_err = 1;//imu异常，不允许解锁
-
 				}
 			}
 			else
@@ -121,7 +110,6 @@ static void RC_UpdateUnlockErrorState(void)
 		flag.unlock_err = 4;//电池电压异常，不允许解锁
 	}
 }
-
 static void RC_SyncUnlockCommand(void)
 {
 	if(flag.unlock_sta == 0)
@@ -156,7 +144,6 @@ static void RC_SyncUnlockCommand(void)
 		flag.unlock_sta = flag.unlock_cmd;
 	}
 }
-
 static void RC_UpdateLockGesture(u8 dT_ms)
 {
 	if(CH_N[CH_THR] < -UN_THR_VALUE  )
@@ -172,7 +159,6 @@ static void RC_UpdateLockGesture(u8 dT_ms)
 		{
 			flag.locking = 0;
 		}
-
 		if(CH_N[CH_PIT]<-UN_PIT_VALUE && CH_N[CH_ROL]>UN_ROL_VALUE && CH_N[CH_YAW]<-UN_YAW_VALUE)
 		{
 			s_unlock_gesture_active = 1;
@@ -210,7 +196,6 @@ static void RC_UpdateLockGesture(u8 dT_ms)
 		}
 	}
 }
-
 static void RC_UpdateThrottleLowState(void)
 {
 	if(CH_N[CH_THR]>-350)
@@ -222,7 +207,6 @@ static void RC_UpdateThrottleLowState(void)
 		flag.thr_low = 1;//油门拉低
 	}
 }
-
 /* 解锁与上锁状态更新 */
 static void RC_UnlockTask(u8 dT_ms)
 {
@@ -231,7 +215,6 @@ static void RC_UnlockTask(u8 dT_ms)
 	RC_UpdateLockGesture(dT_ms);
 	RC_UpdateThrottleLowState();
 }
-
 void RC_duty_task(u8 dT_ms) //建议2ms调用一次
 {
 	if(flag.start_ok)	
@@ -245,7 +228,6 @@ void RC_duty_task(u8 dT_ms) //建议2ms调用一次
 //				{
 //					//CH_N[]+1500为上位机显示通道值
 //					CH_N[i] = 1.25f *((s16)Rc_Pwm_In[i] - 1500); //1100 -- 1900us,处理成大约+-500摇杆量
-
 //				}
 //				else
 //				{
@@ -287,7 +269,6 @@ void RC_duty_task(u8 dT_ms) //建议2ms调用一次
 				CH_N[i] = LIMIT(CH_N[i],-500,500);//限制到+—500
 			}					
 		}
-
 		///////////////////////////////////////////////
 		//解锁监测	
 		RC_UnlockTask(dT_ms);
@@ -295,14 +276,10 @@ void RC_duty_task(u8 dT_ms) //建议2ms调用一次
 		RC_StickFunctionTask(dT_ms);	
 		//通道看门狗
 		RC_ChannelWatchdogTask(dT_ms);
-
 		//失控保护检查
 		fail_safe_check(dT_ms);//3ms
-
-
 	}
 }
-
 /* 执行失控保护输出覆盖 */
 static void RC_FailSafeApply(void)
 {
@@ -310,12 +287,10 @@ static void RC_FailSafeApply(void)
 	{
 		CH_N[i] = 0;
 	}
-
 	if(CH_N[CH_THR]>0)
 	{
 		CH_N[CH_THR] = 0;
 	}
-
 	CH_N[CH_ROL] = 0;
 	CH_N[CH_PIT] = 0;
 	CH_N[CH_YAW] = 0;
@@ -335,7 +310,6 @@ static void RC_FailSafeApply(void)
 		
 	}
 }
-
 void fail_safe_check(u8 dT_ms) //dT秒调用一次
 {
 	static u16 cnt;
@@ -363,8 +337,6 @@ void fail_safe_check(u8 dT_ms) //dT秒调用一次
 			LED_STA.noRc = 1;
 			
 			RC_FailSafeApply();
-
-
 				
 		}
 		else if(cnt2<=-2) //认为信号正常
@@ -387,7 +359,6 @@ void fail_safe_check(u8 dT_ms) //dT秒调用一次
 	
 	
 }
-
 /* 摇杆组合触发判定 */
 static void RC_StickFunctionCheck(u8 dT_ms,_stick_f_c_st *sv,u8 times_n,u16 reset_time_ms,u8 en,u8 trig_val,u8 *trig)
 {
@@ -406,20 +377,17 @@ static void RC_StickFunctionCheck(u8 dT_ms,_stick_f_c_st *sv,u8 times_n,u16 rese
 	else
 	{
 		sv->s_state = 0;
-		/////
 		sv->s_cnt += dT_ms;
 		if(sv->s_cnt>reset_time_ms)
 		{
 			sv->s_now_times = 1; //清除记录次数
 		}
 	}
-
 	if(sv->s_now_times> times_n)
 	{
 		*trig = trig_val;            //触发功能标记
 		sv->s_now_times = 0;
 	}
-
 }
 /* 摇杆长按触发判定 */
 static void RC_StickFunctionCheckLongPress(u8 dT_ms,u16 *time_cnt,u16 longpress_time_ms,u8 en,u8 trig_val,u8 *trig)
@@ -447,9 +415,7 @@ static void RC_StickFunctionCheckLongPress(u8 dT_ms,u16 *time_cnt,u16 longpress_
 		*trig = trig_val;            //触发功能标记
 		*time_cnt = 0;
 	}
-
 }
-
 /* 摇杆组合功能处理 */
 static void RC_StickFunctionTask(u8 dT_ms)
 {
@@ -479,7 +445,6 @@ static void RC_StickFunctionTask(u8 dT_ms)
 			}
 		}
 		
-			///////////////
 		//触发陀螺仪校准
 		RC_StickFunctionCheckLongPress(dT_ms,&s_cali_gyro_hold_cnt,1000,s_stick_fun_gyro_cali,1,&sensor.gyr_CALIBRATE);
 		//触发加速度计校准
@@ -487,19 +452,6 @@ static void RC_StickFunctionTask(u8 dT_ms)
 		
 		//触发罗盘校准
 		RC_StickFunctionCheck(dT_ms,&s_cali_mag_state,5,1000,s_stick_fun_mag_cali,1,&mag.mag_CALIBRATE);
-
 		
 	}
-
-	//////////////
 }
-
-
-
-
-
-
-
-
-
-

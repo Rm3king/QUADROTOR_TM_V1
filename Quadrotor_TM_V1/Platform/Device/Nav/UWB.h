@@ -1,34 +1,26 @@
 #ifndef __UWB_H__
 #define __UWB_H__
-
 /*
- * ?????UWB
- * ??????? UWB ???????????????
- * ????????????????????????????
+ * 模块：UWB 接口
+ * 职责：声明 UWB 数据结构与解析任务入口。
+ * 约束：仅暴露定位数据访问接口，不在头文件中承载实现细节。
  */
-
 #include "Filter.h"
 #include "Math.h"
 #include "Imu.h"
 #include "FcData.h"
-
 typedef struct
 {
 	u8 init_ok;
 	u8 online;
-
 	float ref_dir[2];
 	float raw_data_loc[3];
 	float raw_data_vel[3];
 	float w_dis_cm[3];
 	float w_vel_cmps[3];
-
 } _uwb_data_st;
-
 extern _uwb_data_st uwb_data;
-
 void UWB_GetByte(u8 data);
 void UWB_GetDataTask(u8 dT_ms);
 void UWB_DataCalcTask(u8 dT_ms);
-
 #endif
