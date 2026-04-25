@@ -220,23 +220,6 @@ void RC_duty_task(u8 dT_ms) //建议2ms调用一次
 	if(flag.start_ok)	
 	{
 		/* ????????????? */
-//		if(RC_IN_MODE == PWM)
-//		{
-//			for(u8 i=0;i<CH_NUM;i++)
-//			{
-//				if(chn_en_bit & (1<<i))//(Rc_Pwm_In[i]!=0)//该通道有值，==0说明该通道未插线（PWM）
-//				{
-//					//CH_N[]+1500为上位机显示通道值
-//					CH_N[i] = 1.25f *((s16)Rc_Pwm_In[i] - 1500); //1100 -- 1900us,处理成大约+-500摇杆量
-//				}
-//				else
-//				{
-//					CH_N[i] = 0;
-//				}
-//				CH_N[i] = LIMIT(CH_N[i],-500,500);//限制到+—500
-//			}
-//		}
-//		else if(RC_IN_MODE == PPM)
 		if(s_rc_input_mode == PPM || s_rc_input_mode == PWM)
 		{
 			for(u8 i=0;i<CH_NUM;i++)
