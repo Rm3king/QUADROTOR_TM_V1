@@ -126,8 +126,6 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 			Loc_1level_PID_Init();
 			s_loc_mode[0] = s_loc_mode[1];
 		}	
-		//==
-		////
 		loc_ctrl_1.out[X] = (float)MAX_ANGLE/MAX_SPEED *fs.speed_set_h[X] ;
 		loc_ctrl_1.out[Y] = (float)MAX_ANGLE/MAX_SPEED *fs.speed_set_h[Y] ;
 			
@@ -143,8 +141,6 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 		}	
 		//==	
 		//期望赋值
-//		loc_ctrl_1.exp[X] = fs.speed_set_h[X];
-//		loc_ctrl_1.exp[Y] = fs.speed_set_h[Y];
 		h2w_2d_trans(fs.speed_set_h,imu_data.hx_vec,loc_ctrl_1.exp);
 		//低通滤波
 		LPF_1_(5.0f,dT_ms*1e-3f,imu_data.w_acc[X],vel_fb_d_lpf[X]);

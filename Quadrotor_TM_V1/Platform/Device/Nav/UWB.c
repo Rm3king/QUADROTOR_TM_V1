@@ -1,22 +1,18 @@
-//==引用
+/*
+ * ?????UWB
+ * ??????? UWB ????????????????????????
+ * ????????????????????????????
+ */
+
 #include "UWB.h"
-//
 #include "Imu.h"
 #include "FcData.h"
-//==定义
+
 #define fc_sta flag
 
-//==数据声明
 _uwb_data_st uwb_data;
 
-
-//*********************************************************************************************************
-/**********************************************************************************************************
-*函 数 名: UWB_GetByte
-*功能说明: UWB获取字节
-*参    数: 数据（1字节）
-*返 回 值: 无
-**********************************************************************************************************/
+/* ?????????? UWB ??? */
 static u8 UWB_RxBuffer[256],UWB_data_len = 0,UWB_Data_OK;
 void UWB_GetByte(u8 data)
 {
@@ -106,10 +102,8 @@ void UWB_GetDataTask(u8 dT_ms)
 			uwb_data.raw_data_vel[0] =  (float)(s16)((*(UWB_RxBuffer+14)<<8)|*(UWB_RxBuffer+15)) / 100;
 			uwb_data.raw_data_vel[2] =  (float)(s16)((*(UWB_RxBuffer+16)<<8)|*(UWB_RxBuffer+17)) / 100;
 		}
-		//
 		uwb_check_time = 0;
 	}
-	//
 	if(uwb_check_time <1000)
 	{
 		uwb_check_time += dT_ms;
@@ -135,17 +129,13 @@ void UWB_DataCalcTask(u8 dT_ms)
 	//记录参考方向
 	if(!fc_sta.unlock_sta)
 	{
-		//
 		uwb_data.init_ok = 0;
-		//
 		uwb_data.ref_dir[X] = imu_data.hx_vec[X];
 		uwb_data.ref_dir[Y] = imu_data.hx_vec[Y];
 
 	}
-	//
 	else
 	{
-		//
 		uwb_data.init_ok = 1;
 	}
 	//参考方向转世界坐标（这里等同于地理坐标）

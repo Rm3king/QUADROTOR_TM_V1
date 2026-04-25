@@ -17,7 +17,7 @@
 #define LED_STA_CALI_GYR   (LED_STA.calGyr)
 
 /* ???????? */
-void Sensor_Basic_Init()
+void Sensor_Basic_Init(void)
 {
 	/*设置重心相对传感器的偏移量*/
 	Center_Pos_Set();
@@ -330,8 +330,7 @@ void Sensor_Data_Prepare(u8 dT_ms)
 	}
 	
 			/*旋转加速度补偿*/
-//======================================================================
-	
+	/* ???????? */
 	for(u8 i=0;i<3;i++)
 	{	
 		center_pos.gyro_rad_old[i] = center_pos.gyro_rad[i];
