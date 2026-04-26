@@ -6,603 +6,402 @@
 #include "DT.h"
 #include "Drv_OpenMV.h"
 #include "Drv_laser.h"
-
-/*
- * ???????
- * ??????????????????????????
- * ?????????? TM4C ?? UART ?????????????
- */
 #include "Drv_gps.h"
-
-u8 s_uart1_tx_buf[256];
-
-u8 s_uart1_tx_write_idx = 0;
-
-u8 s_uart1_tx_read_idx = 0;
-
-/* µ×°å´®¿Ú1ÖÐ¶Ï·þÎñ£¬½ÓÊÕ GPS Êý¾Ý */
-
-void UART1_IRQHandler(void)
-
-{
-
-	uint8_t com_data;
-
-	/*»ñÈ¡ÖÐ¶Ï±êÖ¾ Ô­Ê¼ÖÐ¶Ï×´Ì¬ ²»ÆÁ±ÎÖÐ¶Ï±êÖ¾*/		
-
-	uint32_t flag = ROM_UARTIntStatus(UART0_BASE,1);
-
-	/*Çå³ýÖÐ¶Ï±êÖ¾*/	
-
-	ROM_UARTIntClear(UART0_BASE,flag);		
-
-	/*ÅÐ¶ÏFIFOÊÇ·ñ»¹ÓÐÊý¾Ý*/		
-
-	while(ROM_UARTCharsAvail(UART0_BASE))		
-
-	{			
-
-		com_data=ROM_UARTCharGet(UART0_BASE);
-
-		Drv_GpsGetOneByte(com_data);
-
-	}
-
-	if(flag & UART_INT_TX)
-
-	{
-
-		Drv_Uart1TxCheck();
-
-	}
-
-}
-
-/* ³õÊ¼»¯µ×°å´®¿Ú1 */
-
-void Drv_Uart1Init(uint32_t baudrate)
-
-{
-
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-
-	
-
-	/*GPIOµÄUARTÄ£Ê½ÅäÖÃ*/
-
-	ROM_GPIOPinConfigure(UART0_RX);
-
-	ROM_GPIOPinConfigure(UART0_TX);
-
-	ROM_GPIOPinTypeUART(UART0_PORT, UART0_PIN_TX | UART0_PIN_RX);
-
-	/*ÅäÖÃ´®¿ÚºÅ²¨ÌØÂÊºÍÊ±ÖÓÔ´*/		
-
-	ROM_UARTConfigSetExpClk(UART0_BASE, ROM_SysCtlClockGet(), baudrate,(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
-
-	/*FIFOÉèÖÃ*/
-
-	ROM_UARTFIFOLevelSet(UART0_BASE,UART_FIFO_TX7_8,UART_FIFO_RX7_8);
-
-	ROM_UARTFIFOEnable(UART0_BASE);
-
-	/*Ê¹ÄÜ´®¿Ú*/
-
-	ROM_UARTEnable( UART0_BASE );
-
-	/*Ê¹ÄÜUART0½ÓÊÕÖÐ¶Ï*/			
-
-	UARTIntRegister(UART0_BASE,UART1_IRQHandler);			
-
-	ROM_IntPrioritySet(INT_UART0, USER_INT2);
-
-	ROM_UARTTxIntModeSet(UART0_BASE,UART_TXINT_MODE_EOT);
-
-	ROM_UARTIntEnable(UART0_BASE,UART_INT_RX | UART_INT_RT | UART_INT_TX);
-
-}
-
-void Drv_Uart1SendBuf(u8 *data, u8 len)
-
-{
-
-	for(u8 i=0; i<len; i++)
-
-	{
-
-		s_uart1_tx_buf[s_uart1_tx_write_idx++] = * ( data + i );
-
-	}
-
-	Drv_Uart1TxCheck();
-
-}
-
-void Drv_Uart1TxCheck(void)
-
-{
-
-	while( (s_uart1_tx_read_idx != s_uart1_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART0_BASE,s_uart1_tx_buf[s_uart1_tx_read_idx])) )
-
-		s_uart1_tx_read_idx++;
-
-}
-
-u8 s_uart2_tx_buf[256];
-
-u8 s_uart2_tx_write_idx = 0;
-
-u8 s_uart2_tx_read_idx = 0;
-
-/* µ×°å´®¿Ú2ÖÐ¶Ï·þÎñ£¬½ÓÊÕÊý´«Êý¾Ý */
-
-void UART2_IRQHandler(void)
-
-{
-
-	uint8_t com_data;
-
-	/*»ñÈ¡ÖÐ¶Ï±êÖ¾ Ô­Ê¼ÖÐ¶Ï×´Ì¬ ²»ÆÁ±ÎÖÐ¶Ï±êÖ¾*/		
-
-	uint32_t flag = ROM_UARTIntStatus(UART4_BASE,1);
-
-	/*Çå³ýÖÐ¶Ï±êÖ¾*/	
-
-	ROM_UARTIntClear(UART4_BASE,flag);		
-
-	/*ÅÐ¶ÏFIFOÊÇ·ñ»¹ÓÐÊý¾Ý*/		
-
-	while(ROM_UARTCharsAvail(UART4_BASE))		
-
-	{			
-
-		com_data=ROM_UARTCharGet(UART4_BASE);
-
-		ANO_DT_Data_Receive_Prepare(com_data);
-
-	}
-
-	if(flag & UART_INT_TX)
-
-	{
-
-		Drv_Uart2TxCheck();
-
-	}
-
-}
-
-/* ³õÊ¼»¯µ×°å´®¿Ú2 */
-
-void Drv_Uart2Init(uint32_t baudrate)
-
-{
-
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART4);
-
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
-
-	
-
-	/*GPIOµÄUARTÄ£Ê½ÅäÖÃ*/
-
-	ROM_GPIOPinConfigure(UART4_RX);
-
-	ROM_GPIOPinConfigure(UART4_TX);
-
-	ROM_GPIOPinTypeUART(UART4_PORT, UART4_PIN_TX | UART4_PIN_RX);
-
-	/*ÅäÖÃ´®¿ÚºÅ²¨ÌØÂÊºÍÊ±ÖÓÔ´*/		
-
-	ROM_UARTConfigSetExpClk(UART4_BASE, ROM_SysCtlClockGet(), baudrate,(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
-
-	/*FIFOÉèÖÃ*/
-
-	ROM_UARTFIFOLevelSet(UART4_BASE,UART_FIFO_TX7_8,UART_FIFO_RX7_8);
-
-	ROM_UARTFIFOEnable(UART4_BASE);
-
-	/*Ê¹ÄÜ´®¿Ú*/
-
-	ROM_UARTEnable( UART4_BASE );
-
-	/*Ê¹ÄÜUART0½ÓÊÕÖÐ¶Ï*/			
-
-	UARTIntRegister(UART4_BASE,UART2_IRQHandler);			
-
-	ROM_IntPrioritySet(INT_UART4, USER_INT2);
-
-	ROM_UARTTxIntModeSet(UART4_BASE,UART_TXINT_MODE_EOT);
-
-	ROM_UARTIntEnable(UART4_BASE,UART_INT_RX | UART_INT_RT | UART_INT_TX);
-
-}
-
-void Drv_Uart2SendBuf(u8 *data, u8 len)
-
-{
-
-	for(u8 i=0; i<len; i++)
-
-	{
-
-		s_uart2_tx_buf[s_uart2_tx_write_idx++] = * ( data + i );
-
-	}
-
-	Drv_Uart2TxCheck();
-
-}
-
-void Drv_Uart2TxCheck(void)
-
-{
-
-	while( (s_uart2_tx_read_idx != s_uart2_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART4_BASE,s_uart2_tx_buf[s_uart2_tx_read_idx])) )
-
-		s_uart2_tx_read_idx++;
-
-}
-
-u8 s_uart3_tx_buf[256];
-
-u8 s_uart3_tx_write_idx = 0;
-
-u8 s_uart3_tx_read_idx = 0;
-
-/* µ×°å´®¿Ú3ÖÐ¶Ï·þÎñ£¬½ÓÊÕ OpenMV Êý¾Ý */
-
-void UART3_IRQHandler(void)
-
-{
-
-	uint8_t com_data;
-
-	/*»ñÈ¡ÖÐ¶Ï±êÖ¾ Ô­Ê¼ÖÐ¶Ï×´Ì¬ ²»ÆÁ±ÎÖÐ¶Ï±êÖ¾*/		
-
-	uint32_t flag = ROM_UARTIntStatus(UART2_BASE,1);
-
-	/*Çå³ýÖÐ¶Ï±êÖ¾*/	
-
-	ROM_UARTIntClear(UART2_BASE,flag);		
-
-	/*ÅÐ¶ÏFIFOÊÇ·ñ»¹ÓÐÊý¾Ý*/		
-
-	while(ROM_UARTCharsAvail(UART2_BASE))		
-
-	{			
-
-		com_data=ROM_UARTCharGet(UART2_BASE);
-
-		OpenMV_Byte_Get(com_data);
-
-	}
-
-	if(flag & UART_INT_TX)
-
-	{
-
-		Drv_Uart3TxCheck();
-
-	}
-
-}
-
-/* ³õÊ¼»¯µ×°å´®¿Ú3 */
-
-void Drv_Uart3Init(uint32_t baudrate)
-
-{
-
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2);
-
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
-
-	
-
-	/*GPIOµÄUARTÄ£Ê½ÅäÖÃ*/
-
-	ROM_GPIOPinConfigure(UART2_RX);
-
-	ROM_GPIOPinConfigure(UART2_TX);
-
-	ROM_GPIOPinTypeUART(UART2_PORT, UART2_PIN_TX | UART2_PIN_RX);
-
-	/*ÅäÖÃ´®¿ÚºÅ²¨ÌØÂÊºÍÊ±ÖÓÔ´*/		
-
-	ROM_UARTConfigSetExpClk(UART2_BASE, ROM_SysCtlClockGet(), baudrate,(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
-
-	/*FIFOÉèÖÃ*/
-
-	ROM_UARTFIFOLevelSet(UART2_BASE,UART_FIFO_TX7_8,UART_FIFO_RX7_8);
-
-	ROM_UARTFIFOEnable(UART2_BASE);
-
-	/*Ê¹ÄÜ´®¿Ú*/
-
-	ROM_UARTEnable( UART2_BASE );
-
-	/*Ê¹ÄÜUART0½ÓÊÕÖÐ¶Ï*/			
-
-	UARTIntRegister(UART2_BASE,UART3_IRQHandler);			
-
-	ROM_IntPrioritySet(INT_UART2, USER_INT2);
-
-	ROM_UARTTxIntModeSet(UART2_BASE,UART_TXINT_MODE_EOT);
-
-	ROM_UARTIntEnable(UART2_BASE,UART_INT_RX | UART_INT_RT | UART_INT_TX);
-
-}
-
-void Drv_Uart3SendBuf(u8 *data, u8 len)
-
-{
-
-	for(u8 i=0; i<len; i++)
-
-	{
-
-		s_uart3_tx_buf[s_uart3_tx_write_idx++] = * ( data + i );
-
-	}
-
-	Drv_Uart3TxCheck();
-
-}
-
-void Drv_Uart3TxCheck(void)
-
-{
-
-	while( (s_uart3_tx_read_idx != s_uart3_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART2_BASE,s_uart3_tx_buf[s_uart3_tx_read_idx])) )
-
-		s_uart3_tx_read_idx++;
-
-}
-
 #include "OF.h"
-
 #include "Drv_UP_Flow.h"
 
-u8 s_uart4_tx_buf[256];
+/*
+ * æ¨¡å—åç§°ï¼šDrv_Uart
+ * æ¨¡å—èŒè´£ï¼šæä¾›å„å¤–è®¾ä¸²å£çš„åˆå§‹åŒ–ã€å‘é€ç¼“å­˜å’Œä¸­æ–­æŽ¥æ”¶å…¥å£ã€‚
+ * å‘½åè¯´æ˜Žï¼šå‡½æ•°åæŒ‰å¤–è®¾è¯­ä¹‰å‘½åï¼Œåº•æ¿ä¸²å£ç¼–å·æŽ¥å£ä»…ä½œä¸ºå…¼å®¹åŒ…è£…ä¿ç•™ã€‚
+ * ç»´æŠ¤çº¦æŸï¼šæœ¬æ–‡ä»¶ä¸è°ƒæ•´ UART åŸºå€ã€GPIO å¤ç”¨ã€ä¸­æ–­ä¼˜å…ˆçº§å’Œæ”¶å‘å¤„ç†æµç¨‹ã€‚
+ */
 
-u8 s_uart4_tx_write_idx = 0;
+#define UART_TX_BUF_LEN 256
 
-u8 s_uart4_tx_read_idx = 0;
+static u8 s_gps_tx_buf[UART_TX_BUF_LEN];
+static u8 s_gps_tx_write_idx = 0;
+static u8 s_gps_tx_read_idx = 0;
 
-/* µ×°å´®¿Ú4ÖÐ¶Ï·þÎñ£¬½ÓÊÕ¹âÁ÷Êý¾Ý */
+static u8 s_dt_tx_buf[UART_TX_BUF_LEN];
+static u8 s_dt_tx_write_idx = 0;
+static u8 s_dt_tx_read_idx = 0;
 
-void UART4_IRQHandler(void)
+static u8 s_openmv_tx_buf[UART_TX_BUF_LEN];
+static u8 s_openmv_tx_write_idx = 0;
+static u8 s_openmv_tx_read_idx = 0;
 
+static u8 s_optical_flow_tx_buf[UART_TX_BUF_LEN];
+static u8 s_optical_flow_tx_write_idx = 0;
+static u8 s_optical_flow_tx_read_idx = 0;
+
+static u8 s_laser_tx_buf[UART_TX_BUF_LEN];
+static u8 s_laser_tx_write_idx = 0;
+static u8 s_laser_tx_read_idx = 0;
+
+/* åº•æ¿ä¸²å£ 1 ä¸­æ–­æœåŠ¡ï¼šæŽ¥æ”¶ GPS æ•°æ®ã€‚ */
+void UART1_IRQHandler(void)
 {
-
 	uint8_t com_data;
+	uint32_t flag = ROM_UARTIntStatus(UART0_BASE, 1);
 
-	/*»ñÈ¡ÖÐ¶Ï±êÖ¾ Ô­Ê¼ÖÐ¶Ï×´Ì¬ ²»ÆÁ±ÎÖÐ¶Ï±êÖ¾*/		
+	ROM_UARTIntClear(UART0_BASE, flag);
 
-	uint32_t flag = ROM_UARTIntStatus(UART7_BASE,1);
-
-	/*Çå³ýÖÐ¶Ï±êÖ¾*/	
-
-	ROM_UARTIntClear(UART7_BASE,flag);		
-
-	/*ÅÐ¶ÏFIFOÊÇ·ñ»¹ÓÐÊý¾Ý*/		
-
-	while(ROM_UARTCharsAvail(UART7_BASE))		
-
-	{			
-
-		com_data=ROM_UARTCharGet(UART7_BASE);
-
-		OFGetByte(com_data);
-
-	}
-
-	if(flag & UART_INT_TX)
-
+	while (ROM_UARTCharsAvail(UART0_BASE))
 	{
-
-		Drv_Uart4TxCheck();
-
+		com_data = ROM_UARTCharGet(UART0_BASE);
+		Drv_GpsGetOneByte(com_data);
 	}
 
+	if (flag & UART_INT_TX)
+	{
+		Drv_UartGps_TxCheck();
+	}
 }
 
-/* ³õÊ¼»¯µ×°å´®¿Ú4 */
-
-void Drv_Uart4Init(uint32_t baudrate)
-
+/* åˆå§‹åŒ– GPS ä¸²å£ï¼Œä¿æŒåŽŸ UART0 / GPIOA é…ç½®ä¸å˜ã€‚ */
+void Drv_UartGps_Init(uint32_t baudrate)
 {
+	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
 
+	ROM_GPIOPinConfigure(UART0_RX);
+	ROM_GPIOPinConfigure(UART0_TX);
+	ROM_GPIOPinTypeUART(UART0_PORT, UART0_PIN_TX | UART0_PIN_RX);
+
+	ROM_UARTConfigSetExpClk(
+		UART0_BASE,
+		ROM_SysCtlClockGet(),
+		baudrate,
+		(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+
+	ROM_UARTFIFOLevelSet(UART0_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
+	ROM_UARTFIFOEnable(UART0_BASE);
+	ROM_UARTEnable(UART0_BASE);
+
+	UARTIntRegister(UART0_BASE, UART1_IRQHandler);
+	ROM_IntPrioritySet(INT_UART0, USER_INT2);
+	ROM_UARTTxIntModeSet(UART0_BASE, UART_TXINT_MODE_EOT);
+	ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
+}
+
+/* å‘é€ GPS æ•°æ®ï¼Œæ²¿ç”¨åŽŸçŽ¯å½¢å‘é€ç¼“å­˜è¡Œä¸ºã€‚ */
+void Drv_UartGps_SendBuf(u8 *data, u8 len)
+{
+	for (u8 i = 0; i < len; i++)
+	{
+		s_gps_tx_buf[s_gps_tx_write_idx++] = *(data + i);
+	}
+
+	Drv_UartGps_TxCheck();
+}
+
+/* æ£€æŸ¥ GPS ä¸²å£å‘é€ç¼“å­˜å¹¶å°è¯•ç»§ç»­å‘é€ã€‚ */
+void Drv_UartGps_TxCheck(void)
+{
+	while ((s_gps_tx_read_idx != s_gps_tx_write_idx) &&
+		   ROM_UARTCharPutNonBlocking(UART0_BASE, s_gps_tx_buf[s_gps_tx_read_idx]))
+	{
+		s_gps_tx_read_idx++;
+	}
+}
+
+/* åº•æ¿ä¸²å£ 2 ä¸­æ–­æœåŠ¡ï¼šæŽ¥æ”¶æ•°ä¼ æ•°æ®ã€‚ */
+void UART2_IRQHandler(void)
+{
+	uint8_t com_data;
+	uint32_t flag = ROM_UARTIntStatus(UART4_BASE, 1);
+
+	ROM_UARTIntClear(UART4_BASE, flag);
+
+	while (ROM_UARTCharsAvail(UART4_BASE))
+	{
+		com_data = ROM_UARTCharGet(UART4_BASE);
+		ANO_DT_Data_Receive_Prepare(com_data);
+	}
+
+	if (flag & UART_INT_TX)
+	{
+		Drv_UartDt_TxCheck();
+	}
+}
+
+/* åˆå§‹åŒ–æ•°ä¼ ä¸²å£ï¼Œä¿æŒåŽŸ UART4 / GPIOC é…ç½®ä¸å˜ã€‚ */
+void Drv_UartDt_Init(uint32_t baudrate)
+{
+	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART4);
+	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
+
+	ROM_GPIOPinConfigure(UART4_RX);
+	ROM_GPIOPinConfigure(UART4_TX);
+	ROM_GPIOPinTypeUART(UART4_PORT, UART4_PIN_TX | UART4_PIN_RX);
+
+	ROM_UARTConfigSetExpClk(
+		UART4_BASE,
+		ROM_SysCtlClockGet(),
+		baudrate,
+		(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+
+	ROM_UARTFIFOLevelSet(UART4_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
+	ROM_UARTFIFOEnable(UART4_BASE);
+	ROM_UARTEnable(UART4_BASE);
+
+	UARTIntRegister(UART4_BASE, UART2_IRQHandler);
+	ROM_IntPrioritySet(INT_UART4, USER_INT2);
+	ROM_UARTTxIntModeSet(UART4_BASE, UART_TXINT_MODE_EOT);
+	ROM_UARTIntEnable(UART4_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
+}
+
+/* å‘é€æ•°ä¼ æ•°æ®ï¼Œæ²¿ç”¨åŽŸå‘é€ç¼“å­˜è¡Œä¸ºã€‚ */
+void Drv_UartDt_SendBuf(u8 *data, u8 len)
+{
+	for (u8 i = 0; i < len; i++)
+	{
+		s_dt_tx_buf[s_dt_tx_write_idx++] = *(data + i);
+	}
+
+	Drv_UartDt_TxCheck();
+}
+
+/* æ£€æŸ¥æ•°ä¼ ä¸²å£å‘é€ç¼“å­˜å¹¶å°è¯•ç»§ç»­å‘é€ã€‚ */
+void Drv_UartDt_TxCheck(void)
+{
+	while ((s_dt_tx_read_idx != s_dt_tx_write_idx) &&
+		   ROM_UARTCharPutNonBlocking(UART4_BASE, s_dt_tx_buf[s_dt_tx_read_idx]))
+	{
+		s_dt_tx_read_idx++;
+	}
+}
+
+/* åº•æ¿ä¸²å£ 3 ä¸­æ–­æœåŠ¡ï¼šæŽ¥æ”¶ OpenMV æ•°æ®ã€‚ */
+void UART3_IRQHandler(void)
+{
+	uint8_t com_data;
+	uint32_t flag = ROM_UARTIntStatus(UART2_BASE, 1);
+
+	ROM_UARTIntClear(UART2_BASE, flag);
+
+	while (ROM_UARTCharsAvail(UART2_BASE))
+	{
+		com_data = ROM_UARTCharGet(UART2_BASE);
+		OpenMV_Byte_Get(com_data);
+	}
+
+	if (flag & UART_INT_TX)
+	{
+		Drv_UartOpenMv_TxCheck();
+	}
+}
+
+/* åˆå§‹åŒ– OpenMV ä¸²å£ï¼Œä¿æŒåŽŸ UART2 / GPIOD é…ç½®ä¸å˜ã€‚ */
+void Drv_UartOpenMv_Init(uint32_t baudrate)
+{
+	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2);
+	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+
+	ROM_GPIOPinConfigure(UART2_RX);
+	ROM_GPIOPinConfigure(UART2_TX);
+	ROM_GPIOPinTypeUART(UART2_PORT, UART2_PIN_TX | UART2_PIN_RX);
+
+	ROM_UARTConfigSetExpClk(
+		UART2_BASE,
+		ROM_SysCtlClockGet(),
+		baudrate,
+		(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+
+	ROM_UARTFIFOLevelSet(UART2_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
+	ROM_UARTFIFOEnable(UART2_BASE);
+	ROM_UARTEnable(UART2_BASE);
+
+	UARTIntRegister(UART2_BASE, UART3_IRQHandler);
+	ROM_IntPrioritySet(INT_UART2, USER_INT2);
+	ROM_UARTTxIntModeSet(UART2_BASE, UART_TXINT_MODE_EOT);
+	ROM_UARTIntEnable(UART2_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
+}
+
+/* å‘é€ OpenMV æ•°æ®ï¼Œæ²¿ç”¨åŽŸå‘é€ç¼“å­˜è¡Œä¸ºã€‚ */
+void Drv_UartOpenMv_SendBuf(u8 *data, u8 len)
+{
+	for (u8 i = 0; i < len; i++)
+	{
+		s_openmv_tx_buf[s_openmv_tx_write_idx++] = *(data + i);
+	}
+
+	Drv_UartOpenMv_TxCheck();
+}
+
+/* æ£€æŸ¥ OpenMV ä¸²å£å‘é€ç¼“å­˜å¹¶å°è¯•ç»§ç»­å‘é€ã€‚ */
+void Drv_UartOpenMv_TxCheck(void)
+{
+	while ((s_openmv_tx_read_idx != s_openmv_tx_write_idx) &&
+		   ROM_UARTCharPutNonBlocking(UART2_BASE, s_openmv_tx_buf[s_openmv_tx_read_idx]))
+	{
+		s_openmv_tx_read_idx++;
+	}
+}
+
+/* åº•æ¿ä¸²å£ 4 ä¸­æ–­æœåŠ¡ï¼šæŽ¥æ”¶å…‰æµæ•°æ®ã€‚ */
+void UART4_IRQHandler(void)
+{
+	uint8_t com_data;
+	uint32_t flag = ROM_UARTIntStatus(UART7_BASE, 1);
+
+	ROM_UARTIntClear(UART7_BASE, flag);
+
+	while (ROM_UARTCharsAvail(UART7_BASE))
+	{
+		com_data = ROM_UARTCharGet(UART7_BASE);
+		OFGetByte(com_data);
+	}
+
+	if (flag & UART_INT_TX)
+	{
+		Drv_UartOpticalFlow_TxCheck();
+	}
+}
+
+/* åˆå§‹åŒ–å…‰æµä¸²å£ï¼Œä¿æŒåŽŸ UART7 / GPIOE é…ç½®ä¸å˜ã€‚ */
+void Drv_UartOpticalFlow_Init(uint32_t baudrate)
+{
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART7);
-
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
-
-	
-
-	/*GPIOµÄUARTÄ£Ê½ÅäÖÃ*/
 
 	ROM_GPIOPinConfigure(UART7_RX);
-
 	ROM_GPIOPinConfigure(UART7_TX);
-
 	ROM_GPIOPinTypeUART(UART7_PORT, UART7_PIN_TX | UART7_PIN_RX);
 
-	/*ÅäÖÃ´®¿ÚºÅ²¨ÌØÂÊºÍÊ±ÖÓÔ´*/		
+	ROM_UARTConfigSetExpClk(
+		UART7_BASE,
+		ROM_SysCtlClockGet(),
+		baudrate,
+		(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
 
-	ROM_UARTConfigSetExpClk(UART7_BASE, ROM_SysCtlClockGet(), baudrate,(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
-
-	/*FIFOÉèÖÃ*/
-
-	ROM_UARTFIFOLevelSet(UART7_BASE,UART_FIFO_TX7_8,UART_FIFO_RX7_8);
-
+	ROM_UARTFIFOLevelSet(UART7_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
 	ROM_UARTFIFOEnable(UART7_BASE);
+	ROM_UARTEnable(UART7_BASE);
 
-	/*Ê¹ÄÜ´®¿Ú*/
-
-	ROM_UARTEnable( UART7_BASE );
-
-	/*Ê¹ÄÜUART0½ÓÊÕÖÐ¶Ï*/			
-
-	UARTIntRegister(UART7_BASE,UART4_IRQHandler);			
-
+	UARTIntRegister(UART7_BASE, UART4_IRQHandler);
 	ROM_IntPrioritySet(INT_UART7, USER_INT2);
-
-	ROM_UARTTxIntModeSet(UART7_BASE,UART_TXINT_MODE_EOT);
-
-	ROM_UARTIntEnable(UART7_BASE,UART_INT_RX | UART_INT_RT | UART_INT_TX);
-
+	ROM_UARTTxIntModeSet(UART7_BASE, UART_TXINT_MODE_EOT);
+	ROM_UARTIntEnable(UART7_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
 }
 
-void Drv_Uart4SendBuf(u8 *data, u8 len)
-
+/* å‘é€å…‰æµæ¨¡å—æ•°æ®ï¼Œæ²¿ç”¨åŽŸå‘é€ç¼“å­˜è¡Œä¸ºã€‚ */
+void Drv_UartOpticalFlow_SendBuf(u8 *data, u8 len)
 {
-
-	for(u8 i=0; i<len; i++)
-
+	for (u8 i = 0; i < len; i++)
 	{
-
-		s_uart4_tx_buf[s_uart4_tx_write_idx++] = * ( data + i );
-
+		s_optical_flow_tx_buf[s_optical_flow_tx_write_idx++] = *(data + i);
 	}
 
-	Drv_Uart4TxCheck();
-
+	Drv_UartOpticalFlow_TxCheck();
 }
 
-void Drv_Uart4TxCheck(void)
-
+/* æ£€æŸ¥å…‰æµä¸²å£å‘é€ç¼“å­˜å¹¶å°è¯•ç»§ç»­å‘é€ã€‚ */
+void Drv_UartOpticalFlow_TxCheck(void)
 {
-
-	while( (s_uart4_tx_read_idx != s_uart4_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART7_BASE,s_uart4_tx_buf[s_uart4_tx_read_idx])) )
-
-		s_uart4_tx_read_idx++;
-
+	while ((s_optical_flow_tx_read_idx != s_optical_flow_tx_write_idx) &&
+		   ROM_UARTCharPutNonBlocking(UART7_BASE, s_optical_flow_tx_buf[s_optical_flow_tx_read_idx]))
+	{
+		s_optical_flow_tx_read_idx++;
+	}
 }
 
-u8 s_uart5_tx_buf[256];
-
-u8 s_uart5_tx_write_idx = 0;
-
-u8 s_uart5_tx_read_idx = 0;
-
-/* µ×°å´®¿Ú5ÖÐ¶Ï·þÎñ£¬½ÓÊÕ¼¤¹â²â¾àÊý¾Ý */
-
+/* åº•æ¿ä¸²å£ 5 ä¸­æ–­æœåŠ¡ï¼šæŽ¥æ”¶æ¿€å…‰æµ‹è·æ•°æ®ã€‚ */
 void UART5_IRQHandler(void)
-
 {
-
 	uint8_t com_data;
+	uint32_t flag = ROM_UARTIntStatus(UART5_BASE, 1);
 
-	/*»ñÈ¡ÖÐ¶Ï±êÖ¾ Ô­Ê¼ÖÐ¶Ï×´Ì¬ ²»ÆÁ±ÎÖÐ¶Ï±êÖ¾*/		
+	ROM_UARTIntClear(UART5_BASE, flag);
 
-	uint32_t flag = ROM_UARTIntStatus(UART5_BASE,1);
-
-	/*Çå³ýÖÐ¶Ï±êÖ¾*/	
-
-	ROM_UARTIntClear(UART5_BASE,flag);		
-
-	/*ÅÐ¶ÏFIFOÊÇ·ñ»¹ÓÐÊý¾Ý*/		
-
-	while(ROM_UARTCharsAvail(UART5_BASE))		
-
-	{			
-
-		com_data=ROM_UARTCharGet(UART5_BASE);
-
-		Drv_Laser_GetOneByte(com_data);
-
-	}
-
-	if(flag & UART_INT_TX)
-
+	while (ROM_UARTCharsAvail(UART5_BASE))
 	{
-
-		Drv_Uart5TxCheck();
-
+		com_data = ROM_UARTCharGet(UART5_BASE);
+		Drv_Laser_GetOneByte(com_data);
 	}
 
+	if (flag & UART_INT_TX)
+	{
+		Drv_UartLaser_TxCheck();
+	}
 }
 
-/* ³õÊ¼»¯µ×°å´®¿Ú5 */
-
-void Drv_Uart5Init(uint32_t baudrate)
-
+/*
+ * åˆå§‹åŒ–æ¿€å…‰ä¸²å£ï¼Œä¿æŒåŽŸ UART5 / GPIOE é…ç½®ä¸å˜ã€‚
+ * æ³¨æ„ï¼šPD7 è§£é”ç›¸å…³å†™æ³•æ²¿ç”¨åŽŸå·¥ç¨‹é…ç½®ï¼Œä¸åœ¨æœ¬è½®è°ƒæ•´ã€‚
+ */
+void Drv_UartLaser_Init(uint32_t baudrate)
 {
-
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART5);
-
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
 
-	
-
-	/*PD7½âËø²Ù×÷*/
-
-	HWREG(UART2_PORT + GPIO_O_LOCK) = GPIO_LOCK_KEY; 
-
+	HWREG(UART2_PORT + GPIO_O_LOCK) = GPIO_LOCK_KEY;
 	HWREG(UART2_PORT + GPIO_O_CR) = UART5_PIN_TX;
-
 	HWREG(UART2_PORT + GPIO_O_LOCK) = 0x00;
 
-	/*GPIOµÄUARTÄ£Ê½ÅäÖÃ*/
-
 	ROM_GPIOPinConfigure(UART5_RX);
-
 	ROM_GPIOPinConfigure(UART5_TX);
-
 	ROM_GPIOPinTypeUART(UART5_PORT, UART5_PIN_TX | UART5_PIN_RX);
 
-	/*ÅäÖÃ´®¿ÚºÅ²¨ÌØÂÊºÍÊ±ÖÓÔ´*/		
+	ROM_UARTConfigSetExpClk(
+		UART5_BASE,
+		ROM_SysCtlClockGet(),
+		baudrate,
+		(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
 
-	ROM_UARTConfigSetExpClk(UART5_BASE, ROM_SysCtlClockGet(), baudrate,(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
-
-	/*FIFOÉèÖÃ*/
-
-	ROM_UARTFIFOLevelSet(UART5_BASE,UART_FIFO_TX7_8,UART_FIFO_RX7_8);
-
+	ROM_UARTFIFOLevelSet(UART5_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
 	ROM_UARTFIFOEnable(UART5_BASE);
+	ROM_UARTEnable(UART5_BASE);
 
-	/*Ê¹ÄÜ´®¿Ú*/
-
-	ROM_UARTEnable( UART5_BASE );
-
-	/*Ê¹ÄÜUART0½ÓÊÕÖÐ¶Ï*/			
-
-	UARTIntRegister(UART5_BASE,UART5_IRQHandler);			
-
+	UARTIntRegister(UART5_BASE, UART5_IRQHandler);
 	ROM_IntPrioritySet(INT_UART5, USER_INT2);
-
-	ROM_UARTTxIntModeSet(UART5_BASE,UART_TXINT_MODE_EOT);
-
-	ROM_UARTIntEnable(UART5_BASE,UART_INT_RX | UART_INT_RT | UART_INT_TX);
-
+	ROM_UARTTxIntModeSet(UART5_BASE, UART_TXINT_MODE_EOT);
+	ROM_UARTIntEnable(UART5_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
 }
 
-void Drv_Uart5SendBuf(u8 *data, u8 len)
-
+/* å‘é€æ¿€å…‰æ¨¡å—æ•°æ®ï¼Œæ²¿ç”¨åŽŸå‘é€ç¼“å­˜è¡Œä¸ºã€‚ */
+void Drv_UartLaser_SendBuf(u8 *data, u8 len)
 {
-
-	for(u8 i=0; i<len; i++)
-
+	for (u8 i = 0; i < len; i++)
 	{
-
-		s_uart5_tx_buf[s_uart5_tx_write_idx++] = * ( data + i );
-
+		s_laser_tx_buf[s_laser_tx_write_idx++] = *(data + i);
 	}
 
-	Drv_Uart5TxCheck();
-
+	Drv_UartLaser_TxCheck();
 }
 
-void Drv_Uart5TxCheck(void)
-
+/* æ£€æŸ¥æ¿€å…‰ä¸²å£å‘é€ç¼“å­˜å¹¶å°è¯•ç»§ç»­å‘é€ã€‚ */
+void Drv_UartLaser_TxCheck(void)
 {
-
-	while( (s_uart5_tx_read_idx != s_uart5_tx_write_idx) && (ROM_UARTCharPutNonBlocking(UART5_BASE,s_uart5_tx_buf[s_uart5_tx_read_idx])) )
-
-		s_uart5_tx_read_idx++;
-
+	while ((s_laser_tx_read_idx != s_laser_tx_write_idx) &&
+		   ROM_UARTCharPutNonBlocking(UART5_BASE, s_laser_tx_buf[s_laser_tx_read_idx]))
+	{
+		s_laser_tx_read_idx++;
+	}
 }
 
+/* åŽ†å²å…¼å®¹æŽ¥å£ï¼šåº•æ¿ä¸²å£ 1 å¯¹åº” GPSã€‚ */
+void Drv_Uart1Init(uint32_t baudrate) { Drv_UartGps_Init(baudrate); }
+void Drv_Uart1SendBuf(u8 *data, u8 len) { Drv_UartGps_SendBuf(data, len); }
+void Drv_Uart1TxCheck(void) { Drv_UartGps_TxCheck(); }
+
+/* åŽ†å²å…¼å®¹æŽ¥å£ï¼šåº•æ¿ä¸²å£ 2 å¯¹åº”æ•°ä¼ ã€‚ */
+void Drv_Uart2Init(uint32_t baudrate) { Drv_UartDt_Init(baudrate); }
+void Drv_Uart2SendBuf(u8 *data, u8 len) { Drv_UartDt_SendBuf(data, len); }
+void Drv_Uart2TxCheck(void) { Drv_UartDt_TxCheck(); }
+
+/* åŽ†å²å…¼å®¹æŽ¥å£ï¼šåº•æ¿ä¸²å£ 3 å¯¹åº” OpenMVã€‚ */
+void Drv_Uart3Init(uint32_t baudrate) { Drv_UartOpenMv_Init(baudrate); }
+void Drv_Uart3SendBuf(u8 *data, u8 len) { Drv_UartOpenMv_SendBuf(data, len); }
+void Drv_Uart3TxCheck(void) { Drv_UartOpenMv_TxCheck(); }
+
+/* åŽ†å²å…¼å®¹æŽ¥å£ï¼šåº•æ¿ä¸²å£ 4 å¯¹åº”å…‰æµã€‚ */
+void Drv_Uart4Init(uint32_t baudrate) { Drv_UartOpticalFlow_Init(baudrate); }
+void Drv_Uart4SendBuf(u8 *data, u8 len) { Drv_UartOpticalFlow_SendBuf(data, len); }
+void Drv_Uart4TxCheck(void) { Drv_UartOpticalFlow_TxCheck(); }
+
+/* åŽ†å²å…¼å®¹æŽ¥å£ï¼šåº•æ¿ä¸²å£ 5 å¯¹åº”æ¿€å…‰ã€‚ */
+void Drv_Uart5Init(uint32_t baudrate) { Drv_UartLaser_Init(baudrate); }
+void Drv_Uart5SendBuf(u8 *data, u8 len) { Drv_UartLaser_SendBuf(data, len); }
+void Drv_Uart5TxCheck(void) { Drv_UartLaser_TxCheck(); }
