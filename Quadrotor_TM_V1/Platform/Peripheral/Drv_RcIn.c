@@ -31,7 +31,7 @@ static void PPM_Cal(uint32_t  PulseHigh)
         {
             if(Chan < 16)
             {
-							ch_watch_dog_feed(Chan);
+							FC_Rc_ChannelWatchdogFeed(Chan);
               RC_PPM.Captures[Chan++] = PulseHigh;
             }
         }
@@ -136,7 +136,7 @@ static void Sbus_Decode(uint8_t data)
 				//否则有数据就喂狗
 				for(u8 i = 0;i < 8;i++)//原RC接收程序只设计了8个通道
 				{
-					ch_watch_dog_feed(i);
+					FC_Rc_ChannelWatchdogFeed(i);
 				}
 			}			
 		}
@@ -185,3 +185,6 @@ void Drv_SbusInit(void)
 	ROM_IntPrioritySet( INT_UART3 , USER_INT6 );
 	ROM_UARTIntEnable( SBUS_UART , UART_INT_RX | UART_INT_OE );
 }
+
+
+

@@ -69,12 +69,12 @@ void Drv_BspInit(void)
 	//数据初始化
 	Dvr_ParamterInit();
 	//读取初始数据
-	Para_Data_Init();
+	FC_Param_InitData();
 	//灯光初始化
 	Dvr_LedInit();
 	
 	//遥控接收模式初始化
-	Remote_Control_Init();
+	FC_Rc_Init();
 	//spi通信初始化
 	Drv_Spi0Init();
 	Drv_SenserCsPinInit();
@@ -106,3 +106,6 @@ void Drv_BspInit(void)
 	//电机输出初始化
 	Drv_PwmOutInit();
 }
+
+
+

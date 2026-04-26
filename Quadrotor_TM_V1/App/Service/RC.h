@@ -33,6 +33,20 @@ extern u16 signal_intensity;
 /* 当前有效通道位图。 */
 extern u8 chn_en_bit;
 
+/*
+ * 第二阶段语义接口：
+ * 当前先通过兼容别名暴露更清晰的命名，底层实现与旧接口保持一致。
+ * 后续如果继续推进，再逐步迁移实现文件内部符号。
+ */
+#define g_rc_channels             CH_N
+#define g_rc_signal_intensity     signal_intensity
+#define g_rc_channel_enable_mask  chn_en_bit
+
+#define FC_Rc_Init                Remote_Control_Init
+#define FC_Rc_Task                RC_duty_task
+#define FC_Rc_FailSafeCheck       fail_safe_check
+#define FC_Rc_ChannelWatchdogFeed ch_watch_dog_feed
+
 void fail_safe_check(u8 dT_ms);
 void Remote_Control_Init(void);
 void RC_duty_task(u8 dT_ms);

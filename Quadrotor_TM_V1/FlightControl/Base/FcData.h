@@ -252,6 +252,9 @@ void data_save(void);
 /* 初始化参数读取流程。 */
 void Para_Data_Init(void);
 
+/* 第二阶段语义接口：先通过兼容别名暴露更清晰的入口命名。 */
+#define FC_Param_RequestSave data_save
+#define FC_Param_InitData    Para_Data_Init
+
 
 #endif
-
