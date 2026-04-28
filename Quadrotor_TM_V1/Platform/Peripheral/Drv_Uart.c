@@ -11,397 +11,303 @@
 #include "Drv_UP_Flow.h"
 
 /*
- * 模块名称：Drv_Uart
- * 模块职责：提供各外设串口的初始化、发送缓存和中断接收入口。
- * 命名说明：函数名按外设语义命名，底板串口编号接口仅作为兼容包装保留。
- * 维护约束：本文件不调整 UART 基址、GPIO 复用、中断优先级和收发处理流程。
+ * UART 驱动模块
+ *
+ * 管理 5 路串口通道，每路使用相同的环形发送缓冲结构，
+ * 通过通用函数统一处理发送逻辑，消除重复代码。
+ *
+ * 硬件映射（底板编号 -> TM4C 硬件 UART -> 外设功能）：
+ *   底板串口1 -> UART0 (PA0/PA1) -> GPS
+ *   底板串口2 -> UART4 (PC4/PC5) -> 数传（ANO 地面站）
+ *   底板串口3 -> UART2 (PD6/PD7) -> OpenMV
+ *   底板串口4 -> UART7 (PE0/PE1) -> 光流模块
+ *   底板串口5 -> UART5 (PE4/PE5) -> 激光测距
  */
 
 #define UART_TX_BUF_LEN 256
 
-static u8 s_gps_tx_buf[UART_TX_BUF_LEN];
-static u8 s_gps_tx_write_idx = 0;
-static u8 s_gps_tx_read_idx = 0;
+/* 串口通道运行时状态，每路串口各一个实例 */
+typedef struct {
+    uint32_t base;
+    u8       tx_buf[UART_TX_BUF_LEN];
+    u8       tx_wr;
+    u8       tx_rd;
+} uart_ch_t;
 
-static u8 s_dt_tx_buf[UART_TX_BUF_LEN];
-static u8 s_dt_tx_write_idx = 0;
-static u8 s_dt_tx_read_idx = 0;
+static uart_ch_t s_ch_gps     = { .base = UART0_BASE };
+static uart_ch_t s_ch_dt      = { .base = UART4_BASE };
+static uart_ch_t s_ch_openmv  = { .base = UART2_BASE };
+static uart_ch_t s_ch_optflow = { .base = UART7_BASE };
+static uart_ch_t s_ch_laser   = { .base = UART5_BASE };
 
-static u8 s_openmv_tx_buf[UART_TX_BUF_LEN];
-static u8 s_openmv_tx_write_idx = 0;
-static u8 s_openmv_tx_read_idx = 0;
+/* ======================== 通用收发逻辑 ======================== */
 
-static u8 s_optical_flow_tx_buf[UART_TX_BUF_LEN];
-static u8 s_optical_flow_tx_write_idx = 0;
-static u8 s_optical_flow_tx_read_idx = 0;
-
-static u8 s_laser_tx_buf[UART_TX_BUF_LEN];
-static u8 s_laser_tx_write_idx = 0;
-static u8 s_laser_tx_read_idx = 0;
-
-/* 底板串口 1 中断服务：接收 GPS 数据。 */
-void UART1_IRQHandler(void)
+/* 尝试将缓冲区中的待发送数据写入 UART 硬件 FIFO */
+static void uart_tx_check(uart_ch_t *ch)
 {
-	uint8_t com_data;
-	uint32_t flag = ROM_UARTIntStatus(UART0_BASE, 1);
-
-	ROM_UARTIntClear(UART0_BASE, flag);
-
-	while (ROM_UARTCharsAvail(UART0_BASE))
-	{
-		com_data = ROM_UARTCharGet(UART0_BASE);
-		Drv_GpsGetOneByte(com_data);
-	}
-
-	if (flag & UART_INT_TX)
-	{
-		Drv_UartGps_TxCheck();
-	}
+    while ((ch->tx_rd != ch->tx_wr) &&
+           ROM_UARTCharPutNonBlocking(ch->base, ch->tx_buf[ch->tx_rd]))
+    {
+        ch->tx_rd++;
+    }
 }
 
-/* 初始化 GPS 串口，保持原 UART0 / GPIOA 配置不变。 */
+/* 将数据写入环形发送缓冲，随后触发发送 */
+static void uart_send_buf(uart_ch_t *ch, u8 *data, u8 len)
+{
+    for (u8 i = 0; i < len; i++)
+    {
+        ch->tx_buf[ch->tx_wr++] = data[i];
+    }
+    uart_tx_check(ch);
+}
+
+/* ======================== GPS（TM4C UART0） ======================== */
+
+static void UartGps_IRQHandler(void)
+{
+    uint8_t com_data;
+    uint32_t status = ROM_UARTIntStatus(UART0_BASE, 1);
+    ROM_UARTIntClear(UART0_BASE, status);
+
+    while (ROM_UARTCharsAvail(UART0_BASE))
+    {
+        com_data = ROM_UARTCharGet(UART0_BASE);
+        Drv_GpsGetOneByte(com_data);
+    }
+
+    if (status & UART_INT_TX)
+    {
+        uart_tx_check(&s_ch_gps);
+    }
+}
+
 void Drv_UartGps_Init(uint32_t baudrate)
 {
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
 
-	ROM_GPIOPinConfigure(UART0_RX);
-	ROM_GPIOPinConfigure(UART0_TX);
-	ROM_GPIOPinTypeUART(UART0_PORT, UART0_PIN_TX | UART0_PIN_RX);
+    ROM_GPIOPinConfigure(UART0_RX);
+    ROM_GPIOPinConfigure(UART0_TX);
+    ROM_GPIOPinTypeUART(UART0_PORT, UART0_PIN_TX | UART0_PIN_RX);
 
-	ROM_UARTConfigSetExpClk(
-		UART0_BASE,
-		ROM_SysCtlClockGet(),
-		baudrate,
-		(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+    ROM_UARTConfigSetExpClk(
+        UART0_BASE, ROM_SysCtlClockGet(), baudrate,
+        UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE);
 
-	ROM_UARTFIFOLevelSet(UART0_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
-	ROM_UARTFIFOEnable(UART0_BASE);
-	ROM_UARTEnable(UART0_BASE);
+    ROM_UARTFIFOLevelSet(UART0_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
+    ROM_UARTFIFOEnable(UART0_BASE);
+    ROM_UARTEnable(UART0_BASE);
 
-	UARTIntRegister(UART0_BASE, UART1_IRQHandler);
-	ROM_IntPrioritySet(INT_UART0, USER_INT2);
-	ROM_UARTTxIntModeSet(UART0_BASE, UART_TXINT_MODE_EOT);
-	ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
+    UARTIntRegister(UART0_BASE, UartGps_IRQHandler);
+    ROM_IntPrioritySet(INT_UART0, USER_INT2);
+    ROM_UARTTxIntModeSet(UART0_BASE, UART_TXINT_MODE_EOT);
+    ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
 }
 
-/* 发送 GPS 数据，沿用原环形发送缓存行为。 */
 void Drv_UartGps_SendBuf(u8 *data, u8 len)
 {
-	for (u8 i = 0; i < len; i++)
-	{
-		s_gps_tx_buf[s_gps_tx_write_idx++] = *(data + i);
-	}
-
-	Drv_UartGps_TxCheck();
+    uart_send_buf(&s_ch_gps, data, len);
 }
 
-/* 检查 GPS 串口发送缓存并尝试继续发送。 */
-void Drv_UartGps_TxCheck(void)
+/* ======================== 数传（TM4C UART4） ======================== */
+
+static void UartDt_IRQHandler(void)
 {
-	while ((s_gps_tx_read_idx != s_gps_tx_write_idx) &&
-		   ROM_UARTCharPutNonBlocking(UART0_BASE, s_gps_tx_buf[s_gps_tx_read_idx]))
-	{
-		s_gps_tx_read_idx++;
-	}
+    uint8_t com_data;
+    uint32_t status = ROM_UARTIntStatus(UART4_BASE, 1);
+    ROM_UARTIntClear(UART4_BASE, status);
+
+    while (ROM_UARTCharsAvail(UART4_BASE))
+    {
+        com_data = ROM_UARTCharGet(UART4_BASE);
+        ANO_DT_Data_Receive_Prepare(com_data);
+    }
+
+    if (status & UART_INT_TX)
+    {
+        uart_tx_check(&s_ch_dt);
+    }
 }
 
-/* 底板串口 2 中断服务：接收数传数据。 */
-void UART2_IRQHandler(void)
-{
-	uint8_t com_data;
-	uint32_t flag = ROM_UARTIntStatus(UART4_BASE, 1);
-
-	ROM_UARTIntClear(UART4_BASE, flag);
-
-	while (ROM_UARTCharsAvail(UART4_BASE))
-	{
-		com_data = ROM_UARTCharGet(UART4_BASE);
-		ANO_DT_Data_Receive_Prepare(com_data);
-	}
-
-	if (flag & UART_INT_TX)
-	{
-		Drv_UartDt_TxCheck();
-	}
-}
-
-/* 初始化数传串口，保持原 UART4 / GPIOC 配置不变。 */
 void Drv_UartDt_Init(uint32_t baudrate)
 {
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART4);
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART4);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
 
-	ROM_GPIOPinConfigure(UART4_RX);
-	ROM_GPIOPinConfigure(UART4_TX);
-	ROM_GPIOPinTypeUART(UART4_PORT, UART4_PIN_TX | UART4_PIN_RX);
+    ROM_GPIOPinConfigure(UART4_RX);
+    ROM_GPIOPinConfigure(UART4_TX);
+    ROM_GPIOPinTypeUART(UART4_PORT, UART4_PIN_TX | UART4_PIN_RX);
 
-	ROM_UARTConfigSetExpClk(
-		UART4_BASE,
-		ROM_SysCtlClockGet(),
-		baudrate,
-		(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+    ROM_UARTConfigSetExpClk(
+        UART4_BASE, ROM_SysCtlClockGet(), baudrate,
+        UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE);
 
-	ROM_UARTFIFOLevelSet(UART4_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
-	ROM_UARTFIFOEnable(UART4_BASE);
-	ROM_UARTEnable(UART4_BASE);
+    ROM_UARTFIFOLevelSet(UART4_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
+    ROM_UARTFIFOEnable(UART4_BASE);
+    ROM_UARTEnable(UART4_BASE);
 
-	UARTIntRegister(UART4_BASE, UART2_IRQHandler);
-	ROM_IntPrioritySet(INT_UART4, USER_INT2);
-	ROM_UARTTxIntModeSet(UART4_BASE, UART_TXINT_MODE_EOT);
-	ROM_UARTIntEnable(UART4_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
+    UARTIntRegister(UART4_BASE, UartDt_IRQHandler);
+    ROM_IntPrioritySet(INT_UART4, USER_INT2);
+    ROM_UARTTxIntModeSet(UART4_BASE, UART_TXINT_MODE_EOT);
+    ROM_UARTIntEnable(UART4_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
 }
 
-/* 发送数传数据，沿用原发送缓存行为。 */
 void Drv_UartDt_SendBuf(u8 *data, u8 len)
 {
-	for (u8 i = 0; i < len; i++)
-	{
-		s_dt_tx_buf[s_dt_tx_write_idx++] = *(data + i);
-	}
-
-	Drv_UartDt_TxCheck();
+    uart_send_buf(&s_ch_dt, data, len);
 }
 
-/* 检查数传串口发送缓存并尝试继续发送。 */
-void Drv_UartDt_TxCheck(void)
+/* ======================== OpenMV（TM4C UART2） ======================== */
+
+static void UartOpenMv_IRQHandler(void)
 {
-	while ((s_dt_tx_read_idx != s_dt_tx_write_idx) &&
-		   ROM_UARTCharPutNonBlocking(UART4_BASE, s_dt_tx_buf[s_dt_tx_read_idx]))
-	{
-		s_dt_tx_read_idx++;
-	}
+    uint8_t com_data;
+    uint32_t status = ROM_UARTIntStatus(UART2_BASE, 1);
+    ROM_UARTIntClear(UART2_BASE, status);
+
+    while (ROM_UARTCharsAvail(UART2_BASE))
+    {
+        com_data = ROM_UARTCharGet(UART2_BASE);
+        OpenMV_Byte_Get(com_data);
+    }
+
+    if (status & UART_INT_TX)
+    {
+        uart_tx_check(&s_ch_openmv);
+    }
 }
 
-/* 底板串口 3 中断服务：接收 OpenMV 数据。 */
-void UART3_IRQHandler(void)
-{
-	uint8_t com_data;
-	uint32_t flag = ROM_UARTIntStatus(UART2_BASE, 1);
-
-	ROM_UARTIntClear(UART2_BASE, flag);
-
-	while (ROM_UARTCharsAvail(UART2_BASE))
-	{
-		com_data = ROM_UARTCharGet(UART2_BASE);
-		OpenMV_Byte_Get(com_data);
-	}
-
-	if (flag & UART_INT_TX)
-	{
-		Drv_UartOpenMv_TxCheck();
-	}
-}
-
-/* 初始化 OpenMV 串口，保持原 UART2 / GPIOD 配置不变。 */
 void Drv_UartOpenMv_Init(uint32_t baudrate)
 {
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2);
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
 
-	ROM_GPIOPinConfigure(UART2_RX);
-	ROM_GPIOPinConfigure(UART2_TX);
-	ROM_GPIOPinTypeUART(UART2_PORT, UART2_PIN_TX | UART2_PIN_RX);
+    ROM_GPIOPinConfigure(UART2_RX);
+    ROM_GPIOPinConfigure(UART2_TX);
+    ROM_GPIOPinTypeUART(UART2_PORT, UART2_PIN_TX | UART2_PIN_RX);
 
-	ROM_UARTConfigSetExpClk(
-		UART2_BASE,
-		ROM_SysCtlClockGet(),
-		baudrate,
-		(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+    ROM_UARTConfigSetExpClk(
+        UART2_BASE, ROM_SysCtlClockGet(), baudrate,
+        UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE);
 
-	ROM_UARTFIFOLevelSet(UART2_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
-	ROM_UARTFIFOEnable(UART2_BASE);
-	ROM_UARTEnable(UART2_BASE);
+    ROM_UARTFIFOLevelSet(UART2_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
+    ROM_UARTFIFOEnable(UART2_BASE);
+    ROM_UARTEnable(UART2_BASE);
 
-	UARTIntRegister(UART2_BASE, UART3_IRQHandler);
-	ROM_IntPrioritySet(INT_UART2, USER_INT2);
-	ROM_UARTTxIntModeSet(UART2_BASE, UART_TXINT_MODE_EOT);
-	ROM_UARTIntEnable(UART2_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
+    UARTIntRegister(UART2_BASE, UartOpenMv_IRQHandler);
+    ROM_IntPrioritySet(INT_UART2, USER_INT2);
+    ROM_UARTTxIntModeSet(UART2_BASE, UART_TXINT_MODE_EOT);
+    ROM_UARTIntEnable(UART2_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
 }
 
-/* 发送 OpenMV 数据，沿用原发送缓存行为。 */
 void Drv_UartOpenMv_SendBuf(u8 *data, u8 len)
 {
-	for (u8 i = 0; i < len; i++)
-	{
-		s_openmv_tx_buf[s_openmv_tx_write_idx++] = *(data + i);
-	}
-
-	Drv_UartOpenMv_TxCheck();
+    uart_send_buf(&s_ch_openmv, data, len);
 }
 
-/* 检查 OpenMV 串口发送缓存并尝试继续发送。 */
-void Drv_UartOpenMv_TxCheck(void)
+/* ======================== 光流（TM4C UART7） ======================== */
+
+static void UartOptFlow_IRQHandler(void)
 {
-	while ((s_openmv_tx_read_idx != s_openmv_tx_write_idx) &&
-		   ROM_UARTCharPutNonBlocking(UART2_BASE, s_openmv_tx_buf[s_openmv_tx_read_idx]))
-	{
-		s_openmv_tx_read_idx++;
-	}
+    uint8_t com_data;
+    uint32_t status = ROM_UARTIntStatus(UART7_BASE, 1);
+    ROM_UARTIntClear(UART7_BASE, status);
+
+    while (ROM_UARTCharsAvail(UART7_BASE))
+    {
+        com_data = ROM_UARTCharGet(UART7_BASE);
+        OFGetByte(com_data);
+    }
+
+    if (status & UART_INT_TX)
+    {
+        uart_tx_check(&s_ch_optflow);
+    }
 }
 
-/* 底板串口 4 中断服务：接收光流数据。 */
-void UART4_IRQHandler(void)
-{
-	uint8_t com_data;
-	uint32_t flag = ROM_UARTIntStatus(UART7_BASE, 1);
-
-	ROM_UARTIntClear(UART7_BASE, flag);
-
-	while (ROM_UARTCharsAvail(UART7_BASE))
-	{
-		com_data = ROM_UARTCharGet(UART7_BASE);
-		OFGetByte(com_data);
-	}
-
-	if (flag & UART_INT_TX)
-	{
-		Drv_UartOpticalFlow_TxCheck();
-	}
-}
-
-/* 初始化光流串口，保持原 UART7 / GPIOE 配置不变。 */
 void Drv_UartOpticalFlow_Init(uint32_t baudrate)
 {
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART7);
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART7);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
 
-	ROM_GPIOPinConfigure(UART7_RX);
-	ROM_GPIOPinConfigure(UART7_TX);
-	ROM_GPIOPinTypeUART(UART7_PORT, UART7_PIN_TX | UART7_PIN_RX);
+    ROM_GPIOPinConfigure(UART7_RX);
+    ROM_GPIOPinConfigure(UART7_TX);
+    ROM_GPIOPinTypeUART(UART7_PORT, UART7_PIN_TX | UART7_PIN_RX);
 
-	ROM_UARTConfigSetExpClk(
-		UART7_BASE,
-		ROM_SysCtlClockGet(),
-		baudrate,
-		(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+    ROM_UARTConfigSetExpClk(
+        UART7_BASE, ROM_SysCtlClockGet(), baudrate,
+        UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE);
 
-	ROM_UARTFIFOLevelSet(UART7_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
-	ROM_UARTFIFOEnable(UART7_BASE);
-	ROM_UARTEnable(UART7_BASE);
+    ROM_UARTFIFOLevelSet(UART7_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
+    ROM_UARTFIFOEnable(UART7_BASE);
+    ROM_UARTEnable(UART7_BASE);
 
-	UARTIntRegister(UART7_BASE, UART4_IRQHandler);
-	ROM_IntPrioritySet(INT_UART7, USER_INT2);
-	ROM_UARTTxIntModeSet(UART7_BASE, UART_TXINT_MODE_EOT);
-	ROM_UARTIntEnable(UART7_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
+    UARTIntRegister(UART7_BASE, UartOptFlow_IRQHandler);
+    ROM_IntPrioritySet(INT_UART7, USER_INT2);
+    ROM_UARTTxIntModeSet(UART7_BASE, UART_TXINT_MODE_EOT);
+    ROM_UARTIntEnable(UART7_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
 }
 
-/* 发送光流模块数据，沿用原发送缓存行为。 */
 void Drv_UartOpticalFlow_SendBuf(u8 *data, u8 len)
 {
-	for (u8 i = 0; i < len; i++)
-	{
-		s_optical_flow_tx_buf[s_optical_flow_tx_write_idx++] = *(data + i);
-	}
-
-	Drv_UartOpticalFlow_TxCheck();
+    uart_send_buf(&s_ch_optflow, data, len);
 }
 
-/* 检查光流串口发送缓存并尝试继续发送。 */
-void Drv_UartOpticalFlow_TxCheck(void)
+/* ======================== 激光测距（TM4C UART5） ======================== */
+
+static void UartLaser_IRQHandler(void)
 {
-	while ((s_optical_flow_tx_read_idx != s_optical_flow_tx_write_idx) &&
-		   ROM_UARTCharPutNonBlocking(UART7_BASE, s_optical_flow_tx_buf[s_optical_flow_tx_read_idx]))
-	{
-		s_optical_flow_tx_read_idx++;
-	}
-}
+    uint8_t com_data;
+    uint32_t status = ROM_UARTIntStatus(UART5_BASE, 1);
+    ROM_UARTIntClear(UART5_BASE, status);
 
-/* 底板串口 5 中断服务：接收激光测距数据。 */
-void UART5_IRQHandler(void)
-{
-	uint8_t com_data;
-	uint32_t flag = ROM_UARTIntStatus(UART5_BASE, 1);
+    while (ROM_UARTCharsAvail(UART5_BASE))
+    {
+        com_data = ROM_UARTCharGet(UART5_BASE);
+        Drv_Laser_GetOneByte(com_data);
+    }
 
-	ROM_UARTIntClear(UART5_BASE, flag);
-
-	while (ROM_UARTCharsAvail(UART5_BASE))
-	{
-		com_data = ROM_UARTCharGet(UART5_BASE);
-		Drv_Laser_GetOneByte(com_data);
-	}
-
-	if (flag & UART_INT_TX)
-	{
-		Drv_UartLaser_TxCheck();
-	}
+    if (status & UART_INT_TX)
+    {
+        uart_tx_check(&s_ch_laser);
+    }
 }
 
 /*
- * 初始化激光串口，保持原 UART5 / GPIOE 配置不变。
- * 注意：PD7 解锁相关写法沿用原工程配置，不在本轮调整。
+ * 激光串口初始化。
+ * 历史遗留：此处保留了原工程对 GPIOD (PD7) 的解锁操作，
+ * 虽然激光串口实际使用 GPIOE (PE4/PE5)，但删除此操作可能
+ * 影响 OpenMV 串口 (UART2, PD7) 的初始化顺序依赖，暂不调整。
  */
 void Drv_UartLaser_Init(uint32_t baudrate)
 {
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART5);
-	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART5);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
 
-	HWREG(UART2_PORT + GPIO_O_LOCK) = GPIO_LOCK_KEY;
-	HWREG(UART2_PORT + GPIO_O_CR) = UART5_PIN_TX;
-	HWREG(UART2_PORT + GPIO_O_LOCK) = 0x00;
+    HWREG(UART2_PORT + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(UART2_PORT + GPIO_O_CR) = UART5_PIN_TX;
+    HWREG(UART2_PORT + GPIO_O_LOCK) = 0x00;
 
-	ROM_GPIOPinConfigure(UART5_RX);
-	ROM_GPIOPinConfigure(UART5_TX);
-	ROM_GPIOPinTypeUART(UART5_PORT, UART5_PIN_TX | UART5_PIN_RX);
+    ROM_GPIOPinConfigure(UART5_RX);
+    ROM_GPIOPinConfigure(UART5_TX);
+    ROM_GPIOPinTypeUART(UART5_PORT, UART5_PIN_TX | UART5_PIN_RX);
 
-	ROM_UARTConfigSetExpClk(
-		UART5_BASE,
-		ROM_SysCtlClockGet(),
-		baudrate,
-		(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+    ROM_UARTConfigSetExpClk(
+        UART5_BASE, ROM_SysCtlClockGet(), baudrate,
+        UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE);
 
-	ROM_UARTFIFOLevelSet(UART5_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
-	ROM_UARTFIFOEnable(UART5_BASE);
-	ROM_UARTEnable(UART5_BASE);
+    ROM_UARTFIFOLevelSet(UART5_BASE, UART_FIFO_TX7_8, UART_FIFO_RX7_8);
+    ROM_UARTFIFOEnable(UART5_BASE);
+    ROM_UARTEnable(UART5_BASE);
 
-	UARTIntRegister(UART5_BASE, UART5_IRQHandler);
-	ROM_IntPrioritySet(INT_UART5, USER_INT2);
-	ROM_UARTTxIntModeSet(UART5_BASE, UART_TXINT_MODE_EOT);
-	ROM_UARTIntEnable(UART5_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
+    UARTIntRegister(UART5_BASE, UartLaser_IRQHandler);
+    ROM_IntPrioritySet(INT_UART5, USER_INT2);
+    ROM_UARTTxIntModeSet(UART5_BASE, UART_TXINT_MODE_EOT);
+    ROM_UARTIntEnable(UART5_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX);
 }
 
-/* 发送激光模块数据，沿用原发送缓存行为。 */
 void Drv_UartLaser_SendBuf(u8 *data, u8 len)
 {
-	for (u8 i = 0; i < len; i++)
-	{
-		s_laser_tx_buf[s_laser_tx_write_idx++] = *(data + i);
-	}
-
-	Drv_UartLaser_TxCheck();
+    uart_send_buf(&s_ch_laser, data, len);
 }
-
-/* 检查激光串口发送缓存并尝试继续发送。 */
-void Drv_UartLaser_TxCheck(void)
-{
-	while ((s_laser_tx_read_idx != s_laser_tx_write_idx) &&
-		   ROM_UARTCharPutNonBlocking(UART5_BASE, s_laser_tx_buf[s_laser_tx_read_idx]))
-	{
-		s_laser_tx_read_idx++;
-	}
-}
-
-/* 历史兼容接口：底板串口 1 对应 GPS。 */
-void Drv_Uart1Init(uint32_t baudrate) { Drv_UartGps_Init(baudrate); }
-void Drv_Uart1SendBuf(u8 *data, u8 len) { Drv_UartGps_SendBuf(data, len); }
-void Drv_Uart1TxCheck(void) { Drv_UartGps_TxCheck(); }
-
-/* 历史兼容接口：底板串口 2 对应数传。 */
-void Drv_Uart2Init(uint32_t baudrate) { Drv_UartDt_Init(baudrate); }
-void Drv_Uart2SendBuf(u8 *data, u8 len) { Drv_UartDt_SendBuf(data, len); }
-void Drv_Uart2TxCheck(void) { Drv_UartDt_TxCheck(); }
-
-/* 历史兼容接口：底板串口 3 对应 OpenMV。 */
-void Drv_Uart3Init(uint32_t baudrate) { Drv_UartOpenMv_Init(baudrate); }
-void Drv_Uart3SendBuf(u8 *data, u8 len) { Drv_UartOpenMv_SendBuf(data, len); }
-void Drv_Uart3TxCheck(void) { Drv_UartOpenMv_TxCheck(); }
-
-/* 历史兼容接口：底板串口 4 对应光流。 */
-void Drv_Uart4Init(uint32_t baudrate) { Drv_UartOpticalFlow_Init(baudrate); }
-void Drv_Uart4SendBuf(u8 *data, u8 len) { Drv_UartOpticalFlow_SendBuf(data, len); }
-void Drv_Uart4TxCheck(void) { Drv_UartOpticalFlow_TxCheck(); }
-
-/* 历史兼容接口：底板串口 5 对应激光。 */
-void Drv_Uart5Init(uint32_t baudrate) { Drv_UartLaser_Init(baudrate); }
-void Drv_Uart5SendBuf(u8 *data, u8 len) { Drv_UartLaser_SendBuf(data, len); }
-void Drv_Uart5TxCheck(void) { Drv_UartLaser_TxCheck(); }

@@ -4,56 +4,37 @@
 #include "sysconfig.h"
 
 /*
- * 模块名称：Drv_Uart
- * 模块职责：提供 GPS、数传、OpenMV、光流和激光串口的初始化与发送接口。
- * 命名约定：优先使用语义化接口名，底板串口编号接口仅作为兼容层保留。
- * 使用约束：本轮仅整理接口命名与注释，不修改寄存器配置、中断流程和收发行为。
+ * UART 驱动模块
+ *
+ * 提供 5 路串口的初始化与发送接口，按外设语义命名。
+ * 内部使用统一的环形缓冲结构，发送和中断检查逻辑不再重复。
+ *
+ * 硬件映射：
+ *   GPS    -> TM4C UART0 (PA0/PA1)
+ *   数传   -> TM4C UART4 (PC4/PC5)
+ *   OpenMV -> TM4C UART2 (PD6/PD7)
+ *   光流   -> TM4C UART7 (PE0/PE1)
+ *   激光   -> TM4C UART5 (PE4/PE5)
  */
 
-/* GPS 串口：底板串口 1，对应 TM4C UART0。 */
+/* GPS 串口 */
 void Drv_UartGps_Init(uint32_t baudrate);
 void Drv_UartGps_SendBuf(u8 *data, u8 len);
-void Drv_UartGps_TxCheck(void);
 
-/* 数传串口：底板串口 2，对应 TM4C UART4。 */
+/* 数传串口（ANO 地面站） */
 void Drv_UartDt_Init(uint32_t baudrate);
 void Drv_UartDt_SendBuf(u8 *data, u8 len);
-void Drv_UartDt_TxCheck(void);
 
-/* OpenMV 串口：底板串口 3，对应 TM4C UART2。 */
+/* OpenMV 串口 */
 void Drv_UartOpenMv_Init(uint32_t baudrate);
 void Drv_UartOpenMv_SendBuf(u8 *data, u8 len);
-void Drv_UartOpenMv_TxCheck(void);
 
-/* 光流串口：底板串口 4，对应 TM4C UART7。 */
+/* 光流串口 */
 void Drv_UartOpticalFlow_Init(uint32_t baudrate);
 void Drv_UartOpticalFlow_SendBuf(u8 *data, u8 len);
-void Drv_UartOpticalFlow_TxCheck(void);
 
-/* 激光串口：底板串口 5，对应 TM4C UART5。 */
+/* 激光测距串口 */
 void Drv_UartLaser_Init(uint32_t baudrate);
 void Drv_UartLaser_SendBuf(u8 *data, u8 len);
-void Drv_UartLaser_TxCheck(void);
-
-/*
- * 历史兼容接口：
- * Drv_Uart1~5* 沿用底板串口编号命名，保留它们仅用于兼容旧调用点。
- * 新代码请优先使用上面的语义化接口。
- */
-void Drv_Uart1Init(uint32_t baudrate);
-void Drv_Uart1SendBuf(u8 *data, u8 len);
-void Drv_Uart1TxCheck(void);
-void Drv_Uart2Init(uint32_t baudrate);
-void Drv_Uart2SendBuf(u8 *data, u8 len);
-void Drv_Uart2TxCheck(void);
-void Drv_Uart3Init(uint32_t baudrate);
-void Drv_Uart3SendBuf(u8 *data, u8 len);
-void Drv_Uart3TxCheck(void);
-void Drv_Uart4Init(uint32_t baudrate);
-void Drv_Uart4SendBuf(u8 *data, u8 len);
-void Drv_Uart4TxCheck(void);
-void Drv_Uart5Init(uint32_t baudrate);
-void Drv_Uart5SendBuf(u8 *data, u8 len);
-void Drv_Uart5TxCheck(void);
 
 #endif
