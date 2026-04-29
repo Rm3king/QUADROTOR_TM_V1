@@ -1,5 +1,78 @@
 # Changelog
 
+## [Stage2-R2] 命名规范化 + 魔法数字清理 + 死代码删除 (2026-04-29)
+
+### 改动概述
+跨 9 个文件进行命名规范化、魔法数字替换和死代码清理，
+提升代码可读性和教学价值。
+
+### 改动详情
+
+#### config.h — 新增命名常量
+- `GRAVITY_CMSS (981)` — 重力加速度，cm/s^2
+- `RAD_TO_DEG (57.2957795f)` — 弧度转角度
+- `ACC_NORM_MAX (1060)` / `ACC_NORM_MIN (900)` — IMU 加速度模值有效范围
+
+#### MotorCtrl.h — 结构体重命名
+- `_mc_st` → `motor_ctrl_t`（类型名规范化）
+- `ct_val_rol` → `roll`
+- `ct_val_pit` → `pitch`
+- `ct_val_yaw` → `yaw`
+- `ct_val_thr` → `throttle`
+
+#### MotorCtrl.c — 重写整理
+- 应用上述字段重命名
+- 修复 `flag.motor_preparation == 0` 的重复判断
+- 预转延时从魔法数字 `300/600/900/1200` 改为 `MOTOR_PREP_TIME * N`
+- `1000` → `MOTOR_PWM_MAX` 常量
+- 添加 X 型混控矩阵注释图（标注每个电机的 roll/pitch/yaw 符号）
+
+#### AttCtrl.c — 应用 mc 字段重命名
+- `mc.ct_val_rol` → `mc.roll`（及 pitch、yaw）
+
+#### AltCtrl.c — 应用 mc 字段重命名
+- `mc.ct_val_thr` → `mc.throttle`
+
+#### FlightCtrl.c — 清理
+- `mc.ct_val_thr` → `mc.throttle`
+- 删除 `ctrl_parameter_change_task()` 中的 `if(0)` 死代码块
+- 删除 `Swtich_State_Task()` 中的 `if(0)//(Laser_height_mm<1900)` 死代码块
+  → 简化为 `switchs.tof_on = 0;`（原逻辑等价）
+- 删除未使用的 `extern s32 ref_height_get;` 声明
+
+#### Imu.c — 魔法数字替换
+- `981` → `GRAVITY_CMSS`
+- `1060` / `900` → `ACC_NORM_MAX` / `ACC_NORM_MIN`
+- `57.30f` → `RAD_TO_DEG`（3 处）
+
+#### FlightDataCal.c — 清理
+- 删除 `IMU_Update_Task()` 中两层 `if(0)` 死代码（24 行 → 3 行）
+- 删除未使用的 `extern s32 sensor_val_ref[];`
+- 删除未使用的 `u16 test_time_cnt` 及其自增
+
+#### FlightDataCal.h — 修复
+- 删除不存在的 `ref_height_get` extern 声明（变量实际名为 `ref_height_get_1`）
+
+### 涉及文件清单
+| 文件 | 改动类型 |
+|------|---------|
+| `FlightControl/Control/config.h` | 新增常量 |
+| `FlightControl/Control/MotorCtrl.h` | 结构体重命名 |
+| `FlightControl/Control/MotorCtrl.c` | 重写整理 |
+| `FlightControl/Control/AttCtrl.c` | 字段重命名 |
+| `FlightControl/Control/AltCtrl.c` | 字段重命名 |
+| `FlightControl/Control/FlightCtrl.c` | 重命名 + 死代码删除 |
+| `FlightControl/Base/Imu.c` | 魔法数字替换 |
+| `FlightControl/Control/FlightDataCal.c` | 死代码 + 废弃变量删除 |
+| `FlightControl/Control/FlightDataCal.h` | 修复错误 extern |
+
+### 验证方式
+1. Keil 编译通过（0 Error, 0 Warning）
+2. 烧录后所有控制功能正常
+3. 试飞确认无异常
+
+---
+
 ## [Stage2-R1] UART 驱动重构 (2026-04-28)
 
 ### 改动概述

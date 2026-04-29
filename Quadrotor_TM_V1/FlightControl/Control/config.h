@@ -1,16 +1,25 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 /*
- * ģ�飺��������
- * ְ�𣺼��ж��������س����͹��̿��ء�
+ * ģ�飺��������
+ * ְ�𣺼��ж��������س����͹��̿��ء�
  */
 #include "sysconfig.h"
-/* �Ƕ��뻡�Ȼ��㡣 */
+
+/* 角度与弧度互转 */
 #define ANGLE_TO_RADIAN 0.01745329f
+#define RAD_TO_DEG      57.2957795f
+
+/* 物理常量 */
+#define GRAVITY_CMSS    981         /* 重力加速度 (cm/s^2)，传感器原始单位 */
+
+/* IMU 互补滤波：加速度模值有效范围，超出则不参与姿态修正 */
+#define ACC_NORM_MAX    1060        /* ~1.08g，上限 */
+#define ACC_NORM_MIN    900         /* ~0.92g，下限 */
 #define ANO_DT_USE_NRF24l01
 #define SP_EST_DRAG 1.0f
 #define BARO_WIND_COMP 0.10f
-/* �����˲�����̬���ƾ�������� */
+/* �����˲�����̬���ƾ�������� */
 #define GYR_ACC_FILTER 0.25f
 #define FINAL_P        0.35f
 #define MOTOR_ESC_TYPE 1

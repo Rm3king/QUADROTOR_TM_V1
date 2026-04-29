@@ -3,15 +3,15 @@
 #include "FcData.h"
 #include "Pid.h"
 
-/* µç»ú»ì¿ØÊä³öÁ¿ */
+/* ç”µæœºæ··æ§è¾“å…¥é‡ï¼šå§¿æ€æ§åˆ¶ç¯è¾“å‡º + æ²¹é—¨ */
 typedef struct
 {
-    s32 ct_val_rol;
-    s32 ct_val_pit;
-    s32 ct_val_yaw;
-    s32 ct_val_thr;
-} _mc_st;
-extern _mc_st mc;
+    s32 roll;
+    s32 pitch;
+    s32 yaw;
+    s32 throttle;
+} motor_ctrl_t;
+extern motor_ctrl_t mc;
 
 extern s16 motor[MOTORSNUM];
 

@@ -25,37 +25,29 @@
  * ?????????????????/??????????
  * ???????????????????????????
  */
-/* ËùÓÐ¿ØÖÆ»· PID ²ÎÊý³õÊ¼»¯ */
+/* ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½Æ»ï¿½ PID ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ */
 void All_PID_Init(void)
 {
-	/*×ËÌ¬¿ØÖÆ£¬½ÇËÙ¶ÈPID³õÊ¼»¯*/
+	/*ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½PIDï¿½ï¿½Ê¼ï¿½ï¿½*/
 	Att_1level_PID_Init();
 	
-	/*×ËÌ¬¿ØÖÆ£¬½Ç¶ÈPID³õÊ¼»¯*/
+	/*ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½Æ£ï¿½ï¿½Ç¶ï¿½PIDï¿½ï¿½Ê¼ï¿½ï¿½*/
 	Att_2level_PID_Init();
 	
-	/*¸ß¶È¿ØÖÆ£¬¸ß¶ÈËÙ¶ÈPID³õÊ¼»¯*/
+	/*ï¿½ß¶È¿ï¿½ï¿½Æ£ï¿½ï¿½ß¶ï¿½ï¿½Ù¶ï¿½PIDï¿½ï¿½Ê¼ï¿½ï¿½*/
 	Alt_1level_PID_Init();	
 	
-	/*¸ß¶È¿ØÖÆ£¬¸ß¶ÈPID³õÊ¼»¯*/
+	/*ï¿½ß¶È¿ï¿½ï¿½Æ£ï¿½ï¿½ß¶ï¿½PIDï¿½ï¿½Ê¼ï¿½ï¿½*/
 	Alt_2level_PID_Init();
 	
 	
-	/*Î»ÖÃËÙ¶È¿ØÖÆPID³õÊ¼»¯*/
+	/*Î»ï¿½ï¿½ï¿½Ù¶È¿ï¿½ï¿½ï¿½PIDï¿½ï¿½Ê¼ï¿½ï¿½*/
 	Loc_1level_PID_Init();
 	
 }
-/* ¸ù¾Ý·ÉÐÐ×´Ì¬ÇÐ»»¿ØÖÆ²ÎÊý */
+/* ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½×´Ì¬ï¿½Ð»ï¿½ï¿½ï¿½ï¿½Æ²ï¿½ï¿½ï¿½ */
 void ctrl_parameter_change_task()
 {
-	
-	if(0)
-	{
-		Set_Att_2level_Ki(0);
-		
-	}
-	else
-	{
 		if(flag.auto_take_off_land ==AUTO_TAKE_OFF)
 		{
 			Set_Att_1level_Ki(2);
@@ -66,9 +58,8 @@ void ctrl_parameter_change_task()
 		}
 		
 		Set_Att_2level_Ki(1);
-	}
 }
-/* Ò»¼ü·­¹ö´¥·¢Èë¿Ú */
+/* Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 void one_key_roll()
 {
 			if(flag.flying && flag.auto_take_off_land == AUTO_TAKE_OFF_FINISH)
@@ -81,7 +72,7 @@ void one_key_roll()
 			}
 }
 static u16 s_one_key_takeoff_delay_ms;
-/* Ò»¼üÆð·ÉÑÓÊ±ÈÎÎñ */
+/* Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ */
 void one_key_take_off_task(u16 dt_ms)
 {
 	if(s_one_key_takeoff_delay_ms != 0)
@@ -95,7 +86,7 @@ void one_key_take_off_task(u16 dt_ms)
 				if(flag.auto_take_off_land == AUTO_TAKE_OFF_NULL)
 				{
 					flag.auto_take_off_land = AUTO_TAKE_OFF;
-					//½âËø¡¢Æð·É
+					//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					flag.taking_off = 1;
 				}
 			
@@ -106,7 +97,7 @@ void one_key_take_off_task(u16 dt_ms)
 		s_one_key_takeoff_delay_ms = 0;
 	}
 }
-/* Ò»¼üÆð·É´¥·¢ */
+/* Ò»ï¿½ï¿½ï¿½ï¿½É´ï¿½ï¿½ï¿½ */
 void one_key_take_off()
 {
 	if(flag.unlock_err == 0)
@@ -118,12 +109,12 @@ void one_key_take_off()
 		}
 	}
 }
-/* Ò»¼ü½µÂä´¥·¢ */
+/* Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ä´¥ï¿½ï¿½ */
 void one_key_land()
 {
 	flag.auto_take_off_land = AUTO_LAND;
 }
-/* ¼±Í£ËøÖ¹´¦Àí */
+/* ï¿½ï¿½Í£ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ */
 void Sudden_Stop_Task(void)
 {
     flag.unlock_cmd = 0;
@@ -133,15 +124,14 @@ void Sudden_Stop_Task(void)
 }
 _flight_state_st fs;
 s16 flying_cnt,landing_cnt;
-extern s32 ref_height_get;
 float stop_baro_hpf;
 static s16 s_land_detect_delay_ms ;
-/* ½µÂä×´Ì¬ÅÐ¶¨ */
+/* ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½Ð¶ï¿½ */
 static void LandDiscriminate(s16 dT_ms)
 {
 	
 	
-	/*ÓÍÃÅ¹éÒ»ÖµÐ¡ÓÚ0.1  »òÕßÆô¶¯×Ô¶¯½µÂä*/
+	/*ï¿½ï¿½ï¿½Å¹ï¿½Ò»ÖµÐ¡ï¿½ï¿½0.1  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	if((fs.speed_set_h_norm[Z] < 0.1f) || flag.auto_take_off_land == AUTO_LAND)
 	{
 		if(s_land_detect_delay_ms>0)
@@ -154,11 +144,11 @@ static void LandDiscriminate(s16 dT_ms)
 		s_land_detect_delay_ms = 200;
 	}
 	
-	/*ÒâÒåÊÇ£ºÈç¹ûÏòÉÏÍÆÁËÓÍÃÅ£¬¾ÍÐèÒªµÈ´¹Ö±·½Ïò¼ÓËÙ¶ÈÐ¡ÓÚ200cm/s2 ±£³Ö200ms²Å¿ªÊ¼¼ì²â*/	
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½Ç£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å£ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½È´ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½Ð¡ï¿½ï¿½200cm/s2 ï¿½ï¿½ï¿½ï¿½200msï¿½Å¿ï¿½Ê¼ï¿½ï¿½ï¿½*/	
 	if(s_land_detect_delay_ms <= 0 && (flag.thr_low || flag.auto_take_off_land == AUTO_LAND) )
 	{
-		/*ÓÍÃÅ×îÖÕÊä³öÁ¿Ð¡ÓÚ250²¢ÇÒÃ»ÓÐÔÚÊÖ¶¯½âËøÉÏËø¹ý³ÌÖÐ£¬³ÖÐø1Ãë£¬ÈÏÎª×ÅÂ½£¬È»ºóÉÏËø*/
-		if(mc.ct_val_thr<250 && flag.unlock_sta == 1 && flag.locking != 2)//ABS(wz_spe_f1.out <20 ) //»¹Ó¦µ± ÓëÉÏËÙ¶ÈÌõ¼þ£¬ËÙ¶ÈÐ¡ÓÚÕý20ÀåÃ×Ã¿Ãë¡£
+		/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½250ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ë£¬ï¿½ï¿½Îªï¿½ï¿½Â½ï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+		if(mc.throttle<250 && flag.unlock_sta == 1 && flag.locking != 2)
 		{
 			if(landing_cnt<1500)
 			{
@@ -185,17 +175,17 @@ static void LandDiscriminate(s16 dT_ms)
 		landing_cnt  = 0;
 	}
 }
-/* ·ÉÐÐ×´Ì¬ÈÎÎñ */
+/* ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ */
 void Flight_State_Task(u8 dT_ms,s16 *CH_N)
 {
 	s16 thr_deadzone;
 	static float max_speed_lim,vel_z_tmp[2];
-	/*ÉèÖÃÓÍÃÅÒ¡¸ËÁ¿*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½*/
 	thr_deadzone = (flag.wifi_ch_en != 0) ? 0 : 50;
 	fs.speed_set_h_norm[Z] = my_deadzone(CH_N[CH_THR],0,thr_deadzone) *0.0023f;
 	fs.speed_set_h_norm_lpf[Z] += 0.5f *(fs.speed_set_h_norm[Z] - fs.speed_set_h_norm_lpf[Z]);
 	
-	/*ÍÆÓÍÃÅÆð·É*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	if(flag.unlock_sta)
 	{	
 		if(fs.speed_set_h_norm[Z]>0.01f && flag.motor_preparation == 1) // 0-1
@@ -216,33 +206,33 @@ void Flight_State_Task(u8 dT_ms,s16 *CH_N)
 		}
 		else
 		{
-			/*Æð·Éºó1Ãë£¬ÈÏÎªÒÑ¾­ÔÚ·ÉÐÐ*/
+			/*ï¿½ï¿½Éºï¿½1ï¿½ë£¬ï¿½ï¿½Îªï¿½Ñ¾ï¿½ï¿½Ú·ï¿½ï¿½ï¿½*/
 			flag.flying = 1;  
 		}
 		
 		if(fs.speed_set_h_norm[Z]>0)
 		{
-			/*ÉèÖÃÉÏÉýËÙ¶È*/
+			/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½*/
 			vel_z_tmp[0] = (fs.speed_set_h_norm_lpf[Z] *MAX_Z_SPEED_UP);
 		}
 		else
 		{
-			/*ÉèÖÃÏÂ½µËÙ¶È*/
+			/*ï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½ï¿½Ù¶ï¿½*/
 			vel_z_tmp[0] = (fs.speed_set_h_norm_lpf[Z] *MAX_Z_SPEED_DW);
 		}
-		//·É¿ØÏµÍ³ZËÙ¶ÈÄ¿±êÁ¿×ÛºÏÉè¶¨
+		//ï¿½É¿ï¿½ÏµÍ³Zï¿½Ù¶ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½Ûºï¿½ï¿½è¶¨
 		vel_z_tmp[1] = vel_z_tmp[0] + program_ctrl.vel_cmps_h[Z] + pc_user.vel_cmps_set_z;
 		//
 		vel_z_tmp[1] = LIMIT(vel_z_tmp[1],fc_stv.vel_limit_z_n,fc_stv.vel_limit_z_p);
 		//
-		fs.speed_set_h[Z] += LIMIT((vel_z_tmp[1] - fs.speed_set_h[Z]),-0.8f,0.8f);//ÏÞÖÆÔöÁ¿·ù¶È
+		fs.speed_set_h[Z] += LIMIT((vel_z_tmp[1] - fs.speed_set_h[Z]),-0.8f,0.8f);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 	else
 	{
 		fs.speed_set_h[Z] = 0 ;
 	}
 	float speed_set_tmp[2];
-	/*ËÙ¶ÈÉè¶¨Á¿£¬Õý¸º²Î¿¼ANO×ø±ê²Î¿¼·½Ïò*/
+	/*ï¿½Ù¶ï¿½ï¿½è¶¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¿ï¿½ANOï¿½ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	fs.speed_set_h_norm[X] = (my_deadzone(+CH_N[CH_PIT],0,50) *0.0022f);
 	fs.speed_set_h_norm[Y] = (my_deadzone(-CH_N[CH_ROL],0,50) *0.0022f);
 		
@@ -259,7 +249,7 @@ void Flight_State_Task(u8 dT_ms,s16 *CH_N)
 	
 	fc_stv.vel_limit_xy = max_speed_lim;
 	
-	//·É¿ØÏµÍ³XYËÙ¶ÈÄ¿±êÁ¿×ÛºÏÉè¶¨
+	//ï¿½É¿ï¿½ÏµÍ³XYï¿½Ù¶ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½Ûºï¿½ï¿½è¶¨
 	speed_set_tmp[X] = fc_stv.vel_limit_xy *fs.speed_set_h_norm_lpf[X] + program_ctrl.vel_cmps_h[X] + pc_user.vel_cmps_set_h[X];
 	speed_set_tmp[Y] = fc_stv.vel_limit_xy *fs.speed_set_h_norm_lpf[Y] + program_ctrl.vel_cmps_h[Y] + pc_user.vel_cmps_set_h[Y];
 	
@@ -267,10 +257,10 @@ void Flight_State_Task(u8 dT_ms,s16 *CH_N)
 	fs.speed_set_h[X] = fs.speed_set_h_cms[X];
 	fs.speed_set_h[Y] = fs.speed_set_h_cms[Y];	
 	
-	/*µ÷ÓÃ¼ì²â×ÅÂ½µÄº¯Êý*/
+	/*ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½Â½ï¿½Äºï¿½ï¿½ï¿½*/
 	LandDiscriminate(dT_ms);
 	
-	/*ÇãÐ±¹ý´óÉÏËø*/
+	/*ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	if(rolling_flag.rolling_step == ROLL_END)
 	{
 		if(imu_data.z_vec[Z] < 0.25f) /* ? 75 ???????????? */
@@ -283,18 +273,18 @@ void Flight_State_Task(u8 dT_ms,s16 *CH_N)
 			flag.unlock_cmd = 0;
 		}
 	}	
-	/*Ð£×¼ÖÐ£¬¸´Î»ÖØÁ¦·½Ïò*/
+	/*Ð£×¼ï¿½Ð£ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	if(sensor.gyr_CALIBRATE != 0 || sensor.acc_CALIBRATE != 0 ||sensor.acc_z_auto_CALIBRATE)
 	{
 		imu_state.G_reset = 1;
 	}
 	
-	/*¸´Î»ÖØÁ¦·½ÏòÊ±£¬ÈÏÎª´«¸ÐÆ÷Ê§Ð§*/
+	/*ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§Ð§*/
 	if(imu_state.G_reset == 1)
 	{
 		flag.sensor_imu_ok = 0;
 		LED_STA.rst_imu = 1;
-		WCZ_Data_Reset(); //¸´Î»¸ß¶ÈÊý¾ÝÈÚºÏ
+		WCZ_Data_Reset(); //ï¿½ï¿½Î»ï¿½ß¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½
 	}
 	else if(imu_state.G_reset == 0)
 	{	
@@ -306,7 +296,7 @@ void Flight_State_Task(u8 dT_ms,s16 *CH_N)
 		}
 	}
 	
-	/*·ÉÐÐ×´Ì¬¸´Î»*/
+	/*ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½Î»*/
 	if(flag.unlock_sta == 0)
 	{
 		flag.flying = 0;
@@ -317,7 +307,7 @@ void Flight_State_Task(u8 dT_ms,s16 *CH_N)
 		
 		flag.rc_loss_back_home = 0;
 		
-		//¸´Î»ÈÚºÏ
+		//ï¿½ï¿½Î»ï¿½Úºï¿½
 		if(flag.taking_off == 0)
 		{
 //			wxyz_fusion_reset();
@@ -335,11 +325,11 @@ static s16 of_alt_delay;
 static u8 of_tof_on_tmp;
 //
 _judge_sync_data_st jsdata;
-/* ×´Ì¬ÇÐ»»ÅÐ¶¨ÈÎÎñ */
+/* ×´Ì¬ï¿½Ð»ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ */
 void Swtich_State_Task(u8 dT_ms)
 {
 	switchs.baro_on = 1;
-	//¹âÁ÷Ä£¿é
+	//ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
 	if(sens_hd_check.of_ok || sens_hd_check.of_df_ok)
 	{
 		//
@@ -355,7 +345,7 @@ void Swtich_State_Task(u8 dT_ms)
 		}
 		
 		//
-		if(jsdata.of_qua>50 )//|| flag.flying == 0) //¹âÁ÷ÖÊÁ¿´óÓÚ50 /*»òÕßÔÚ·ÉÐÐÖ®Ç°*/£¬ÈÏÎª¹âÁ÷¿ÉÓÃ£¬ÅÐ¶¨¿ÉÓÃÑÓ³ÙÊ±¼äÎª1Ãë
+		if(jsdata.of_qua>50 )//|| flag.flying == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½50 /*ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½ï¿½ï¿½Ö®Ç°*/ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½Ê±ï¿½ï¿½Îª1ï¿½ï¿½
 		{
 			if(of_quality_delay<500)
 			{
@@ -372,19 +362,19 @@ void Swtich_State_Task(u8 dT_ms)
 			of_quality_ok = 0;
 		}
 		
-		//¹âÁ÷¸ß¶È600cmÄÚÓÐÐ§
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½600cmï¿½ï¿½ï¿½ï¿½Ð§
 		if(jsdata.of_alt<600)
 		{
 			//		
 			jsdata.valid_of_alt_cm = jsdata.of_alt;
-			//ÑÓÊ±1.5ÃëÅÐ¶Ï¼¤¹â¸ß¶ÈÊÇ·ñÓÐÐ§
+			//ï¿½ï¿½Ê±1.5ï¿½ï¿½ï¿½Ð¶Ï¼ï¿½ï¿½ï¿½ß¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ð§
 			if(of_alt_delay<1000)
 			{
 				of_alt_delay += dT_ms;			
 			}
 			else
 			{
-				//ÅÐ¶¨¸ß¶ÈÓÐÐ§
+				//ï¿½Ð¶ï¿½ï¿½ß¶ï¿½ï¿½ï¿½Ð§
 				of_alt_ok = 1;
 				of_tof_on_tmp = 1;
 			}
@@ -398,7 +388,7 @@ void Swtich_State_Task(u8 dT_ms)
 			}
 			else
 			{
-				//ÅÐ¶¨¸ß¶ÈÎÞÐ§
+				//ï¿½Ð¶ï¿½ï¿½ß¶ï¿½ï¿½ï¿½Ð§
 				of_alt_ok = 0;
 				of_tof_on_tmp = 0;
 			}				
@@ -431,22 +421,8 @@ void Swtich_State_Task(u8 dT_ms)
 		switchs.of_flow_on = switchs.of_tof_on = 0;
 	}
 	
-	//¼¤¹âÄ£¿é
-	if(sens_hd_check.tof_ok)
-	{
-		if(0)//(Laser_height_mm<1900)
-		{
-			switchs.tof_on = 1;
-		}
-		else
-		{
-			switchs.tof_on = 0;
-		}
-	}
-	else
-	{
-		switchs.tof_on = 0;
-	}
+	//ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+	switchs.tof_on = 0;
 	
 	//GPS	
 	
@@ -477,20 +453,20 @@ static void Speed_Mode_Switch()
 }
 u8 speed_mode_old = 255;
 u8 flight_mode_old = 255;
-/* ·ÉÐÐÄ£Ê½ÉèÖÃÈÎÎñ */
+/* ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 void Flight_Mode_Set(u8 dT_ms)
 {
 	Speed_Mode_Switch();
 	
-	if(speed_mode_old != flag.speed_mode) //×´Ì¬¸Ä±ä
+	if(speed_mode_old != flag.speed_mode) //×´Ì¬ï¿½Ä±ï¿½
 	{
 		speed_mode_old = flag.speed_mode;
 	}
 	/* AUX1 ?????????????????????? */
-	//CH_N[]+1500ÎªÉÏÎ»»úÏÔÊ¾Í¨µÀÖµ
-	if(CH_N[AUX1] <-100 && CH_N[AUX1]>-200)//½ÓÊÕ»úÊ§¿ØÖµ£¬ÐèÒªÊÖ¹¤ÉèÖÃÒ£¿ØÆ÷
+	//CH_N[]+1500Îªï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Ê¾Í¨ï¿½ï¿½Öµ
+	if(CH_N[AUX1] <-100 && CH_N[AUX1]>-200)//ï¿½ï¿½ï¿½Õ»ï¿½Ê§ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Òªï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½ï¿½ï¿½
 	{
-		//Ò£¿ØÉèÖÃµÄ½ÓÊÕ»úÊä³öµÄÊ§¿Ø±£»¤µÄÐÅºÅ¡£
+		//Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ÃµÄ½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÅºÅ¡ï¿½
 		flag.chn_failsafe = 1;
 	}
 	else
@@ -510,16 +486,16 @@ void Flight_Mode_Set(u8 dT_ms)
 		}
 	}
 	//
-	if(flight_mode_old != flag.flight_mode) //Ò¡¸Ë¶ÔÓ¦Ä£Ê½×´Ì¬¸Ä±ä
+	if(flight_mode_old != flag.flight_mode) //Ò¡ï¿½Ë¶ï¿½Ó¦Ä£Ê½×´Ì¬ï¿½Ä±ï¿½
 	{
 		flight_mode_old = flag.flight_mode;
 		
 		flag.rc_loss_back_home = 0;
 	}
 	//
-	if(flag.rc_loss ==0)//½ÓÊÕ»úÓÐÐÅºÅ
+	if(flag.rc_loss ==0)//ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½Åºï¿½
 	{
-		//CH_N[]+1500ÎªÉÏÎ»»úÏÔÊ¾Í¨µÀÖµ
+		//CH_N[]+1500Îªï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Ê¾Í¨ï¿½ï¿½Öµ
 		if(CH_N[AUX2]<-300)//<1200
 		{
 			flag.flight_mode2 = 0;

@@ -12,130 +12,112 @@
 #include "RC.h"
 
 /*
- * Ä£¿é£ºµç»ú¿ØÖÆ
- * Ö°Ôğ£ºÖ´ĞĞ½âËøÔ¤×ª¡¢»ì¿ØºÏ³ÉÓë PWM Êä³öÇ°ÏŞ·ù
- * ËµÃ÷£º±£³ÖÔ­ÓĞ»ì¿Ø¹ØÏµºÍÊä³öË³Ğò£¬½öÕûÀíÎÄ¼şËµÃ÷¡£
+ * ç”µæœºæ§åˆ¶æ¨¡å—
+ *
+ * æ‰§è¡Œè§£é”é¢„è½¬ã€æ··æ§åˆæˆå’Œ PWM è¾“å‡ºå‰é™å¹…ã€‚
+ *
+ * æ··æ§å¸ƒå±€ï¼ˆX å‹å››æ—‹ç¿¼ï¼Œæœºå¤´æœå‰ï¼‰ï¼š
+ *      æœºå¤´
+ *   m2     m1
+ *     \   /
+ *      \ /
+ *      / \
+ *     /   \
+ *   m3     m4
+ *      æœºå°¾
  */
 
-/*
-ËÄÖá£º
-      »úÍ·
-   m2     m1
-     \   /
-      \ /
-      / \
-     /   \
-   m3     m4
-      Æ¨¹É
-*/
 s16 motor[MOTORSNUM];
 s16 motor_step[MOTORSNUM];
-//float motor_lpf[MOTORSNUM];
 
-static u16 motor_prepara_cnt;
-_mc_st mc;
+static u16 motor_prep_cnt;
+motor_ctrl_t mc;
 u16 motor_idle_pwm;
-/* µç»ú¿ØÖÆÈÎÎñ */
+
+#define MOTOR_PWM_MAX   1000
+#define MOTOR_PREP_TIME 300     /* æ¯ä¸ªç”µæœºé¢„è½¬æŒç»­æ—¶é—´ (ms) */
+
 void Motor_Ctrl_Task(u8 dT_ms)
 {
 	u8 i;
-	
-	
-	if(flag.unlock_sta)
-	{		
-		motor_idle_pwm = 10*LIMIT(g_fc_param.set.idle_speed_pwm,0,30);
-		
-		if(flag.motor_preparation == 0)
+
+	if (flag.unlock_sta)
+	{
+		motor_idle_pwm = 10 * LIMIT(g_fc_param.set.idle_speed_pwm, 0, 30);
+
+		if (flag.motor_preparation == 0)
 		{
-			motor_prepara_cnt += dT_ms;
-			
-			if(flag.motor_preparation == 0)
-			{			
-				if(motor_prepara_cnt<300)
-				{
-					motor[m1] = motor_idle_pwm;
-				}
-				else if(motor_prepara_cnt<600)
-				{
-					motor[m2] = motor_idle_pwm;
-				}
-				else if(motor_prepara_cnt<900)
-				{
-					motor[m3] = motor_idle_pwm;
-				}	
-				else if(motor_prepara_cnt<1200)
-				{	
-					motor[m4] = motor_idle_pwm;
-				}
-				else
-				{
-					flag.motor_preparation = 1;
-					motor_prepara_cnt = 0;
-				}
+			motor_prep_cnt += dT_ms;
+
+			if (motor_prep_cnt < MOTOR_PREP_TIME)
+			{
+				motor[m1] = motor_idle_pwm;
 			}
-			
-		}	
+			else if (motor_prep_cnt < MOTOR_PREP_TIME * 2)
+			{
+				motor[m2] = motor_idle_pwm;
+			}
+			else if (motor_prep_cnt < MOTOR_PREP_TIME * 3)
+			{
+				motor[m3] = motor_idle_pwm;
+			}
+			else if (motor_prep_cnt < MOTOR_PREP_TIME * 4)
+			{
+				motor[m4] = motor_idle_pwm;
+			}
+			else
+			{
+				flag.motor_preparation = 1;
+				motor_prep_cnt = 0;
+			}
+		}
 	}
 	else
 	{
 		flag.motor_preparation = 0;
 	}
-	
 
-			
-	if(flag.motor_preparation == 1)
-	{	
-		motor_step[m1] = mc.ct_val_thr  +mc.ct_val_yaw -mc.ct_val_rol +mc.ct_val_pit;
-		motor_step[m2] = mc.ct_val_thr  -mc.ct_val_yaw +mc.ct_val_rol +mc.ct_val_pit;
-		motor_step[m3] = mc.ct_val_thr  +mc.ct_val_yaw +mc.ct_val_rol -mc.ct_val_pit;
-		motor_step[m4] = mc.ct_val_thr  -mc.ct_val_yaw -mc.ct_val_rol -mc.ct_val_pit;
-		
-	
-		for(i=0;i<MOTORSNUM;i++)
-		{	
-			motor_step[i] = LIMIT(motor_step[i],motor_idle_pwm,1000);
-			
-		}
-		
-
-
-	}
-	
-	for(i=0;i<MOTORSNUM;i++)
+	/* X å‹å››æ—‹ç¿¼æ··æ§çŸ©é˜µï¼š
+	 *   m1(å³å‰) = +thr +yaw -roll +pitch
+	 *   m2(å·¦å‰) = +thr -yaw +roll +pitch
+	 *   m3(å·¦å) = +thr +yaw +roll -pitch
+	 *   m4(å³å) = +thr -yaw -roll -pitch
+	 */
+	if (flag.motor_preparation == 1)
 	{
-		if(flag.unlock_sta)
+		motor_step[m1] = mc.throttle + mc.yaw - mc.roll + mc.pitch;
+		motor_step[m2] = mc.throttle - mc.yaw + mc.roll + mc.pitch;
+		motor_step[m3] = mc.throttle + mc.yaw + mc.roll - mc.pitch;
+		motor_step[m4] = mc.throttle - mc.yaw - mc.roll - mc.pitch;
+
+		for (i = 0; i < MOTORSNUM; i++)
 		{
-			if(flag.motor_preparation == 1)
-			{
-				motor[i] = LIMIT(motor_step[i],motor_idle_pwm,999);
-			}
-	
+			motor_step[i] = LIMIT(motor_step[i], motor_idle_pwm, MOTOR_PWM_MAX);
+		}
+	}
+
+	for (i = 0; i < MOTORSNUM; i++)
+	{
+		if (flag.unlock_sta && flag.motor_preparation == 1)
+		{
+			motor[i] = LIMIT(motor_step[i], motor_idle_pwm, MOTOR_PWM_MAX - 1);
 		}
 		else
-		{		
+		{
 			motor[i] = 0;
-		}	
-
+		}
 	}
 
-	//ÅäÖÃÊä³ö
-	for(u8 i =0;i<4;i++)
+	for (u8 i = 0; i < 4; i++)
 	{
-		Drv_MotorPWMSet(i,motor[i]);
+		Drv_MotorPWMSet(i, motor[i]);
 	}
 
-//#define Cali_Set_ESC
 #ifdef Cali_Set_ESC
-	//ÅäÖÃÊä³ö
-	for(u8 i =0;i<4;i++)
+	for (u8 i = 0; i < 4; i++)
 	{
-		motor[i] = CH_N[CH_THR]+500;
-		Drv_MotorPWMSet(i,motor[i]);
+		motor[i] = CH_N[CH_THR] + 500;
+		Drv_MotorPWMSet(i, motor[i]);
 	}
-	
 #endif
-
 }
-
-
-

@@ -15,7 +15,6 @@
  * 职责：调度传感器读取、姿态更新和高度相关融合计算。
  * 约束：保持 1ms 任务调用顺序与传感器参与条件不变。
  */
-u16 test_time_cnt;
 /* 1ms 周期读取 IMU 等传感器原始数据。 */
 void Fc_Sensor_Get(void)
 {
@@ -35,9 +34,7 @@ void Fc_Sensor_Get(void)
 			baro_height = (s32)Drv_Spl0601_Read();
 		}
 	}	
-	test_time_cnt++;
 }
-extern s32 sensor_val_ref[];
 static u8 s_imu_reset_armed;
 void IMU_Update_Task(u8 dT_ms)
 {
@@ -58,30 +55,9 @@ void IMU_Update_Task(u8 dT_ms)
 					}
 				}
 									
-				if(0) 
-				{
-					imu_state.gkp = 0.0f;
-					imu_state.gki = 0.0f;
-					
-				}
-				else
-				{
-					if(0)
-					{
-						imu_state.gkp = 0.2f;
-					}
-					else
-					{
-						/*设置重力互补融合修正kp系数*/
-						imu_state.gkp = 0.2f;
-					}
-					
-					/*设置重力互补融合修正ki系数*/
-					imu_state.gki = 0.01f;
-					
-					/*设置罗盘互补融合修正ki系数*/
-					imu_state.mkp = 0.1f;
-				}
+				imu_state.gkp = 0.2f;
+				imu_state.gki = 0.01f;
+				imu_state.mkp = 0.1f;
 				
 				imu_state.M_fix_en = sens_hd_check.mag_ok;		//磁力计修正使能
 	
