@@ -1,14 +1,14 @@
 /*
- * Ä£¿é£ºUWB Êı¾İ½âÎö
- * Ö°Ôğ£º½ÓÊÕ²¢½âÎö UWB ¶¨Î»Êı¾İ£¬¸üĞÂÎ»ÖÃÓëËÙ¶È¹Û²âÁ¿¡£
- * Ô¼Êø£º±£³Öµ±Ç°±¨ÎÄ¸ñÊ½¡¢×ø±êº¬ÒåºÍ×´Ì¬¸üĞÂÁ÷³Ì²»±ä¡£
+ * æ¨¡å—ï¼šUWB æ•°æ®è§£æ
+ * èŒè´£ï¼šæ¥æ”¶å¹¶è§£æ UWB å®šä½æ•°æ®ï¼Œæ›´æ–°ä½ç½®ä¸é€Ÿåº¦è§‚æµ‹é‡ã€‚
+ * çº¦æŸï¼šä¿æŒå½“å‰æŠ¥æ–‡æ ¼å¼ã€åæ ‡å«ä¹‰å’ŒçŠ¶æ€æ›´æ–°æµç¨‹ä¸å˜ã€‚
  */
 #include "UWB.h"
 #include "Imu.h"
 #include "FcData.h"
 #define fc_sta flag
 _uwb_data_st uwb_data;
-/* UWB ½ÓÊÕ»º³åÇø¡£ */
+/* UWB æ¥æ”¶ç¼“å†²åŒºã€‚ */
 static u8 UWB_RxBuffer[256],UWB_data_len = 0,UWB_Data_OK;
 void UWB_GetByte(u8 data)
 {
@@ -17,27 +17,27 @@ void UWB_GetByte(u8 data)
 	static u8 _rx_buf[256];
 	static u8 _rx_buf_len = 0;
 	
-	if(_sta==0&&data==0xAA)	//Ö¡Í·0xAA
+	if(_sta==0&&data==0xAA)	//å¸§å¤´0xAA
 	{
 		_sta=1;
 		_rx_buf[0]=data;
 	}
-	else if(_sta==1&&data==0x30)	//Êı¾İÔ´£¬0x30±íÊ¾Êı¾İÀ´×ÔUWB
+	else if(_sta==1&&data==0x30)	//æ•°æ®æºï¼Œ0x30è¡¨ç¤ºæ•°æ®æ¥è‡ªUWB
 	{
 		_sta=2;
 		_rx_buf[1]=data;
 	}
-	else if(_sta==2)		//Êı¾İÄ¿µÄµØ
+	else if(_sta==2)		//æ•°æ®ç›®çš„åœ°
 	{
 		_sta=3;
 		_rx_buf[2]=data;
 	}
-	else if(_sta==3)		//¹¦ÄÜ×Ö
+	else if(_sta==3)		//åŠŸèƒ½å­—
 	{
 		_sta=4;
 		_rx_buf[3]=data;
 	}
-	else if(_sta==4)		//Êı¾İ³¤¶È
+	else if(_sta==4)		//æ•°æ®é•¿åº¦
 	{
 		_sta = 5;
 		_rx_buf[4]=data;
@@ -67,10 +67,10 @@ void UWB_GetByte(u8 data)
 		_sta = 0;
 }
 /**********************************************************************************************************
-*º¯ Êı Ãû: UWB_GetDataTask
-*¹¦ÄÜËµÃ÷: UWBÊı¾İ»ñÈ¡ÈÎÎñ
-*²Î    Êı: ÖÜÆÚ£¨ºÁÃë£©
-*·µ »Ø Öµ: ÎŞ
+*å‡½ æ•° å: UWB_GetDataTask
+*åŠŸèƒ½è¯´æ˜: UWBæ•°æ®è·å–ä»»åŠ¡
+*å‚    æ•°: å‘¨æœŸï¼ˆæ¯«ç§’ï¼‰
+*è¿” å› å€¼: æ— 
 **********************************************************************************************************/
 static u16 uwb_check_time;
 void UWB_GetDataTask(u8 dT_ms)
@@ -81,13 +81,13 @@ void UWB_GetDataTask(u8 dT_ms)
 		u8 sum = 0;
 		for(u8 i=0;i<(UWB_data_len-1);i++)
 			sum += *(UWB_RxBuffer+i);
-		if(!(sum==*(UWB_RxBuffer+UWB_data_len-1)))		return;		//ÅĞ¶Ïsum
+		if(!(sum==*(UWB_RxBuffer+UWB_data_len-1)))		return;		//åˆ¤æ–­sum
 		
-		if(*(UWB_RxBuffer+3)==0X31)			//¾àÀëĞÅÏ¢
+		if(*(UWB_RxBuffer+3)==0X31)			//è·ç¦»ä¿¡æ¯
 		{
 			
 		}
-		else if(*(UWB_RxBuffer+3)==0X32)			//Î»ÖÃĞÅÏ¢
+		else if(*(UWB_RxBuffer+3)==0X32)			//ä½ç½®ä¿¡æ¯
 		{
 			uwb_data.raw_data_loc[1] = -(float)(s16)((*(UWB_RxBuffer+6)<<8)|*(UWB_RxBuffer+7)) / 100;
 			uwb_data.raw_data_loc[0] =  (float)(s16)((*(UWB_RxBuffer+8)<<8)|*(UWB_RxBuffer+9)) / 100;
@@ -110,16 +110,16 @@ void UWB_GetDataTask(u8 dT_ms)
 	
 }
 /**********************************************************************************************************
-*º¯ Êı Ãû: UWB_DataCalcTask
-*¹¦ÄÜËµÃ÷: UWBÊı¾İ¼ÆËãÈÎÎñ
-*²Î    Êı: ÖÜÆÚ£¨ºÁÃë£©
-*·µ »Ø Öµ: ÎŞ
+*å‡½ æ•° å: UWB_DataCalcTask
+*åŠŸèƒ½è¯´æ˜: UWBæ•°æ®è®¡ç®—ä»»åŠ¡
+*å‚    æ•°: å‘¨æœŸï¼ˆæ¯«ç§’ï¼‰
+*è¿” å› å€¼: æ— 
 **********************************************************************************************************/
 void UWB_DataCalcTask(u8 dT_ms)
 {
-	//½âËøÇ°£¬¼ÇÂ¼µ±Ç°»úÌåXÖáÕı·½ÏòÔÚË®Æ½ÃæÍ¶Ó°ÎªUWB×ø±êXÖáÕı·½Ïò
-	//ÒªÇó½âËøÇ°£¬·É»ú·ÅÕı£¬»úÌåXÖáÕı·½Ïò¶Ô×¼UWB×ø±êÖáXÖáÕı·½Ïò
-	//¼ÇÂ¼²Î¿¼·½Ïò
+	//è§£é”å‰ï¼Œè®°å½•å½“å‰æœºä½“Xè½´æ­£æ–¹å‘åœ¨æ°´å¹³é¢æŠ•å½±ä¸ºUWBåæ ‡Xè½´æ­£æ–¹å‘
+	//è¦æ±‚è§£é”å‰ï¼Œé£æœºæ”¾æ­£ï¼Œæœºä½“Xè½´æ­£æ–¹å‘å¯¹å‡†UWBåæ ‡è½´Xè½´æ­£æ–¹å‘
+	//è®°å½•å‚è€ƒæ–¹å‘
 	if(!fc_sta.unlock_sta)
 	{
 		uwb_data.init_ok = 0;
@@ -130,9 +130,9 @@ void UWB_DataCalcTask(u8 dT_ms)
 	{
 		uwb_data.init_ok = 1;
 	}
-	//²Î¿¼·½Ïò×ªÊÀ½ç×ø±ê£¨ÕâÀïµÈÍ¬ÓÚµØÀí×ø±ê£©
+	//å‚è€ƒæ–¹å‘è½¬ä¸–ç•Œåæ ‡ï¼ˆè¿™é‡Œç­‰åŒäºåœ°ç†åæ ‡ï¼‰
 	h2w_2d_trans(uwb_data.raw_data_loc,uwb_data.ref_dir,uwb_data.w_dis_cm);
-	//¼ÆËãËÙ¶È
+	//è®¡ç®—é€Ÿåº¦
 	h2w_2d_trans(uwb_data.raw_data_vel,uwb_data.ref_dir,uwb_data.w_vel_cmps);
 	
 }

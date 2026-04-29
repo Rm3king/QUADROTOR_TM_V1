@@ -3,27 +3,27 @@
 #include "sysconfig.h"
 #include "FcData.h"
 /*
- * ģ��˵����
- * OpenMV ɫ����ٿ���״̬��
- * �����Ӿ����������������ٶȵ��м��������ϲ���������ȡ��
+ * 模块说明。
+ * OpenMV 色块跟踪控制状态。
+ * 保存视觉解耦、地面误差和输出速度等中间量，供上层控制任务读取。
  */
 typedef struct
 {
-    /* Ŀ�궪ʧ��־�� */
+    /* 目标丢失标志。 */
     u8 target_loss;
-    /* OpenMV ԭʼĿ��λ�á� */
+    /* OpenMV 原始目标位置。 */
     s16 opmv_pos[2];
-    /* ��̬������Ӧ������ƫ�ơ� */
+    /* 姿态补偿对应的像素偏移。 */
     s16 rp2pixel_val[2];
-    /* ����������λ�á� */
+    /* 解耦后的像素位置。 */
     float decou_pos_pixel[2];
-    /* ����λ������λ cm�� */
+    /* 地面位置误差，单位 cm。 */
     float ground_pos_err_h_cm[2];
-    /* ����λ�����΢�֣���λ cm/s�� */
+    /* 地面位置误差微分，单位 cm/s。 */
     float ground_pos_err_d_h_cmps[2];
-    /* Ŀ������ٶȹ��ƣ���λ cm/s�� */
+    /* 目标地面速度估计，单位 cm/s。 */
     float target_gnd_velocity_cmps[2];
-    /* ���������ˮƽ�ٶȣ���λ cm/s�� */
+    /* 输出的期望水平速度，单位 cm/s。 */
     float exp_velocity_h_cmps[2];
 } _ano_opmv_cbt_ctrl_st;
 

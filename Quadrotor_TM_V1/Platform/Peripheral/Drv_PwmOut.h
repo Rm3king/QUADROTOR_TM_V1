@@ -4,9 +4,9 @@
 #include "sysconfig.h"
 
 /*
- * ģ�����ƣ�Drv_PwmOut
- * ģ��ְ���ṩ�������� PWM ����ӿڡ�
- * ʹ��Լ�������޸� PWM ͨ��ӳ������ʱ��
+ * 模块名称：Drv_PwmOut
+ * 模块职责：提供电机与加热 PWM 输出接口。
+ * 使用约束：不修改 PWM 通道映射和输出时序。
  */
 
 void Drv_PwmOutInit(void);

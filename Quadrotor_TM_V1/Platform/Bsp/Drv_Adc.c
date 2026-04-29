@@ -12,21 +12,21 @@ void ADC0Handler(void)
 	Voltage = (AdcTemp*3.3/0xFFF)*11;
 }
 /**********************************************************************************************************
-*º¯ Êý Ãû: ADC_Init
-*¹¦ÄÜËµÃ÷: ADCÄ£¿é³õÊ¼»¯
-*ÐÎ    ²Î: ÎÞ
-*·µ »Ø Öµ: ÎÞ
+*å‡½ æ•° å: ADC_Init
+*åŠŸèƒ½è¯´æ˜Ž: ADCæ¨¡å—åˆå§‹åŒ–
+*å½¢    å‚: æ— 
+*è¿” å›ž å€¼: æ— 
 **********************************************************************************************************/
 void Drv_AdcInit(void)   
 {    
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
-	/*µÈ´ýADCÄ£¿é³õÊ¼»¯Íê³É*/
+	/*ç­‰å¾…ADCæ¨¡å—åˆå§‹åŒ–å®Œæˆ*/
 	while(!ROM_SysCtlPeripheralReady(SYSCTL_PERIPH_ADC0)); 
 	ROM_GPIOPinTypeADC(ADC_PORT, ADC_PIN);
-	/*Ê¹ÄÜµÚÒ»¸öÐòÁÐ²¶»ñÍ¨µÀµÄÖµ */
+	/*ä½¿èƒ½ç¬¬ä¸€ä¸ªåºåˆ—æ•èŽ·é€šé“çš„å€¼ */
 	ROM_ADCSequenceConfigure(ADC0_BASE,0,ADC_TRIGGER_PROCESSOR, 0);
-	/*Ê¹ÄÜÄ£Êý×ª»»Æ÷ÊäÈë0 */	
+	/*ä½¿èƒ½æ¨¡æ•°è½¬æ¢å™¨è¾“å…¥0 */	
 	ROM_ADCSequenceStepConfigure(ADC0_BASE, 0, 0, ADC_CTL_CH0 |ADC_CTL_END | ADC_CTL_IE );     
 	ADCIntRegister(ADC0_BASE, 0, ADC0Handler);
 	ROM_IntPrioritySet( INT_ADC0SS0 , USER_INT6);
@@ -37,6 +37,6 @@ void Drv_AdcInit(void)
 
 void Drv_Adc0Trigger(void)
 {
-	//Æô¶¯adc
+	//å¯åŠ¨adc
 	ROM_ADCProcessorTrigger(ADC0_BASE, 0); 
 }

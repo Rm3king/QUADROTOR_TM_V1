@@ -8,9 +8,9 @@
 #include "FlightCtrl.h"
 #include "MotionCal.h"
 /*
- * Ä£¿éËµÃ÷¡£
- * OpenMV É«¿é¸ú×Ù¿ØÖÆÊµÏÖ¡£
- * ¸ºÔğ¸ù¾İÊÓ¾õÄ¿±êÎ»ÖÃÍê³É×ËÌ¬½âñî¡¢µØÃæÎó²î¹À¼ÆºÍËÙ¶È¿ØÖÆÁ¿¼ÆËã¡£
+ * æ¨¡å—è¯´æ˜ã€‚
+ * OpenMV è‰²å—è·Ÿè¸ªæ§åˆ¶å®ç°ã€‚
+ * è´Ÿè´£æ ¹æ®è§†è§‰ç›®æ ‡ä½ç½®å®Œæˆå§¿æ€è§£è€¦ã€åœ°é¢è¯¯å·®ä¼°è®¡å’Œé€Ÿåº¦æ§åˆ¶é‡è®¡ç®—ã€‚
  */
 static void ANO_CBTracking_Decoupling(u8 *dT_ms, float rol_degs, float pit_degs);
 static void ANO_CBTracking_Calcu(u8 *dT_ms, s32 relative_height_cm);
@@ -32,7 +32,7 @@ _ano_opmv_cbt_ctrl_st ano_opmv_cbt_ctrl;
 static s16 ref_carrier_velocity[2];
 static float decou_pos_pixel_lpf[2][2];
 
-/* ²ÎÊı±ê¶¨Öµ¡£ */
+/* å‚æ•°æ ‡å®šå€¼ã€‚ */
 #define PIXELPDEG_X    2.4f
 #define PIXELPDEG_Y    2.4f
 #define CMPPIXEL_X     0.01f
@@ -40,8 +40,8 @@ static float decou_pos_pixel_lpf[2][2];
 #define TLH_TIME       1000
 
 /*
- * ¹¦ÄÜ£ºÖ´ĞĞÉ«¿é¸ú×ÙÊı¾İÔ¤´¦Àí¡£
- * ËµÃ÷£ºÔÚ OpenMV É«¿éÄ£Ê½ÏÂÍê³É×ËÌ¬½âñîÓëµØÃæÎó²î¹À¼Æ¡£
+ * åŠŸèƒ½ï¼šæ‰§è¡Œè‰²å—è·Ÿè¸ªæ•°æ®é¢„å¤„ç†ã€‚
+ * è¯´æ˜ï¼šåœ¨ OpenMV è‰²å—æ¨¡å¼ä¸‹å®Œæˆå§¿æ€è§£è€¦ä¸åœ°é¢è¯¯å·®ä¼°è®¡ã€‚
  */
 void ANO_CBTracking_Task(u8 dT_ms)
 {
@@ -57,8 +57,8 @@ void ANO_CBTracking_Task(u8 dT_ms)
 }
 
 /*
- * ¹¦ÄÜ£ºÖ´ĞĞÉ«¿é¸ú×Ù×ËÌ¬½âñî¡£
- * ËµÃ÷£º°Ñ OpenMV Í¼Ïñ×ø±ê×ª»»Îª·É¿Ø×ø±êÏÂµÄÆ½ÒÆÆ«²î¡£
+ * åŠŸèƒ½ï¼šæ‰§è¡Œè‰²å—è·Ÿè¸ªå§¿æ€è§£è€¦ã€‚
+ * è¯´æ˜ï¼šæŠŠ OpenMV å›¾åƒåæ ‡è½¬æ¢ä¸ºé£æ§åæ ‡ä¸‹çš„å¹³ç§»åå·®ã€‚
  */
 static void ANO_CBTracking_Decoupling(u8 *dT_ms,float rol_degs,float pit_degs)
 {
@@ -123,7 +123,7 @@ static void ANO_CBTracking_Decoupling(u8 *dT_ms,float rol_degs,float pit_degs)
     }
 }
 
-/* ¹¦ÄÜ£º¸ù¾İ½âñî½á¹û¼ÆËãµØÃæÎó²îÓëÄ¿±êËÙ¶È¡£ */
+/* åŠŸèƒ½ï¼šæ ¹æ®è§£è€¦ç»“æœè®¡ç®—åœ°é¢è¯¯å·®ä¸ç›®æ ‡é€Ÿåº¦ã€‚ */
 static void ANO_CBTracking_Calcu(u8 *dT_ms,s32 relative_height_cm)
 {
     static float relative_height_cm_valid;
@@ -149,8 +149,8 @@ static void ANO_CBTracking_Calcu(u8 *dT_ms,s32 relative_height_cm)
 }
 
 /*
- * ¹¦ÄÜ£º¼ÆËãÉ«¿é¸ú×Ù¿ØÖÆÊä³ö¡£
- * ËµÃ÷£º±£³ÖÔ­ÓĞ PD ¼ÓËÙ¶ÈÇ°À¡ĞÎÊ½²»±ä¡£
+ * åŠŸèƒ½ï¼šè®¡ç®—è‰²å—è·Ÿè¸ªæ§åˆ¶è¾“å‡ºã€‚
+ * è¯´æ˜ï¼šä¿æŒåŸæœ‰ PD åŠ é€Ÿåº¦å‰é¦ˆå½¢å¼ä¸å˜ã€‚
  */
 void ANO_CBTracking_Ctrl(u8 *dT_ms,u8 en)
 {

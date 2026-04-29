@@ -1,7 +1,7 @@
 /*
- * Ä£¿é£ºÈÎÎñÊ¾Àý¿ØÖÆ
- * Ö°Ôð£º°´Ô¤Éè½×¶ÎÖ´ÐÐÑÝÊ¾·ÉÐÐÈÎÎñ£¬²¢ÔÚÐèÒªÊ±½»»¹ÊÖ¶¯¿ØÖÆ¡£
- * Ô¼Êø£º±£³ÖÏÖÓÐ½×¶ÎË³Ðò¡¢µÈ´ýÊ±³¤ºÍÈÎÎñ´¥·¢Ìõ¼þ²»±ä¡£
+ * æ¨¡å—ï¼šä»»åŠ¡ç¤ºä¾‹æŽ§åˆ¶
+ * èŒè´£ï¼šæŒ‰é¢„è®¾é˜¶æ®µæ‰§è¡Œæ¼”ç¤ºé£žè¡Œä»»åŠ¡ï¼Œå¹¶åœ¨éœ€è¦æ—¶äº¤è¿˜æ‰‹åŠ¨æŽ§åˆ¶ã€‚
+ * çº¦æŸï¼šä¿æŒçŽ°æœ‰é˜¶æ®µé¡ºåºã€ç­‰å¾…æ—¶é•¿å’Œä»»åŠ¡è§¦å‘æ¡ä»¶ä¸å˜ã€‚
  */
 #include "RC.h"
 #include "DT.h"
@@ -45,7 +45,7 @@ void Takeoff()
         }
     }
 }
-void StageTask0(u32 timestamp)   // µÈ´ý´¥·¢
+void StageTask0(u32 timestamp)   // ç­‰å¾…è§¦å‘
 {
     if(CH_N[AUX3] < 0)
     {
@@ -60,16 +60,16 @@ void StageTask0(u32 timestamp)   // µÈ´ý´¥·¢
         time = 2000;
     }
 }
-void StageTask1(u32 timestamp)   // 5ÃëºóÆð·É
+void StageTask1(u32 timestamp)   // 5ç§’åŽèµ·é£ž
 {
     if(timestamp < time) return;
     Takeoff();
     ANO_DT_SendString("Stage2: Take off");
     stage = 2;
     reset_timer();
-    time = 6000;   // Æð·ÉºóÐüÍ£6Ãë
+    time = 6000;   // èµ·é£žåŽæ‚¬åœ6ç§’
 }
-void StageTask2(u32 timestamp)   // Æð·ÉºóÐüÍ£
+void StageTask2(u32 timestamp)   // èµ·é£žåŽæ‚¬åœ
 {
     Program_Ctrl_User_Set_HXYcmps(0, 0);
     Program_Ctrl_User_Set_YAWdps(0);
@@ -77,9 +77,9 @@ void StageTask2(u32 timestamp)   // Æð·ÉºóÐüÍ£
     ANO_DT_SendString("Stage3: Forward");
     stage = 3;
     reset_timer();
-    time = 3000;   // Ç°½ø5Ãë
+    time = 3000;   // å‰è¿›5ç§’
 }
-void StageTask3(u32 timestamp)   // Ç°½ø
+void StageTask3(u32 timestamp)   // å‰è¿›
 {
     if(timestamp < time)
     {
@@ -91,13 +91,13 @@ void StageTask3(u32 timestamp)   // Ç°½ø
     ANO_DT_SendString("Stage4: Left");
     stage = 4;
     reset_timer();
-    time = 3000;   // ×óÒÆ5Ãë
+    time = 3000;   // å·¦ç§»5ç§’
 }
-void StageTask4(u32 timestamp)   // ×óÒÆ
+void StageTask4(u32 timestamp)   // å·¦ç§»
 {
     if(timestamp < time)
     {
-        Program_Ctrl_User_Set_HXYcmps(0, -25);   // Èç¹û·½Ïò·´ÁË¸Ä³É (0, -20)
+        Program_Ctrl_User_Set_HXYcmps(0, -25);   // å¦‚æžœæ–¹å‘åäº†æ”¹æˆ (0, -20)
         Program_Ctrl_User_Set_YAWdps(0);
         return;
     }
@@ -105,9 +105,9 @@ void StageTask4(u32 timestamp)   // ×óÒÆ
     ANO_DT_SendString("Stage5: Backward");
     stage = 5;
     reset_timer();
-    time = 3000;   // ºóÍË5Ãë
+    time = 3000;   // åŽé€€5ç§’
 }
-void StageTask5(u32 timestamp)   // ºóÍË
+void StageTask5(u32 timestamp)   // åŽé€€
 {
     if(timestamp < time)
     {
@@ -119,13 +119,13 @@ void StageTask5(u32 timestamp)   // ºóÍË
     ANO_DT_SendString("Stage6: Right");
     stage = 6;
     reset_timer();
-    time = 3000;   // ÓÒÒÆ5Ãë
+    time = 3000;   // å³ç§»5ç§’
 }
-void StageTask6(u32 timestamp)   // ÓÒÒÆ
+void StageTask6(u32 timestamp)   // å³ç§»
 {
     if(timestamp < time)
     {
-        Program_Ctrl_User_Set_HXYcmps(0, 25);  // Èç¹û·½Ïò·´ÁË¸Ä³É (0, 20)
+        Program_Ctrl_User_Set_HXYcmps(0, 25);  // å¦‚æžœæ–¹å‘åäº†æ”¹æˆ (0, 20)
         Program_Ctrl_User_Set_YAWdps(0);
         return;
     }
@@ -133,9 +133,9 @@ void StageTask6(u32 timestamp)   // ÓÒÒÆ
     ANO_DT_SendString("Stage7: Hover");
     stage = 7;
     reset_timer();
-    time = 4000;   // ÐüÍ£5Ãë
+    time = 4000;   // æ‚¬åœ5ç§’
 }
-void StageTask7(u32 timestamp)   // »Øµ½Æðµã¸½½üÐüÍ£
+void StageTask7(u32 timestamp)   // å›žåˆ°èµ·ç‚¹é™„è¿‘æ‚¬åœ
 {
     Program_Ctrl_User_Set_HXYcmps(0, 0);
     Program_Ctrl_User_Set_YAWdps(0);
@@ -146,7 +146,7 @@ void StageTask7(u32 timestamp)   // »Øµ½Æðµã¸½½üÐüÍ£
     reset_timer();
     time = 4000;
 }
-void StageTask8(u32 timestamp)   // ÈÎÎñ½áÊø£¬¸´Î»
+void StageTask8(u32 timestamp)   // ä»»åŠ¡ç»“æŸï¼Œå¤ä½
 {
     Program_Ctrl_User_Set_HXYcmps(0, 0);
     Program_Ctrl_User_Set_YAWdps(0);
@@ -185,7 +185,7 @@ void InspectionTask(u8 dT_ms)
         reset_mission();
     }
 }
-//Ò»¼üÆð·É½ÓÈëÊÖ¶¯
+//ä¸€é”®èµ·é£žæŽ¥å…¥æ‰‹åŠ¨
 //#include "RC.h"
 //#include "DT.h"
 //#include "ProgramCtrl_User.h"

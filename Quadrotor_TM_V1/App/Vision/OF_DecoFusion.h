@@ -3,7 +3,7 @@
 #include "sysconfig.h"
 #include "FcData.h"
 
-/* ¹âÁ÷Ô­Ê¼Êı¾İ¡£ */
+/* å…‰æµåŸå§‹æ•°æ®ã€‚ */
 typedef struct
 {
     u8 updata;
@@ -14,21 +14,21 @@ typedef struct
     u8 valid;
 } _of_data_st;
 
-/* ¹âÁ÷½âñîÓëÈÚºÏ×´Ì¬¡£ */
+/* å…‰æµè§£è€¦ä¸èåˆçŠ¶æ€ã€‚ */
 typedef struct
 {
-    /* ×´Ì¬»ú£º0 ³õÊ¼»¯£¬1 Õı³££¬2 ±£Áô¡£ */
+    /* çŠ¶æ€æœºï¼š0 åˆå§‹åŒ–ï¼Œ1 æ­£å¸¸ï¼Œ2 ä¿ç•™ã€‚ */
     u8 state;
     u8 quality;
     u8 valid;
 
-    /* ²Î¿¼¸ß¶ÈÓë¹âÁ÷¹Û²â¡£ */
+    /* å‚è€ƒé«˜åº¦ä¸å…‰æµè§‚æµ‹ã€‚ */
     float of_ref_height;
     float of_vel[2];
     float gnd_vel_obs_h[2];
     float gnd_vel_obs_w[2];
 
-    /* ¹ßĞÔ¹À¼ÆÓëÈÚºÏÊä³ö¡£ */
+    /* æƒ¯æ€§ä¼°è®¡ä¸èåˆè¾“å‡ºã€‚ */
     float gnd_acc_est_w[2];
     float gnd_vel_est_w[2];
     float gnd_vel_est_h[2];
@@ -39,7 +39,6 @@ typedef struct
 extern float of_rot_d_degs[];
 extern _of_data_st of_data;
 extern _of_rdf_st of_rdf;
-
 
 static void ANO_OF_Data_Get(float *dT_s, u8 *of_data_buf);
 static void OF_INS_Get(float *dT_s, float rad_ps_x, float rad_ps_y, float acc_wx, float acc_wy);

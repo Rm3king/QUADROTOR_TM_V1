@@ -4,7 +4,7 @@
 #include "Imu.h"
 #include "MotorCtrl.h"
 
-#define BARO_SPEED_ERR_LIM   50               //对比融合速度
+#define BARO_SPEED_ERR_LIM   50               //瀵规瘮铻嶅悎閫熷害
 
 _inte_fix_filter_st wcz_acc_fus;
 _fix_inte_filter_st wcz_spe_fus,wcz_hei_fus;

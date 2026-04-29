@@ -1,9 +1,9 @@
 #ifndef __FC_USB_CDC_H__
 #define __FC_USB_CDC_H__
 /*
- * ģ�����ƣ�FcUsbCdc
- * ģ��ְ�𣺷�װ USB CDC �ĳ�ʼ�����շ������ݿ�������ѯ�ӿڡ�
- * ʹ��Լ������ͷ�ļ�����¶����ӿڣ������� USB �¼�����ϸ�ڡ�
+ * 模块名称：FcUsbCdc
+ * 模块职责：封装 USB CDC 的初始化、收发与数据可用量查询接口。
+ * 使用约束：本头文件仅暴露对外接口，不包含 USB 事件处理细节。
  */
 #include <stdint.h>
 #include "sysconfig.h"

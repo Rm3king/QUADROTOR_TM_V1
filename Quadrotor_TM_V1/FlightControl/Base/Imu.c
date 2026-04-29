@@ -1,35 +1,35 @@
 /*
- * Ä£¿é£º×ËÌ¬½âËã
- * Ö°Ôğ£ºÎ¬»¤ËÄÔªÊı×ËÌ¬¡¢·½ÏòÏòÁ¿ºÍÅ·À­½Ç½á¹û
- * ËµÃ÷£º±£³ÖÔ­ÓĞÈÚºÏÁ÷³Ì¡¢ÔöÒæºÍ¸´Î»Âß¼­²»±ä£¬½öÕûÀíËµÃ÷¡£
+ * æ¨¡å—ï¼šå§¿æ€è§£ç®—
+ * èŒè´£ï¼šç»´æŠ¤å››å…ƒæ•°å§¿æ€ã€æ–¹å‘å‘é‡å’Œæ¬§æ‹‰è§’ç»“æœ
+ * è¯´æ˜ï¼šä¿æŒåŸæœ‰èåˆæµç¨‹ã€å¢ç›Šå’Œå¤ä½é€»è¾‘ä¸å˜ï¼Œä»…æ•´ç†è¯´æ˜ã€‚
  */
 #include "Imu.h"
 #include "Math.h"
 #include "Filter.h"
-/*²Î¿¼×ø±ê£¬¶¨ÒåÎªANO×ø±ê*
-¸©ÊÓ£¬»úÍ··½ÏòÎªxÕı·½Ïò
+/*å‚è€ƒåæ ‡ï¼Œå®šä¹‰ä¸ºANOåæ ‡*
+ä¿¯è§†ï¼Œæœºå¤´æ–¹å‘ä¸ºxæ­£æ–¹å‘
      +x
      |
  +y--|--
      |
 		 
 */	
-//ÊÀ½ç×ø±êÆ½ÃæXY×ªÆ½Ãæº½Ïò×ø±êXY
+//ä¸–ç•Œåæ ‡å¹³é¢XYè½¬å¹³é¢èˆªå‘åæ ‡XY
 void w2h_2d_trans(float w[VEC_XYZ],float ref_ax[VEC_XYZ],float h[VEC_XYZ])
 {
 	h[X] =  w[X] *  ref_ax[X]  + w[Y] *ref_ax[Y];
 	h[Y] =  w[X] *(-ref_ax[Y]) + w[Y] *ref_ax[X];
 	
 }
-//Æ½Ãæº½Ïò×ø±êXY×ªÊÀ½ç×ø±êÆ½ÃæXY
+//å¹³é¢èˆªå‘åæ ‡XYè½¬ä¸–ç•Œåæ ‡å¹³é¢XY
 void h2w_2d_trans(float h[VEC_XYZ],float ref_ax[VEC_XYZ],float w[VEC_XYZ])
 {
 	w[X] = h[X] *ref_ax[X] + h[Y] *(-ref_ax[Y]);
 	w[Y] = h[X] *ref_ax[Y] + h[Y] *  ref_ax[X];
 	
 }
-//ÔØÌå×ø±ê×ªÊÀ½ç×ø±ê£¨ANOÔ¼¶¨µÈÍ¬ÓëµØÀí×ø±ê£©
-float att_matrix[3][3]; //±ØĞëÓÉ×ËÌ¬½âËãËã³ö¸Ã¾ØÕó
+//è½½ä½“åæ ‡è½¬ä¸–ç•Œåæ ‡ï¼ˆANOçº¦å®šç­‰åŒä¸åœ°ç†åæ ‡ï¼‰
+float att_matrix[3][3]; //å¿…é¡»ç”±å§¿æ€è§£ç®—ç®—å‡ºè¯¥çŸ©é˜µ
 void a2w_3d_trans(float a[VEC_XYZ],float w[VEC_XYZ])
 {
 		for(u8 i = 0;i<3;i++)
@@ -61,9 +61,9 @@ static float s_imu_reset_error_sum;
 static u16 reset_cnt;
 					 
 _imu_state_st imu_state = {1,1,1,1,1,1,1,1};
-static float s_mag_heading_ref[2][2] = {{1,0},{1,0}};//µØÀí×ø±êÖĞ£¬Ë®Æ½Ãæ´Å³¡·½ÏòºãÎªÄÏ±± (1,0)
+static float s_mag_heading_ref[2][2] = {{1,0},{1,0}};//åœ°ç†åæ ‡ä¸­ï¼Œæ°´å¹³é¢ç£åœºæ–¹å‘æ’ä¸ºå—åŒ— (1,0)
 float imu_test[3];
-/* ×ËÌ¬½âËãÖ÷¸üĞÂº¯Êı */
+/* å§¿æ€è§£ç®—ä¸»æ›´æ–°å‡½æ•° */
 void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XYZ],s16 mag_val[VEC_XYZ],_imu_st *imu)
 {
 //	const float kp = 0.2f,ki = 0.001f;
@@ -89,14 +89,14 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 	
 		if(state->obs_en)
 		{
-			//¼ÆËã»úÌå×ø±êÏÂµÄÔË¶¯¼ÓËÙ¶È¹Û²âÁ¿¡£×ø±êÏµÎª±±Î÷Ìì
+			//è®¡ç®—æœºä½“åæ ‡ä¸‹çš„è¿åŠ¨åŠ é€Ÿåº¦è§‚æµ‹é‡ã€‚åæ ‡ç³»ä¸ºåŒ—è¥¿å¤©
 			for(u8 i = 0;i<3;i++)
 			{
 				s32 temp = 0;
 				for(u8 j = 0;j<3;j++)
 				{
 					
-					temp += imu->obs_acc_w[j] *att_matrix[j][i];//t[i][j] ×ªÖÃÎª t[j][i]
+					temp += imu->obs_acc_w[j] *att_matrix[j][i];//t[i][j] è½¬ç½®ä¸º t[j][i]
 				}
 				imu->obs_acc_a[i] = temp;
 				
@@ -114,42 +114,42 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 		acc_norm_l_recip = my_sqrt_reciprocal(my_pow(imu->gra_acc[X]) + my_pow(imu->gra_acc[Y]) + my_pow(imu->gra_acc[Z]));
 		acc_norm_l = safe_div(1,acc_norm_l_recip,0);
 		
-		// ¼ÓËÙ¶È¼ÆµÄ¶ÁÊı£¬µ¥Î»»¯¡£
+		// åŠ é€Ÿåº¦è®¡çš„è¯»æ•°ï¼Œå•ä½åŒ–ã€‚
 		for(u8 i = 0;i<3;i++)
 		{
 			acc_norm[i] = imu->gra_acc[i] *acc_norm_l_recip;
 		}
 		
 		
-	// ÔØÌå×ø±êÏÂµÄx·½ÏòÏòÁ¿£¬µ¥Î»»¯¡£
+	// è½½ä½“åæ ‡ä¸‹çš„xæ–¹å‘å‘é‡ï¼Œå•ä½åŒ–ã€‚
     att_matrix[0][0] = imu->x_vec[X] = 1 - (2*q2q2 + 2*q3q3);
     att_matrix[0][1] = imu->x_vec[Y] = 2*q1q2 - 2*q0q3;
     att_matrix[0][2] = imu->x_vec[Z] = 2*q1q3 + 2*q0q2;
 		
-	// ÔØÌå×ø±êÏÂµÄy·½ÏòÏòÁ¿£¬µ¥Î»»¯¡£
+	// è½½ä½“åæ ‡ä¸‹çš„yæ–¹å‘å‘é‡ï¼Œå•ä½åŒ–ã€‚
     att_matrix[1][0] = imu->y_vec[X] = 2*q1q2 + 2*q0q3;
     att_matrix[1][1] = imu->y_vec[Y] = 1 - (2*q1q1 + 2*q3q3);
     att_matrix[1][2] = imu->y_vec[Z] = 2*q2q3 - 2*q0q1;
 		
-    // ÔØÌå×ø±êÏÂµÄz·½ÏòÏòÁ¿£¨µÈĞ§ÖØÁ¦ÏòÁ¿¡¢ÖØÁ¦¼ÓËÙ¶ÈÏòÁ¿£©£¬µ¥Î»»¯¡£
+    // è½½ä½“åæ ‡ä¸‹çš„zæ–¹å‘å‘é‡ï¼ˆç­‰æ•ˆé‡åŠ›å‘é‡ã€é‡åŠ›åŠ é€Ÿåº¦å‘é‡ï¼‰ï¼Œå•ä½åŒ–ã€‚
     att_matrix[2][0] = imu->z_vec[X] = 2*q1q3 - 2*q0q2;
     att_matrix[2][1] = imu->z_vec[Y] = 2*q2q3 + 2*q0q1;
     att_matrix[2][2] = imu->z_vec[Z] = 1 - (2*q1q1 + 2*q2q2);
 		
-	//Ë®Æ½Ãæ·½ÏòÏòÁ¿
+	//æ°´å¹³é¢æ–¹å‘å‘é‡
 	float hx_vec_reci = my_sqrt_reciprocal(my_pow(att_matrix[0][0]) + my_pow(att_matrix[1][0]));
 	imu->hx_vec[X] = att_matrix[0][0] *hx_vec_reci;
 	imu->hx_vec[Y] = att_matrix[1][0] *hx_vec_reci;
 	
 	
-	// ¼ÆËãÔØÌå×ø±êÏÂµÄÔË¶¯¼ÓËÙ¶È¡£(Óë×ËÌ¬½âËãÎŞ¹Ø)
+	// è®¡ç®—è½½ä½“åæ ‡ä¸‹çš„è¿åŠ¨åŠ é€Ÿåº¦ã€‚(ä¸å§¿æ€è§£ç®—æ— å…³)
 		for(u8 i = 0;i<3;i++)
 		{
 			imu->a_acc[i] = (s32)(acc[i] - GRAVITY_CMSS *imu->z_vec[i]);
 		}
 		
     
-		//¼ÆËãÊÀ½ç×ø±êÏÂµÄÔË¶¯¼ÓËÙ¶È¡£×ø±êÏµÎª±±Î÷Ìì
+		//è®¡ç®—ä¸–ç•Œåæ ‡ä¸‹çš„è¿åŠ¨åŠ é€Ÿåº¦ã€‚åæ ‡ç³»ä¸ºåŒ—è¥¿å¤©
 		for(u8 i = 0;i<3;i++)
 		{
 			s32 temp = 0;
@@ -164,12 +164,12 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 		w2h_2d_trans(imu->w_acc,imu_data.hx_vec,imu->h_acc);
 		
 		
-    // ²âÁ¿ÖµÓëµÈĞ§ÖØÁ¦ÏòÁ¿µÄ²æ»ı£¨¼ÆËãÏòÁ¿Îó²î£©¡£
+    // æµ‹é‡å€¼ä¸ç­‰æ•ˆé‡åŠ›å‘é‡çš„å‰ç§¯ï¼ˆè®¡ç®—å‘é‡è¯¯å·®ï¼‰ã€‚
     vec_err[X] =  (acc_norm[Y] * imu->z_vec[Z] - imu->z_vec[Y] * acc_norm[Z]);
     vec_err[Y] = -(acc_norm[X] * imu->z_vec[Z] - imu->z_vec[X] * acc_norm[Z]);
     vec_err[Z] = -(acc_norm[Y] * imu->z_vec[X] - imu->z_vec[Y] * acc_norm[X]);
 #ifdef USE_MAG
-		//µç×ÓÂŞÅÌ¸³ÖµÎªfloatÊ¸Á¿
+		//ç”µå­ç½—ç›˜èµ‹å€¼ä¸ºfloatçŸ¢é‡
 		for(u8 i = 0;i<3;i++)
 		{
 			mag_val_f[i] = (float)mag_val[i];
@@ -177,18 +177,18 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 			
 		if(!(mag_val[X] ==0 && mag_val[Y] == 0 && mag_val[Z] == 0))
 		{
-			//°ÑÔØÌå×ø±êÏÂµÄÂŞÅÌÊı¾İ×ª»»µ½µØÀí×ø±êÏÂ
+			//æŠŠè½½ä½“åæ ‡ä¸‹çš„ç½—ç›˜æ•°æ®è½¬æ¢åˆ°åœ°ç†åæ ‡ä¸‹
 			a2w_3d_trans(mag_val_f,imu->w_mag);
-			//¼ÆËã·½ÏòÏòÁ¿¹éÒ»»¯ÏµÊı£¨Ä£µÄµ¹Êı£©
+			//è®¡ç®—æ–¹å‘å‘é‡å½’ä¸€åŒ–ç³»æ•°ï¼ˆæ¨¡çš„å€’æ•°ï¼‰
 			float l_re_tmp = my_sqrt_reciprocal(my_pow(imu->w_mag[0]) + my_pow(imu->w_mag[1]));
-			//¼ÆËãÄÏ±±³¯ÏòÏòÁ¿
+			//è®¡ç®—å—åŒ—æœå‘å‘é‡
 			s_mag_heading_ref[1][0] = imu->w_mag[0] *l_re_tmp;
 			s_mag_heading_ref[1][1] = imu->w_mag[1] *l_re_tmp;
-			//¼ÆËãÄÏ±±³¯ÏòÎó²î(²æ³Ë)£¬µØÀí×ø±êÖĞ£¬Ë®Æ½Ãæ´Å³¡·½ÏòÏòÁ¿Ó¦ºãÎªÄÏ±± (1,0)
+			//è®¡ç®—å—åŒ—æœå‘è¯¯å·®(å‰ä¹˜)ï¼Œåœ°ç†åæ ‡ä¸­ï¼Œæ°´å¹³é¢ç£åœºæ–¹å‘å‘é‡åº”æ’ä¸ºå—åŒ— (1,0)
 			mag_yaw_err = vec_2_cross_product(s_mag_heading_ref[1],s_mag_heading_ref[0]);
-			//¼ÆËãÄÏ±±³¯ÏòÏòÁ¿µã³Ë£¬ÅĞ¶ÏÍ¬Ïò»ò·´Ïò
+			//è®¡ç®—å—åŒ—æœå‘å‘é‡ç‚¹ä¹˜ï¼Œåˆ¤æ–­åŒå‘æˆ–åå‘
 			mag_err_dot_product = vec_2_dot_product(s_mag_heading_ref[1],s_mag_heading_ref[0]);
-			//Èô·´Ïò£¬Ö±½Ó¸ø×î´óÎó²î
+			//è‹¥åå‘ï¼Œç›´æ¥ç»™æœ€å¤§è¯¯å·®
 			if(mag_err_dot_product<0)
 			{
 				mag_yaw_err = my_sign(mag_yaw_err) *1.0f;
@@ -212,10 +212,10 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 				vec_err[X] = vec_err[Y] = vec_err[Z] = 0;
 			}
 #endif
-		//Îó²î»ı·Ö
+		//è¯¯å·®ç§¯åˆ†
 		vec_err_i[i] +=  LIMIT(vec_err[i],-0.1f,0.1f) *dT *ki_use;
 		
-	// ¹¹ÔìÔöÁ¿Ğı×ª£¨º¬ÈÚºÏ¾ÀÕı£©¡£	
+	// æ„é€ å¢é‡æ—‹è½¬ï¼ˆå«èåˆçº æ­£ï¼‰ã€‚	
 						
 			
 #ifdef USE_MAG
@@ -224,7 +224,7 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 			d_angle[i] = (gyr[i] + (vec_err[i]  + vec_err_i[i]) * kp_use ) * dT / 2 ;
 #endif
 		}
-    // ¼ÆËã×ËÌ¬¡£
+    // è®¡ç®—å§¿æ€ã€‚
     imu->w = imu->w            - imu->x*d_angle[X] - imu->y*d_angle[Y] - imu->z*d_angle[Z];
     imu->x = imu->w*d_angle[X] + imu->x            + imu->y*d_angle[Z] - imu->z*d_angle[Y];
     imu->y = imu->w*d_angle[Y] - imu->x*d_angle[Z] + imu->y            + imu->z*d_angle[X];
@@ -237,60 +237,60 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
     imu->z *= q_norm_l;
 		
   
-  /* ??????????????? */
+  /* ç£åŠ›è®¡èˆªå‘èåˆä¿®æ­£ */
 #ifdef USE_MAG
-		if(state->M_fix_en==0)//´ÅÁ¦
+		if(state->M_fix_en==0)//ç£åŠ›
 		{
-			mkp_use = 0;//²»ĞŞÕı
-			state->M_reset = 0;//ÂŞÅÌĞŞÕı²»¸´Î»£¬Çå³ı¸´Î»±ê¼Ç
+			mkp_use = 0;//ä¸ä¿®æ­£
+			state->M_reset = 0;//ç½—ç›˜ä¿®æ­£ä¸å¤ä½ï¼Œæ¸…é™¤å¤ä½æ ‡è®°
 		}
 		else
 		{
 			if(state->M_reset)//
 			{
-				//Í¨¹ıÔöÁ¿½øĞĞ¶Ô×¼
+				//é€šè¿‡å¢é‡è¿›è¡Œå¯¹å‡†
 				mkp_use = 10.0f;
 				if(mag_yaw_err != 0 && ABS(mag_yaw_err)<0.01f)
 				{
-					state->M_reset = 0;//Îó²îĞ¡ÓÚ2µÄÊ±ºò£¬Çå³ı¸´Î»±ê¼Ç
+					state->M_reset = 0;//è¯¯å·®å°äº2çš„æ—¶å€™ï¼Œæ¸…é™¤å¤ä½æ ‡è®°
 				}
 			}
 			else
 			{
-				mkp_use = state->mkp; //Õı³£ĞŞÕı
+				mkp_use = state->mkp; //æ­£å¸¸ä¿®æ­£
 			}
 		}
 #endif
 		
-		if(state->G_fix_en==0)//ÖØÁ¦·½ÏòĞŞÕı
+		if(state->G_fix_en==0)//é‡åŠ›æ–¹å‘ä¿®æ­£
 		{
-			kp_use = 0;//²»ĞŞÕı
+			kp_use = 0;//ä¸ä¿®æ­£
 		}
 		else
 		{
-			if(state->G_reset == 0)//Õı³£ĞŞÕı
+			if(state->G_reset == 0)//æ­£å¸¸ä¿®æ­£
 			{			
 				kp_use = state->gkp;
 				ki_use = state->gki;
 			}
-			else//¿ìËÙĞŞÕı£¬Í¨¹ıÔöÁ¿½øĞĞ¶Ô×¼
+			else//å¿«é€Ÿä¿®æ­£ï¼Œé€šè¿‡å¢é‡è¿›è¡Œå¯¹å‡†
 			{
 				kp_use = 10.0f;
 				ki_use = 0.0f;
 				
-				//¼ÆËã¾²Ì¬Îó²îÊÇ·ñËõĞ¡
+				//è®¡ç®—é™æ€è¯¯å·®æ˜¯å¦ç¼©å°
 				s_imu_reset_error_sum = (ABS(vec_err[X]) + ABS(vec_err[Y]));
 				
 				s_imu_reset_error_sum = LIMIT(s_imu_reset_error_sum,0,1.0f);
 				
 				if((s_imu_reset_error_sum < 0.02f) && (state->M_reset == 0))
 				{
-					//¼ÆÊ±
+					//è®¡æ—¶
 					reset_cnt += 2;
 					if(reset_cnt>400)
 					{
 						reset_cnt = 0;
-						state->G_reset = 0;//ÒÑ¾­¶Ô×¼£¬Çå³ı¸´Î»±ê¼Ç
+						state->G_reset = 0;//å·²ç»å¯¹å‡†ï¼Œæ¸…é™¤å¤ä½æ ‡è®°
 					}
 				}
 				else
@@ -301,16 +301,16 @@ void IMU_update(float dT,_imu_state_st *state,float gyr[VEC_XYZ], s32 acc[VEC_XY
 		}
 }
 static float t_temp;
-/* ÓÉ×ËÌ¬ÏòÁ¿¼ÆËãÅ·À­½Ç */
+/* ç”±å§¿æ€å‘é‡è®¡ç®—æ¬§æ‹‰è§’ */
 void calculate_RPY()
 {
-	/* ??????????? */
+	/* ç”±æ—‹è½¬çŸ©é˜µè®¡ç®—æ¬§æ‹‰è§’ */
 	
 		t_temp = LIMIT(1 - my_pow(att_matrix[2][0]),0,1);
 		
 		//imu_data.pit = asin(2*q1q3 - 2*q0q2)* RAD_TO_DEG;
 	
-		if(ABS(imu_data.z_vec[Z])>0.05f)//±ÜÃâÆæµãµÄÔËËã
+		if(ABS(imu_data.z_vec[Z])>0.05f)//é¿å…å¥‡ç‚¹çš„è¿ç®—
 		{
 			imu_data.pit =  fast_atan2(att_matrix[2][0],my_sqrt(t_temp))* RAD_TO_DEG;
 			imu_data.rol =  fast_atan2(att_matrix[2][1], att_matrix[2][2])* RAD_TO_DEG; 

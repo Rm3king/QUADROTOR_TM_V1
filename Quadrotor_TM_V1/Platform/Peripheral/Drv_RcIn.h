@@ -3,10 +3,10 @@
 
 #include "sysconfig.h"
 /*
- * ģ�����ƣ�Drv_RcIn
- * ģ��ְ���ṩ PPM �� SBUS ����ң������ĵײ��ʼ���ӿڡ�
- * ����˵����������ʷ��ʼ������ͬʱ���䰴Э�����������ļ��ݱ�����
- * ʹ��Լ�������ֲ��޸��жϡ�������ͨ�������߼���
+ * 模块名称：Drv_RcIn
+ * 模块职责：提供 PPM 与 SBUS 两类遥控输入的底层初始化接口。
+ * 命名说明：保留历史初始化名，同时补充按协议语义命名的兼容别名。
+ * 使用约束：本轮不修改中断、解码与通道换算逻辑。
  */
 
 typedef struct
@@ -41,7 +41,7 @@ extern u16 Rc_Sbus_In[16];
 void Drv_PpmInit(void);
 void Drv_SbusInit(void);
 
-/* ���廯���ݱ��������������������д�����ľɽӿڡ� */
+/* 语义化兼容别名：用于逐步替代仅按缩写命名的旧接口。 */
 #define Drv_RcPpm_Init		Drv_PpmInit
 #define Drv_RcSbus_Init		Drv_SbusInit
 

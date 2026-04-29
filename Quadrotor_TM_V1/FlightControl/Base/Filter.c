@@ -1,14 +1,14 @@
 /*
- * Ä£¿é£ºÂË²¨¹¤¾ß
- * Ö°Ôğ£ºÌá¹©·É¿ØÊ¹ÓÃµÄµÍÍ¨¡¢ÏŞ·ù¡¢´°¿ÚºÍÏòÁ¿±ä»»¸¨Öúº¯Êı
- * ËµÃ÷£º²»¸Ä±äÏÖÓĞÂË²¨Ëã·¨£¬Ö»Í³Ò»×¢ÊÍºÍÎÄ¼şÍ··ç¸ñ¡£
+ * æ¨¡å—ï¼šæ»¤æ³¢å·¥å…·
+ * èŒè´£ï¼šæä¾›é£æ§ä½¿ç”¨çš„ä½é€šã€é™å¹…ã€çª—å£å’Œå‘é‡å˜æ¢è¾…åŠ©å‡½æ•°
+ * è¯´æ˜ï¼šä¸æ”¹å˜ç°æœ‰æ»¤æ³¢ç®—æ³•ï¼Œåªç»Ÿä¸€æ³¨é‡Šå’Œæ–‡ä»¶å¤´é£æ ¼ã€‚
  */
 #include "Filter.h"
 #include "Math.h"
 
 
 
-/* »ı·ÖĞŞÕıÂË²¨Æ÷¸üĞÂ */
+/* ç§¯åˆ†ä¿®æ­£æ»¤æ³¢å™¨æ›´æ–° */
 void inte_fix_filter(float dT,_inte_fix_filter_st *data)
 {
 	float ei_lim_val;
@@ -31,7 +31,7 @@ void inte_fix_filter(float dT,_inte_fix_filter_st *data)
 
 }
 
-/* Î¢·ÖĞŞÕıÂË²¨Æ÷¸üĞÂ */
+/* å¾®åˆ†ä¿®æ­£æ»¤æ³¢å™¨æ›´æ–° */
 void fix_inte_filter(float dT,_fix_inte_filter_st *data)
 {
 	
@@ -49,7 +49,7 @@ void fix_inte_filter(float dT,_fix_inte_filter_st *data)
 
 
 
-void limit_filter(float T,float hz,_lf_t *data,float in) //ÔöÁ¿ÂË²¨£¬ÊÊºÏ´óÔëÉùµÍÖÍºó£¨ÎŞ·ì£©£¬ÊÕÁ²×î¿ì
+void limit_filter(float T,float hz,_lf_t *data,float in) //å¢é‡æ»¤æ³¢ï¼Œé€‚åˆå¤§å™ªå£°ä½æ»åï¼ˆæ— ç¼ï¼‰ï¼Œæ”¶æ•›æœ€å¿«
 {
 	float abs_t;
 // 	LPF_1(hz,T,	 in,&(data->lpf_1)); 
@@ -59,7 +59,7 @@ void limit_filter(float T,float hz,_lf_t *data,float in) //ÔöÁ¿ÂË²¨£¬ÊÊºÏ´óÔëÉùµ
  	abs_t = ABS(in);
 	data->out = LIMIT((data->lpf_1),-abs_t,abs_t);
 }
-void limit_filter_2(float T,float hz,_lf_t *data,float in) //ÔöÁ¿ÂË²¨£¬¾ùºâ£¬µ«ÖÍºóÉÔ´ó(Êı¾İ·´ÏòµÈ´ıµÍÍ¨·´Ïò)
+void limit_filter_2(float T,float hz,_lf_t *data,float in) //å¢é‡æ»¤æ³¢ï¼Œå‡è¡¡ï¼Œä½†æ»åç¨å¤§(æ•°æ®åå‘ç­‰å¾…ä½é€šåå‘)
 {
 	float abs_t;
 	LPF_1_(hz,T,	 in,(data->lpf_1)); 
@@ -70,7 +70,7 @@ void limit_filter_2(float T,float hz,_lf_t *data,float in) //ÔöÁ¿ÂË²¨£¬¾ùºâ£¬µ«Ö
 // 	data->out = LIMIT((data->lpf_1),-abs_t,abs_t);
 }
 
-void limit_filter_3(float T,float hz,_lf_t *data,float in) //ÔöÁ¿ÂË²¨£¬ÊÊºÏµÍÔëÉùÖÍºó½ÏĞ¡(µÈ·ù´óÔëÉùÆ½ĞĞ²»ÊÕÁ²),ÔëÉù´óÊÕÁ²¹ıÂı
+void limit_filter_3(float T,float hz,_lf_t *data,float in) //å¢é‡æ»¤æ³¢ï¼Œé€‚åˆä½å™ªå£°æ»åè¾ƒå°(ç­‰å¹…å¤§å™ªå£°å¹³è¡Œä¸æ”¶æ•›),å™ªå£°å¤§æ”¶æ•›è¿‡æ…¢
 {
 	float abs_t;
 	LPF_1_(hz,T,	 in,(data->lpf_1)); 
@@ -80,10 +80,10 @@ void limit_filter_3(float T,float hz,_lf_t *data,float in) //ÔöÁ¿ÂË²¨£¬ÊÊºÏµÍÔëÉ
 }
 
 // #define STEEPEST_ARR_NUM 10
-// #define STEEPEST_STEP 10  //´Î
+// #define STEEPEST_STEP 10  //æ¬¡
 
 
-/* ×îËÙÏÂ½µÂË²¨¼ÆËã */
+/* æœ€é€Ÿä¸‹é™æ»¤æ³¢è®¡ç®— */
 void steepest_descend(s32 arr[],u8 len,_steepest_st *steepest,u8 step_num,s32 in)
 {	
 	u8 updw = 1;//0 dw,1up
@@ -108,9 +108,9 @@ void steepest_descend(s32 arr[],u8 len,_steepest_st *steepest,u8 step_num,s32 in
 	
 	arr[ (steepest->cnt) ] = in;
 	
-	step = (float)(in - steepest->lst_out)/step_num ;//Ìİ¶È
+	step = (float)(in - steepest->lst_out)/step_num ;//æ¢¯åº¦
 	
-	if(ABS(step)<1)//ÕûĞÎÊı¾İ<1µÄÓĞĞ§ÅĞ¶¨
+	if(ABS(step)<1)//æ•´å½¢æ•°æ®<1çš„æœ‰æ•ˆåˆ¤å®š
 	{
 		if(ABS(step)*step_num<2)
 		{
@@ -131,9 +131,9 @@ void steepest_descend(s32 arr[],u8 len,_steepest_st *steepest,u8 step_num,s32 in
 // 			j = steepest->cnt + i + 1;
 // 			if( j >= len )	
 // 			{
-// 				j = j - len; //Ë³ĞòÅÅÁĞ
+// 				j = j - len; //é¡ºåºæ’åˆ—
 // 			}
-			pow_sum += my_pow(arr[i] - start_point );// /step_num;//³ı·¨¼õĞ¡±ÈÀı**
+			pow_sum += my_pow(arr[i] - start_point );// /step_num;//é™¤æ³•å‡å°æ¯”ä¾‹**
 			
 			//start_point += pn *(step_slope_factor *step/len);
 		}
@@ -144,13 +144,13 @@ void steepest_descend(s32 arr[],u8 len,_steepest_st *steepest,u8 step_num,s32 in
 			{
 				on = 0;
 			}
-			updw = 1;//ÉÏÉıÁË
+			updw = 1;//ä¸Šå‡äº†
 			pn = (pn == 1 )? -1:1;
 
 		}
 		else
 		{
-			updw = 0; //ÕıÔÚÏÂ½µ
+			updw = 0; //æ­£åœ¨ä¸‹é™
  			if(step_slope_factor<step_num)
  			{
  				step_slope_factor++;
@@ -159,14 +159,14 @@ void steepest_descend(s32 arr[],u8 len,_steepest_st *steepest,u8 step_num,s32 in
 			
 		steepest->lst_pow_sum = pow_sum;		
 		pow_sum = 0;
-		start_point += pn *step;//µ÷Õû
+		start_point += pn *step;//è°ƒæ•´
 		
-		if(++step_cnt > step_num)//ÏŞÖÆ¼ÆËã´ÎÊı
+		if(++step_cnt > step_num)//é™åˆ¶è®¡ç®—æ¬¡æ•°
 		{
 			on = 0;
 		}
 			//////
-			if(step_slope_factor>=2)//ÏŞÖÆÏÂ½µ´ÎÊı1´Î£¬½ÚÊ¡Ê±¼ä£¬µ«»áÔö´óÖÍºó£¬ÈôcpuÊ±¼ä³äÔ£¿É²»ÓÃ¡£
+			if(step_slope_factor>=2)//é™åˆ¶ä¸‹é™æ¬¡æ•°1æ¬¡ï¼ŒèŠ‚çœæ—¶é—´ï¼Œä½†ä¼šå¢å¤§æ»åï¼Œè‹¥cpuæ—¶é—´å……è£•å¯ä¸ç”¨ã€‚
 			{
 				on = 0;
 
@@ -185,14 +185,14 @@ void steepest_descend(s32 arr[],u8 len,_steepest_st *steepest,u8 step_num,s32 in
 
 
 
-/* ÓĞÏŞ³¤¶È´°¿ÚÂË²¨ */
+/* æœ‰é™é•¿åº¦çª—å£æ»¤æ³¢ */
 void fir_arrange_filter(float *arr,u16 len,u8 *fil_cnt,float in,float *arr_out) //len<=255 len >= 3
 {
 	//float arrange[len];
 	float tmp;
 	u8 i,j;
 /*
-´°¿ÚÊı¾İ´¦Àí
+çª—å£æ•°æ®å¤„ç†
 */		
 	if( ++*fil_cnt >= len )	
 	{
@@ -201,11 +201,11 @@ void fir_arrange_filter(float *arr,u16 len,u8 *fil_cnt,float in,float *arr_out) 
 	
 	arr[ *fil_cnt ] = in;
 /*
-´°¿ÚÊı¾İ´¦Àí
+çª—å£æ•°æ®å¤„ç†
 */	
 	
 /*
-¸³Öµ¡¢ÅÅÁĞ
+èµ‹å€¼ã€æ’åˆ—
 */	
 	for(i=0;i<len;i++)
 	{
@@ -225,7 +225,7 @@ void fir_arrange_filter(float *arr,u16 len,u8 *fil_cnt,float in,float *arr_out) 
 		}
 	}
 /*
-¸³Öµ¡¢ÅÅÁĞ
+èµ‹å€¼ã€æ’åˆ—
 */		
 	
 
@@ -252,7 +252,7 @@ void fir_arrange_filter(float *arr,u16 len,u8 *fil_cnt,float in,float *arr_out) 
 	
 	*out += ( in - ( last  ) )/(float)( width_num ) ;
 	//*out += 0.00001f *(in - *out);
-	*out += 0.00001f *LIMIT((in - *out),-1,1);  //Êı¾İ¾«¶ÈÎó²îĞŞÕı
+	*out += 0.00001f *LIMIT((in - *out),-1,1);  //æ•°æ®ç²¾åº¦è¯¯å·®ä¿®æ­£
 	
 }
 
@@ -262,7 +262,7 @@ void LPF_1(float hz,float time,float in,float *out)
 
 }
 
-/* Ë«¾«¶ÈÒ»½×µÍÍ¨ÂË²¨ */
+/* åŒç²¾åº¦ä¸€é˜¶ä½é€šæ»¤æ³¢ */
 void LPF_1_db(float hz,float time,double in,double *out)
 {
 	*out += ( 1 / ( 1 + 1 / ( hz *6.28f *time ) ) ) *( in - *out );
@@ -298,7 +298,7 @@ float my_hpf_limited(float T,float hz,float x,float zoom,float *zoom_adj)
 }
 
 
-void simple_3d_trans(float ref[VEC_XYZ], float in[VEC_XYZ], float out[VEC_XYZ]) //¸Ãº¯ÊıÖ»ÓĞÔÚË®Æ½Ãæ¸½½üÒ»¸öÓĞÏŞµÄ·¶Î§ÄÚÕıÈ·¡£
+void simple_3d_trans(float ref[VEC_XYZ], float in[VEC_XYZ], float out[VEC_XYZ]) //è¯¥å‡½æ•°åªæœ‰åœ¨æ°´å¹³é¢é™„è¿‘ä¸€ä¸ªæœ‰é™çš„èŒƒå›´å†…æ­£ç¡®ã€‚
 {
 	static s8 pn;
 	static float h_tmp_x,h_tmp_y;
@@ -318,13 +318,13 @@ void simple_3d_trans(float ref[VEC_XYZ], float in[VEC_XYZ], float out[VEC_XYZ]) 
 
 }
 
-/* °´²Î¿¼·½ÏòÍê³ÉÈıÎ¬µ½Ë®Æ½×ø±ê±ä»» */
+/* æŒ‰å‚è€ƒæ–¹å‘å®Œæˆä¸‰ç»´åˆ°æ°´å¹³åæ ‡å˜æ¢ */
 void vec_3dh_transition(float ref[VEC_XYZ], float in[VEC_XYZ], float out[VEC_XYZ])
 {
 	simple_3d_trans(ref,in,out); //
 }
 
-/* ¼ÆËãË®Æ½×ø±ê±ä»»¾ØÕó */
+/* è®¡ç®—æ°´å¹³åæ ‡å˜æ¢çŸ©é˜µ */
 void vec_3dh_transition_matrix(float ref[VEC_XYZ],float wh_matrix[VEC_XYZ][VEC_XYZ])
 {
 
@@ -350,7 +350,7 @@ void vec_3dh_transition_matrix(float ref[VEC_XYZ],float wh_matrix[VEC_XYZ][VEC_X
 //}
 
 
-//float low_pass2_filter(float sample,filter_s* imu_filter)//µÍÍ¨¶ş½×ÂË²¨Æ÷
+//float low_pass2_filter(float sample,filter_s* imu_filter)//ä½é€šäºŒé˜¶æ»¤æ³¢å™¨
 //{
 //	float delay_element_0 = sample - imu_filter->_delay_element_1 * imu_filter->_a1 - imu_filter->_delay_element_2 * imu_filter->_a2;
 //	float output = delay_element_0 * imu_filter->_b0 + imu_filter->_delay_element_1 * imu_filter->_b1 + imu_filter->_delay_element_2 * imu_filter->_b2;

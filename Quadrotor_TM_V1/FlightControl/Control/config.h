@@ -1,8 +1,8 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 /*
- * ģ�飺��������
- * ְ�𣺼��ж��������س����͹��̿��ء�
+ * 模块：公共配置
+ * 职责：集中定义数学常量和工程控制参数。
  */
 #include "sysconfig.h"
 
@@ -19,7 +19,7 @@
 #define ANO_DT_USE_NRF24l01
 #define SP_EST_DRAG 1.0f
 #define BARO_WIND_COMP 0.10f
-/* �����˲�����̬���ƾ�������� */
+/* 滤波与姿态控制经验参数 */
 #define GYR_ACC_FILTER 0.25f
 #define FINAL_P        0.35f
 #define MOTOR_ESC_TYPE 1

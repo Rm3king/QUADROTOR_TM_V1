@@ -2,8 +2,8 @@
 #define _SCHEDULER_H_
 #include "config.h"
 /*
- * µ÷¶ÈÈÎÎñÃèÊö¡£
- * task_func ÎªÈÎÎñÈë¿Ú£¬interval_ticks ºÍ last_run µÄµ¥Î»¾ùÎª us¡£
+ * è°ƒåº¦ä»»åŠ¡æè¿°ã€‚
+ * task_func ä¸ºä»»åŠ¡å…¥å£ï¼Œinterval_ticks å’Œ last_run çš„å•ä½å‡ä¸º usã€‚
  */
 typedef struct
 {

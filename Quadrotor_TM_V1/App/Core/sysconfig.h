@@ -13,7 +13,7 @@ typedef	int8_t 		s8;
 #include "gpio.h"
 #include "pin_map.h"
 #include "Drv_Bsp.h"
-/* ????????????? */
+/* ç³»ç»Ÿé…ç½®ä¸ç‰ˆæœ¬å· */
 #define Delay_ms MyDelayMs
 #define ANO_DT_USE_USART2
 //#define ANO_DT_USE_USB
@@ -22,13 +22,13 @@ typedef	int8_t 		s8;
 #define SOFT_VER 26
 #define BL_VER	0
 #define PT_VER	400
-/* LED ???? */
+/* LED é¢œè‰²å®šä¹‰ */
 #define LED_R	0x01
 #define LED_G	0x02
 #define LED_B	0x04
 #define LED_S	0x08
 #define LED_ALL 0xFF
-/*ÖĞ¶ÏºÅÔ½Ğ¡ÓÅÏÈ¼¶Ô½¸ß*/
+/*ä¸­æ–­å·è¶Šå°ä¼˜å…ˆçº§è¶Šé«˜*/
 #define  USER_INT0  0x00
 #define  USER_INT1  0x20
 #define  USER_INT2  0x40
@@ -37,7 +37,7 @@ typedef	int8_t 		s8;
 #define  USER_INT5  0xA0
 #define  USER_INT6  0xD0
 #define  USER_INT7  0xE0
-/*================IOÅäÖÃ======================*/
+/*================IOé…ç½®======================*/
 #define LED1_SYSCTL			SYSCTL_PERIPH_GPIOD
 #define LED2_SYSCTL			SYSCTL_PERIPH_GPIOD
 #define LED3_SYSCTL			SYSCTL_PERIPH_GPIOA
@@ -50,17 +50,17 @@ typedef	int8_t 		s8;
 #define LED2_PIN			GPIO_PIN_1
 #define LED3_PIN			GPIO_PIN_6
 #define LEDS_PIN			GPIO_PIN_4
-///**********PWMÊä³öÒı½ÅÅäÖÃ*************/
+///**********PWMè¾“å‡ºå¼•è„šé…ç½®*************/
 //#define M0TO_PWM1_FUNCTION	GPIO_PB6_M0PWM0
 //#define M0TO_PWM2_FUNCTION	GPIO_PB7_M0PWM1
 //#define M0TO_PWM3_FUNCTION	GPIO_PB4_M0PWM2
 //#define M0TO_PWM4_FUNCTION	GPIO_PB5_M0PWM3
-/*ÓÍÃÅĞĞ³ÌÎª[0:1000]*/
-//#define MINTHROTTLE	    	0				//×îĞ¡ÓÍÃÅÖµ           
-//#define MAXTHROTTLE 		1000            //×î´óÓÍÃÅÖµ
-//#define PWM_PERIOD_MAX		3125			//ÖÜÆÚÎª2.5ms(400hz)
-/**********spiÒı½ÅÅäÖÃ*************/
-/*´«¸ĞÆ÷ÓÃ*/
+/*æ²¹é—¨è¡Œç¨‹ä¸º[0:1000]*/
+//#define MINTHROTTLE	    	0				//æœ€å°æ²¹é—¨å€¼           
+//#define MAXTHROTTLE 		1000            //æœ€å¤§æ²¹é—¨å€¼
+//#define PWM_PERIOD_MAX		3125			//å‘¨æœŸä¸º2.5ms(400hz)
+/**********spiå¼•è„šé…ç½®*************/
+/*ä¼ æ„Ÿå™¨ç”¨*/
 #define SPI0_SYSCTL			SYSCTL_PERIPH_GPIOA
 #define SPI0_PROT			GPIOA_BASE
 #define SPI0_CLK_PIN		GPIO_PIN_2
@@ -70,7 +70,7 @@ typedef	int8_t 		s8;
 #define SPI0_RX				GPIO_PA4_SSI0RX
 #define SPI0_TX				GPIO_PA5_SSI0TX
 #define SPI0_BASE			SSI0_BASE
-/**********ICM20602µÄÒı½ÅÅäÖÃ*************/
+/**********ICM20602çš„å¼•è„šé…ç½®*************/
 #define ICM_CSPIN_SYSCTL	SYSCTL_PERIPH_GPIOA
 #define ICM20602_CS_PORT	GPIOA_BASE
 #define ICM20602_CS_PIN		GPIO_PIN_3
@@ -78,19 +78,19 @@ typedef	int8_t 		s8;
 #define ICM20602_READY_PORT	    GPIOB_BASE
 #define ICM20602_READY_INT_PORT INT_GPIOB
 #define ICM20602_READY_PIN	    GPIO_PIN_2
-/**********AK8975µÄCSÊ¹ÄÜÒı½ÅÅäÖÃ*************/
+/**********AK8975çš„CSä½¿èƒ½å¼•è„šé…ç½®*************/
 #define AK_CSPIN_SYSCTL		SYSCTL_PERIPH_GPIOD
 #define AK8975_CS_PORT		GPIOD_BASE
 #define AK8975_CS_PIN		GPIO_PIN_2
-/**********spl06µÄCSÊ¹ÄÜÒı½ÅÅäÖÃ*************/
+/**********spl06çš„CSä½¿èƒ½å¼•è„šé…ç½®*************/
 #define SPL_CSPIN_SYSCTL	SYSCTL_PERIPH_GPIOD
 #define SPL06_CS_PORT		GPIOD_BASE
 #define SPL06_CS_PIN		GPIO_PIN_3
-/**********FlashµÄCSÊ¹ÄÜÒı½ÅÅäÖÃ*************/
+/**********Flashçš„CSä½¿èƒ½å¼•è„šé…ç½®*************/
 #define FLASH_CSPIN_SYSCTL	SYSCTL_PERIPH_GPIOE
 #define FLASH_CS_PORT		GPIOE_BASE
 #define FLASH_CS_PIN		GPIO_PIN_2
-/**********PWMÊä³öÒı½ÅÅäÖÃ*************/
+/**********PWMè¾“å‡ºå¼•è„šé…ç½®*************/
 #define M0TO_PWM1_FUNCTION	GPIO_PB6_M0PWM0
 #define M0TO_PWM2_FUNCTION	GPIO_PB7_M0PWM1
 #define M0TO_PWM3_FUNCTION	GPIO_PB4_M0PWM2
@@ -100,27 +100,27 @@ typedef	int8_t 		s8;
 #define M0TO_PWM7_FUNCTION	GPIO_PF2_M1PWM6
 #define M0TO_PWM8_FUNCTION	GPIO_PF3_M1PWM7
 #define HEAT_PWM_FUNCTION	GPIO_PA7_M1PWM3
-/*ÓÍÃÅĞĞ³ÌÎª[0:1000]*/
-#define MINTHROTTLE	    	0				//×îĞ¡ÓÍÃÅÖµ           
-#define MAXTHROTTLE 		1000            //×î´óÓÍÃÅÖµ
-#define PWM_PERIOD_MAX		3125			//ÖÜÆÚÎª2.5ms(400hz)
-///**********UartÒı½ÅÅäÖÃ*************/
+/*æ²¹é—¨è¡Œç¨‹ä¸º[0:1000]*/
+#define MINTHROTTLE	    	0				//æœ€å°æ²¹é—¨å€¼           
+#define MAXTHROTTLE 		1000            //æœ€å¤§æ²¹é—¨å€¼
+#define PWM_PERIOD_MAX		3125			//å‘¨æœŸä¸º2.5ms(400hz)
+///**********Uartå¼•è„šé…ç½®*************/
 //#define	UART0_RX			GPIO_PA0_U0RX
 //#define	UART0_TX			GPIO_PA1_U0TX
 //#define	UART0_PORT			GPIOA_BASE
 //#define	UART0_PIN_RX		GPIO_PIN_0
 //#define	UART0_PIN_TX		GPIO_PIN_1
-/**********PPM¶¨Ê±Æ÷ÅäÖÃ*************/
+/**********PPMå®šæ—¶å™¨é…ç½®*************/
 #define PPM_SYSCTL			SYSCTL_PERIPH_GPIOC
 #define PPM_FUNCTION		GPIO_PC7_WT1CCP1
 #define PPM_PORTS			GPIOC_BASE
 #define PPM_PIN				GPIO_PIN_7
 #define PULSE_MIN   800
 #define PULSE_MAX   2200
-/**********ADCÒı½ÅÅäÖÃ*************/
+/**********ADCå¼•è„šé…ç½®*************/
 #define ADC_PORT			GPIOE_BASE
 #define ADC_PIN				GPIO_PIN_3
-/**********´®¿ÚÒı½ÅÅäÖÃ*************/
+/**********ä¸²å£å¼•è„šé…ç½®*************/
 #define SBUS_SYSCTL			SYSCTL_PERIPH_GPIOC
 #define SBUS_UART			UART3_BASE
 #define SBUS_BAUDRATE		100000

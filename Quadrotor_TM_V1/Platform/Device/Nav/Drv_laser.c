@@ -1,13 +1,13 @@
 /*
- * ģ�飺����������
- * ְ����ɼ���߶����ݽ��ա�У���뻺�����
- * ˵�������ı䴮�ڽ������̣���ͳһע�ͷ��
+ * 模块：激光测距驱动
+ * 职责：完成激光高度数据接收、校验与缓存更新
+ * 说明：不改变串口解析流程，仅统一注释风格。
  */
 #include "Drv_laser.h"
 #include "FcData.h"
 
 
-u8 LASER_LINKOK = 0;	//0:��Ч��1����Ч��2��������
+u8 LASER_LINKOK = 0;	//0:无效，1：有效，2：测试中
 
 u16 Laser_height_cm;
 u8 Drv_Laser_Init(void)
@@ -56,7 +56,7 @@ void Drv_Laser_GetOneByte(u8 data)
 			u8 sum = 0;
 			for(u8 i=0; i<8; i++)
 				sum += tmp[i];
-			if(sum == tmp[8])	//У��ͨ��
+			if(sum == tmp[8])	//校验通过
 			{
 				if(LASER_LINKOK == 2)
 					LASER_LINKOK = 1;

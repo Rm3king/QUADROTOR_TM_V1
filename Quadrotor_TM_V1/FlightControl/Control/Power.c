@@ -1,7 +1,7 @@
 /*
- * Ä£¿éÃû³Æ£ºPower
- * Ä£¿éÖ°Ôğ£º¸üĞÂµç³ØµçÑ¹¹À¼Æ£¬²¢¾İ´ËË¢ĞÂµÍÑ¹Óë·µº½Ïà¹Ø×´Ì¬¡£
- * Ê¹ÓÃÔ¼Êø£ºADC ´¥·¢Ë³Ğò¡¢µçÑ¹ÂË²¨½Ú×àºÍãĞÖµÅĞ¶¨±£³Ö²»±ä¡£
+ * æ¨¡å—åç§°ï¼šPower
+ * æ¨¡å—èŒè´£ï¼šæ›´æ–°ç”µæ± ç”µå‹ä¼°è®¡ï¼Œå¹¶æ®æ­¤åˆ·æ–°ä½å‹ä¸è¿”èˆªç›¸å…³çŠ¶æ€ã€‚
+ * ä½¿ç”¨çº¦æŸï¼šADC è§¦å‘é¡ºåºã€ç”µå‹æ»¤æ³¢èŠ‚å¥å’Œé˜ˆå€¼åˆ¤å®šä¿æŒä¸å˜ã€‚
  */
 #include "Power.h"
 #include "Parameter.h"
@@ -17,9 +17,9 @@ void Power_UpdateTask(u8 dT_ms)
 {
 	static s16 s_voltage_sample_mv;
 	float cutoff_hz;
-	//´¥·¢ADC²ÉÑù
+	//è§¦å‘ADCé‡‡æ ·
 	Drv_Adc0Trigger();
-	//¸³ÖµµçÑ¹Êı¾İ
+	//èµ‹å€¼ç”µå‹æ•°æ®
 	s_voltage_sample_mv = Voltage * 1000;
 	
 	if(s_voltage_ready == 0)
@@ -46,7 +46,7 @@ void Power_UpdateTask(u8 dT_ms)
 		
 	if(Plane_Votage<g_fc_param.set.lowest_power_voltage)
 	{
-		flag.power_state = 3;//½«½ûÖ¹½âËø		
+		flag.power_state = 3;//å°†ç¦æ­¢è§£é”		
 	}
 	else
 	{

@@ -5,21 +5,21 @@
 #include "FcData.h"
 
 /*
- * Ä£¿éÃû³Æ£ºParameter
- * Ä£¿éÖ°Ôğ£º¶¨Òå·É¿Ø²ÎÊı´æ´¢½á¹¹¡¢²ÎÊı±£´æ×´Ì¬ºÍ²ÎÊı¶ÁĞ´½Ó¿Ú¡£
- * Ê¹ÓÃÔ¼Êø£º±¾Í·ÎÄ¼şÖ»ÃèÊö²ÎÊı²¼¾ÖÓë½Ó¿Ú£¬²»¸Ä±ä²ÎÊıº¬ÒåÓë´æ´¢Ê±Ğò¡£
+ * æ¨¡å—åç§°ï¼šParameter
+ * æ¨¡å—èŒè´£ï¼šå®šä¹‰é£æ§å‚æ•°å­˜å‚¨ç»“æ„ã€å‚æ•°ä¿å­˜çŠ¶æ€å’Œå‚æ•°è¯»å†™æ¥å£ã€‚
+ * ä½¿ç”¨çº¦æŸï¼šæœ¬å¤´æ–‡ä»¶åªæè¿°å‚æ•°å¸ƒå±€ä¸æ¥å£ï¼Œä¸æ”¹å˜å‚æ•°å«ä¹‰ä¸å­˜å‚¨æ—¶åºã€‚
  */
-/* ³Ö¾Ã»¯²ÎÊı½á¹¹£¬×Ö¶ÎË³ĞòÖ±½Ó¾ö¶¨´æ´¢²¼¾Ö¡£ */
+/* æŒä¹…åŒ–å‚æ•°ç»“æ„ï¼Œå­—æ®µé¡ºåºç›´æ¥å†³å®šå­˜å‚¨å¸ƒå±€ã€‚ */
 __packed struct Parameter_s
 {
-	/* °æ±¾Óë³õÊ¼»¯±ê¼Ç¡£ */
+	/* ç‰ˆæœ¬ä¸åˆå§‹åŒ–æ ‡è®°ã€‚ */
 	u16 frist_init;
 
-	/* ÊäÈëÓëÍâÉè¿ª¹ØÅäÖÃ¡£ */
+	/* è¾“å…¥ä¸å¤–è®¾å¼€å…³é…ç½®ã€‚ */
 	u8 pwmInMode;
 	u8 heatSwitch;
 
-	/* ´«¸ĞÆ÷Ğ£×¼²ÎÊı¡£ */
+	/* ä¼ æ„Ÿå™¨æ ¡å‡†å‚æ•°ã€‚ */
 	float acc_offset[VEC_XYZ];
 	float gyro_offset[VEC_XYZ];
 	float surface_vec[VEC_XYZ];
@@ -27,40 +27,40 @@ __packed struct Parameter_s
 	float mag_offset[VEC_XYZ];
 	float mag_gain[VEC_XYZ];
 
-	/* ×ËÌ¬Óë¸ß¶È¿ØÖÆ PID ²ÎÊı¡£ */
+	/* å§¿æ€ä¸é«˜åº¦æ§åˆ¶ PID å‚æ•°ã€‚ */
 	float pid_att_1level[VEC_RPY][PID];
 	float pid_att_2level[VEC_RPY][PID];
 	float pid_alt_1level[PID];
 	float pid_alt_2level[PID];
 
-	/* Ë®Æ½Î»ÖÃ¿ØÖÆ PID ²ÎÊı¡£ */
+	/* æ°´å¹³ä½ç½®æ§åˆ¶ PID å‚æ•°ã€‚ */
 	float pid_loc_1level[PID];
 	float pid_loc_2level[PID];
 	float pid_gps_loc_1level[PID];
 	float pid_gps_loc_2level[PID];
 
-	/* µçÑ¹±£»¤²ÎÊı¡£ */
+	/* ç”µå‹ä¿æŠ¤å‚æ•°ã€‚ */
 	float warn_power_voltage;
 	float return_home_power_voltage;
 	float lowest_power_voltage;
 
-	/* ×Ô¶¯Æğ½µÓëµç»ú×¼±¸²ÎÊı¡£ */
+	/* è‡ªåŠ¨èµ·é™ä¸ç”µæœºå‡†å¤‡å‚æ•°ã€‚ */
 	float auto_take_off_height;
 	float auto_take_off_speed;
 	float auto_landing_speed;
 	float idle_speed_pwm;
 };
 
-/* ²ÎÊı´æ´¢ÁªºÏÌå£¬Ìá¹©½á¹¹»¯·ÃÎÊºÍ×Ö½Ú¼¶·ÃÎÊ¡£ */
+/* å‚æ•°å­˜å‚¨è”åˆä½“ï¼Œæä¾›ç»“æ„åŒ–è®¿é—®å’Œå­—èŠ‚çº§è®¿é—®ã€‚ */
 union Parameter
 {
-	/* ÁªºÏÌåÍ¬Ê±Ìá¹©½á¹¹»¯·ÃÎÊºÍ×Ö½Ú¼¶·ÃÎÊ¡£ */
+	/* è”åˆä½“åŒæ—¶æä¾›ç»“æ„åŒ–è®¿é—®å’Œå­—èŠ‚çº§è®¿é—®ã€‚ */
 	struct Parameter_s set;
 	u8 byte[2048];
 };
 extern union Parameter g_fc_param;
 
-/* ²ÎÊı±£´æÔËĞĞ×´Ì¬¡£ */
+/* å‚æ•°ä¿å­˜è¿è¡ŒçŠ¶æ€ã€‚ */
 typedef struct
 {
 	u8 save_en;
@@ -69,13 +69,13 @@ typedef struct
 } param_state_t;
 extern param_state_t g_param_state;
 
-/* ¶ÁÈ¡²ÎÊıÇø£¬²¢ÔÚ±ØÒªÊ±Ö´ĞĞÄ¬ÈÏ³õÊ¼»¯¡£ */
+/* è¯»å–å‚æ•°åŒºï¼Œå¹¶åœ¨å¿…è¦æ—¶æ‰§è¡Œé»˜è®¤åˆå§‹åŒ–ã€‚ */
 void FC_Param_Read(void);
-/* ÖÜÆÚĞÔ²ÎÊı±£´æÈÎÎñ¡£ */
+/* å‘¨æœŸæ€§å‚æ•°ä¿å­˜ä»»åŠ¡ã€‚ */
 void FC_Param_WriteTask(u16 dT_ms);
-/* »Ö¸´Ä¬ÈÏ PID ²ÎÊı¡£ */
+/* æ¢å¤é»˜è®¤ PID å‚æ•°ã€‚ */
 void FC_Param_ResetPid(void);
-/* »Ö¸´Ä¬ÈÏ·É¿Ø²ÎÊı¡£ */
+/* æ¢å¤é»˜è®¤é£æ§å‚æ•°ã€‚ */
 void FC_Param_Reset(void);
 
 #endif 

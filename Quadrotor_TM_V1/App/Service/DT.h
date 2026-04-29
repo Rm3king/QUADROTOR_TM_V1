@@ -2,9 +2,9 @@
 #define _DATA_TRANSFER_H
 #include "sysconfig.h"
 /*
- * Ä£¿éÃû³Æ£ºDT
- * Ä£¿éÖ°Ôğ£ºÉùÃ÷µ÷ÊÔĞ­ÒéµÄÊı¾İÊÕ·¢½Ó¿Ú¡¢·¢ËÍ±êÖ¾ºÍ²ÎÊıË÷ÒıÓ³Éä¡£
- * Ê¹ÓÃÔ¼Êø£ºĞ­ÒéÖ¡¸ñÊ½¡¢²ÎÊı±àºÅºÍ¶ÔÍâ·¢ËÍ½Ó¿ÚÔÚÖØ¹¹ÖĞ±£³Ö²»±ä¡£
+ * æ¨¡å—åç§°ï¼šDT
+ * æ¨¡å—èŒè´£ï¼šå£°æ˜è°ƒè¯•åè®®çš„æ•°æ®æ”¶å‘æ¥å£ã€å‘é€æ ‡å¿—å’Œå‚æ•°ç´¢å¼•æ˜ å°„ã€‚
+ * ä½¿ç”¨çº¦æŸï¼šåè®®å¸§æ ¼å¼ã€å‚æ•°ç¼–å·å’Œå¯¹å¤–å‘é€æ¥å£åœ¨é‡æ„ä¸­ä¿æŒä¸å˜ã€‚
  */
 typedef struct
 {
@@ -30,7 +30,7 @@ typedef struct
     u16 paraToSend;
 } dt_flag_t;
 
-/* PID ²ÎÊıË÷Òı¡£ */
+/* PID å‚æ•°ç´¢å¼•ã€‚ */
 #define PAR_PID_1_P         1
 #define PAR_PID_1_I         2
 #define PAR_PID_1_D         3
@@ -86,7 +86,7 @@ typedef struct
 #define PAR_PID_18_I        53
 #define PAR_PID_18_D        54
 
-/* ÆäËû²ÎÊıË÷Òı¡£ */
+/* å…¶ä»–å‚æ•°ç´¢å¼•ã€‚ */
 #define PAR_RCINMODE        61
 #define PAR_UNLOCKPWM       62
 #define PAR_LVWARN          63
@@ -103,12 +103,12 @@ typedef struct
 extern s32 g_dt_param_list[100];
 extern dt_flag_t g_dt_flag;
 
-/* µ÷¶ÈÈë¿ÚÓë½ÓÊÕÈë¿Ú¡£ */
+/* è°ƒåº¦å…¥å£ä¸æ¥æ”¶å…¥å£ã€‚ */
 void ANO_DT_Data_Exchange(void);
 void ANO_DT_Data_Receive_Prepare(u8 data);
 void ANO_DT_Send_Data(u8 *dataToSend, u8 length);
 
-/* ¶ÔÍâ¿É¸´ÓÃµÄĞ­Òé·¢ËÍ½Ó¿Ú¡£ */
+/* å¯¹å¤–å¯å¤ç”¨çš„åè®®å‘é€æ¥å£ã€‚ */
 void ANO_DT_Send_Version(u8 hardware_type, u16 hardware_ver, u16 software_ver, u16 protocol_ver, u16 bootloader_ver);
 void ANO_DT_Send_Status(float angle_rol, float angle_pit, float angle_yaw, s32 alt, u8 fly_model, u8 armed);
 void ANO_DT_Send_Senser(s16 a_x, s16 a_y, s16 a_z, s16 g_x, s16 g_y, s16 g_z, s16 m_x, s16 m_y, s16 m_z);

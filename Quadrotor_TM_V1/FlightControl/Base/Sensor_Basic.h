@@ -8,7 +8,7 @@
 #define RANGE_PN2000_TO_RAD   0.001065f
 #define RANGE_PN16G_TO_CMSS   0.4790f
 
-/* 机体中心点补偿量 */
+/* 鏈轰綋涓績鐐硅ˉ鍋块噺 */
 typedef struct
 {
     float center_pos_cm[VEC_XYZ];
@@ -19,7 +19,7 @@ typedef struct
 } _center_pos_st;
 extern _center_pos_st center_pos;
 
-/* 传感器安装面旋转标定 */
+/* 浼犳劅鍣ㄥ畨瑁呴潰鏃嬭浆鏍囧畾 */
 typedef struct
 {
     u8 surface_CALIBRATE;
@@ -28,7 +28,7 @@ typedef struct
 } _sensor_rotate_st;
 extern _sensor_rotate_st sensor_rot;
 
-/* 基础传感器原始与转换数据 */
+/* 鍩虹浼犳劅鍣ㄥ師濮嬩笌杞崲鏁版嵁 */
 typedef struct
 {
     u8 acc_CALIBRATE;

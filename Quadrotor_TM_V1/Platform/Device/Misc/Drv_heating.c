@@ -19,12 +19,12 @@ void Drv_HeatingSet(u8 val)
 #include "Parameter.h"
 #include "Math.h"
 
-//ÓÃÉÏÎ»»úÉèÖÃºãÎÂ¹¦ÄÜ¿ª¹Ø  
+//ç”¨ä¸Šä½æœºè®¾ç½®æ’æ¸©åŠŸèƒ½å¼€å…³  
 //#define USE_THERMOSTATIC 
 /*
-¾¯¸æ£º¿ªÆô¼ÓÈÈºãÎÂ¹¦ÄÜÊ±Ò»¶¨²»ÄÜÊ¹Thermostatic_Ctrl_Taskº¯ÊıÍ£ÖÍÔËĞĞ£¬
-Èô³öÏÖÈÎºÎ³ÌĞòÒì³£»òÕßdebug²Ù×÷Ê¹Thermostatic_Ctrl_TaskÍ£ÖÍÔËĞĞ£¬
-¶¼¿ÉÄÜÔì³É·É¿ØÓ²¼şËğ»µ£¬Çë½÷É÷Ê¹ÓÃ¡£
+è­¦å‘Šï¼šå¼€å¯åŠ çƒ­æ’æ¸©åŠŸèƒ½æ—¶ä¸€å®šä¸èƒ½ä½¿Thermostatic_Ctrl_Taskå‡½æ•°åœæ»è¿è¡Œï¼Œ
+è‹¥å‡ºç°ä»»ä½•ç¨‹åºå¼‚å¸¸æˆ–è€…debugæ“ä½œä½¿Thermostatic_Ctrl_Taskåœæ»è¿è¡Œï¼Œ
+éƒ½å¯èƒ½é€ æˆé£æ§ç¡¬ä»¶æŸåï¼Œè¯·è°¨æ…ä½¿ç”¨ã€‚
 */
 
 
@@ -39,20 +39,20 @@ static u16 temperature_cnt;
 static u8 thermostatic_en;
 void Thermostatic_Ctrl_Task(u8 dT_ms)
 {
-	//½âËøÇ°²ÅÔÊĞí²Ù×÷
+	//è§£é”å‰æ‰å…è®¸æ“ä½œ
 	if(flag.unlock_sta == 0)
 	{
-		if(g_fc_param.set.heatSwitch == 1)//¿ªÆôºãÎÂ¹¦ÄÜ
+		if(g_fc_param.set.heatSwitch == 1)//å¼€å¯æ’æ¸©åŠŸèƒ½
 		{
 			if(thermostatic_en == 0)
 			{
 				//
 				thermostatic_en = 1;
-				//¸´Î»Íê³É±ê¼Ç
+				//å¤ä½å®Œæˆæ ‡è®°
 				flag.mems_temperature_ok = 0;
 				//
-				sensor.acc_z_auto_CALIBRATE = 1; //ÖØĞÂ¶Ô×¼ZÖá
-				sensor.gyr_CALIBRATE = 2;//ÖØĞÂĞ£×¼ÍÓÂİÒÇ
+				sensor.acc_z_auto_CALIBRATE = 1; //é‡æ–°å¯¹å‡†Zè½´
+				sensor.gyr_CALIBRATE = 2;//é‡æ–°æ ¡å‡†é™€èºä»ª
 				//
 				ANO_DT_SendString("Thermostatic ON......");	
 			}
@@ -72,38 +72,38 @@ void Thermostatic_Ctrl_Task(u8 dT_ms)
 	//
 	if(thermostatic_en)
 	{
-		//ÉÏ´Î·´À¡
+		//ä¸Šæ¬¡åé¦ˆ
 		temperature_fb[1] = temperature_fb[0];
-		//±¾´Î·´À¡£¬ICMÄÚ²¿ÎÂ¶È´«¸ĞÆ÷
+		//æœ¬æ¬¡åé¦ˆï¼ŒICMå†…éƒ¨æ¸©åº¦ä¼ æ„Ÿå™¨
 		temperature_fb[0] = sensor.Tempreature_C;
-		//Î¢·Ö
+		//å¾®åˆ†
 		temperature_diff = (temperature_fb[0] - temperature_fb[1]) *1000/dT_ms;
-		//Î¢·ÖÏÈĞĞ£¨ÓÃÎ¢·ÖÔ¤²â·´À¡£©
+		//å¾®åˆ†å…ˆè¡Œï¼ˆç”¨å¾®åˆ†é¢„æµ‹åé¦ˆï¼‰
 		temperature_fb[2] = temperature_fb[0] + temperature_diff *TEMPERATURE_KD ;//*test_temperature_ctrl_arg[2];
-		//¼ÆËãÆ«²î
+		//è®¡ç®—åå·®
 		temperature_err = EXP_TEMPERATURE - temperature_fb[2];
 		//-----
 		if(1)//((temperature_ctrl_val)<100)
 		{
-			//»ı·ÖÆ«²îÏŞ·ù
+			//ç§¯åˆ†åå·®é™å¹…
 			temperature_err_i += LIMIT(temperature_err,-10,10) *dT_ms *0.001f;
-			//»ı·ÖÏŞ·ù
+			//ç§¯åˆ†é™å¹…
 			temperature_err_i = LIMIT(temperature_err_i,-20,20);
 		}
-		//¼ÆËã¿ØÖÆÊä³öÁ¿
+		//è®¡ç®—æ§åˆ¶è¾“å‡ºé‡
 		temperature_ctrl_val = 
 		TEMPERATURE_KP *temperature_err // *test_temperature_ctrl_arg[0]
 		+ TEMPERATURE_KI *temperature_err_i;// *test_temperature_ctrl_arg[1];
 		//
 		temperature_ctrl_val = LIMIT(temperature_ctrl_val ,0,100);
-		//ºãÎÂ¿ØÖÆÁ¿Êä³ö
+		//æ’æ¸©æ§åˆ¶é‡è¾“å‡º
 		Drv_HeatingSet((u8)temperature_ctrl_val); 
-		//ÅĞ¶ÏÊÇ·ñÍê³ÉºãÎÂµÄÉıÎÂ¹ı³Ì
+		//åˆ¤æ–­æ˜¯å¦å®Œæˆæ’æ¸©çš„å‡æ¸©è¿‡ç¨‹
 		if(flag.mems_temperature_ok == 0)
 		{		
 			if(temperature_fb[0] > (EXP_TEMPERATURE-0.2f) && temperature_fb[0] < (EXP_TEMPERATURE+0.2f))
 			{
-				//Æ«²îĞ¡Óã0.2ÉãÊÏ¶È£¬ÇÒ³ÖĞø1500ms£¬ÅĞ¶¨ÉıÎÂÍê³É
+				//åå·®å°é±¼0.2æ‘„æ°åº¦ï¼Œä¸”æŒç»­1500msï¼Œåˆ¤å®šå‡æ¸©å®Œæˆ
 				if(temperature_cnt<1500)
 				{
 					temperature_cnt += dT_ms;
@@ -124,7 +124,7 @@ void Thermostatic_Ctrl_Task(u8 dT_ms)
 			}
 		}
 	}
-	else //²»Ê¹ÓÃºãÎÂ¹¦ÄÜ
+	else //ä¸ä½¿ç”¨æ’æ¸©åŠŸèƒ½
 	{
 		flag.mems_temperature_ok = 1;
 		Drv_HeatingSet((u8)0); 

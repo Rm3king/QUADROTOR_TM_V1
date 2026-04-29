@@ -3,8 +3,8 @@
 #include "sysconfig.h"
 
 /*
- * ģ�����ƣ�Drv_spl06
- * ģ��ְ���ṩ SPL06 ��ѹ�ƼĴ������塢��ʼ����߶ȶ�ȡ�ӿڡ�
+ * 模块名称：Drv_spl06
+ * 模块职责：提供 SPL06 气压计寄存器定义、初始化与高度读取接口。
  */
 
 #define CONTINUOUS_PRESSURE     1

@@ -7,20 +7,20 @@
 #include "Parameter.h"
 #include "UWB.h"
 /*
- * Ä£¿éÃû³Æ£ºLocCtrl
- * Ä£¿éÖ°Ôğ£ºÈÚºÏ GPS¡¢UWB¡¢¹âÁ÷µÈ¹Û²âÔ´£¬¼ÆËãË®Æ½Î»ÖÃ¿ØÖÆÊä³ö¡£
- * Ê¹ÓÃÔ¼Êø£º¿ØÖÆËã·¨¡¢Êı¾İÀ´Ô´ÇĞ»»Âß¼­ºÍ×ø±ê±ä»»Á÷³Ì±£³Ö²»±ä¡£
+ * æ¨¡å—åç§°ï¼šLocCtrl
+ * æ¨¡å—èŒè´£ï¼šèåˆ GPSã€UWBã€å…‰æµç­‰è§‚æµ‹æºï¼Œè®¡ç®—æ°´å¹³ä½ç½®æ§åˆ¶è¾“å‡ºã€‚
+ * ä½¿ç”¨çº¦æŸï¼šæ§åˆ¶ç®—æ³•ã€æ•°æ®æ¥æºåˆ‡æ¢é€»è¾‘å’Œåæ ‡å˜æ¢æµç¨‹ä¿æŒä¸å˜ã€‚
  */
-//Î»ÖÃËÙ¶È»·¿ØÖÆ²ÎÊı
+//ä½ç½®é€Ÿåº¦ç¯æ§åˆ¶å‚æ•°
 _PID_arg_st loc_arg_1[2] ; 
-//Î»ÖÃËÙ¶È»·¿ØÖÆÊı¾İ
+//ä½ç½®é€Ÿåº¦ç¯æ§åˆ¶æ•°æ®
 _PID_val_st loc_val_1[2] ; 
-//Î»ÖÃËÙ¶È»·ĞŞÕı¿ØÖÆ²ÎÊı
+//ä½ç½®é€Ÿåº¦ç¯ä¿®æ­£æ§åˆ¶å‚æ•°
 _PID_arg_st loc_arg_1_fix[2] ; 
-//Î»ÖÃËÙ¶È»·ĞŞÕı¿ØÖÆÊı¾İ
+//ä½ç½®é€Ÿåº¦ç¯ä¿®æ­£æ§åˆ¶æ•°æ®
 _PID_val_st loc_val_1_fix[2] ; 
 static u8 s_loc_mode[2];
-/* Ë®Æ½Î»ÖÃ/ËÙ¶È»· PID ²ÎÊı³õÊ¼»¯ */
+/* æ°´å¹³ä½ç½®/é€Ÿåº¦ç¯ PID å‚æ•°åˆå§‹åŒ– */
 void Loc_1level_PID_Init()
 {
 	if(s_loc_mode[1] == 2)
@@ -57,7 +57,7 @@ void Loc_1level_PID_Init()
 		
 		loc_arg_1_fix[Y] = loc_arg_1_fix[X];	
 	}
-	//UWB ¡¢UWB AND OF
+	//UWB ã€UWB AND OF
 	else if(s_loc_mode[1] == 3 || s_loc_mode[1] == 4)
 	{
 		loc_arg_1[X].kp = g_fc_param.set.pid_loc_1level[KP];//0.22f  ;
@@ -86,7 +86,7 @@ static float fb_speed_fix[2];
 float vel_fb_d_lpf[2];
 float vel_fb_h[2],vel_fb_w[2];
 float vel_fb_fix_w[2];
-/* Ë®Æ½Î»ÖÃ/ËÙ¶È¿ØÖÆÈÎÎñ */
+/* æ°´å¹³ä½ç½®/é€Ÿåº¦æ§åˆ¶ä»»åŠ¡ */
 void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 {
 	static float loc_hand_exp_vel[2]={0};
@@ -96,7 +96,7 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 	float pos_ctrl_h_out[2];
 	float pos_ctrl_w_out[2];
 	
-	//½öÓĞUWB(ÔİÎŞ)
+	//ä»…æœ‰UWB(æš‚æ— )
 	if(switchs.uwb_on && (!switchs.of_flow_on) && (!switchs.gps_on))
 	{
 		s_loc_mode[1] = 3;
@@ -109,7 +109,7 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 		loc_ctrl_1.out[Y] = (float)MAX_ANGLE/MAX_SPEED *fs.speed_set_h[Y] ;
 			
 	}
-	//½öÓĞ¹âÁ÷ºÍUWB
+	//ä»…æœ‰å…‰æµå’ŒUWB
 	else if(switchs.uwb_on && switchs.of_flow_on && (!switchs.gps_on))
 	{
 		s_loc_mode[1] = 4;
@@ -118,12 +118,12 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 			Loc_1level_PID_Init();
 			s_loc_mode[0] = s_loc_mode[1];
 		}	
-		//ÆÚÍû¸³Öµ
+		//æœŸæœ›èµ‹å€¼
 		h2w_2d_trans(fs.speed_set_h,imu_data.hx_vec,loc_ctrl_1.exp);
-		//µÍÍ¨ÂË²¨
+		//ä½é€šæ»¤æ³¢
 		LPF_1_(5.0f,dT_ms*1e-3f,imu_data.w_acc[X],vel_fb_d_lpf[X]);
 		LPF_1_(5.0f,dT_ms*1e-3f,imu_data.w_acc[Y],vel_fb_d_lpf[Y]);		
-		//·´À¡¸³ÖµHXYZ£¨Ë®Æ½º½Ïò×ø±ê£©
+		//åé¦ˆèµ‹å€¼HXYZï¼ˆæ°´å¹³èˆªå‘åæ ‡ï¼‰
 		if(sens_hd_check.of_ok)
 		{
 			vel_fb_h[0] = OF_DX2;
@@ -134,46 +134,46 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 			vel_fb_h[0] = of_rdf.gnd_vel_est_h[X];
 			vel_fb_h[1] = of_rdf.gnd_vel_est_h[Y];	
 		}
-		//×ª»»NWU£¨±±Î÷Ìì£©×ø±ê
+		//è½¬æ¢NWUï¼ˆåŒ—è¥¿å¤©ï¼‰åæ ‡
 		h2w_2d_trans(vel_fb_h,imu_data.hx_vec,vel_fb_w);
-		//·´À¡¸³Öµ+¼ÓËÙ¶È³¬Ç°
+		//åé¦ˆèµ‹å€¼+åŠ é€Ÿåº¦è¶…å‰
 		loc_ctrl_1.fb[X] = vel_fb_w[0] + 0.03f *vel_fb_d_lpf[X];
 		loc_ctrl_1.fb[Y] = vel_fb_w[1] + 0.03f *vel_fb_d_lpf[Y];
-		//ËÙ¶ÈĞŞÕıÖµ¸³Öµ£¬ÓÃÓÚ»ı·Ö
+		//é€Ÿåº¦ä¿®æ­£å€¼èµ‹å€¼ï¼Œç”¨äºç§¯åˆ†
 		fb_speed_fix[0] = uwb_data.w_vel_cmps[0];
 		fb_speed_fix[1] = uwb_data.w_vel_cmps[1];
 		
 		for(u8 i =0;i<2;i++)
 		{
-			PID_calculate( dT_ms*1e-3f,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
-										loc_ctrl_1.exp[i] ,				//Ç°À¡Öµ
-										loc_ctrl_1.exp[i] ,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
-										loc_ctrl_1.fb[i] ,			//·´À¡Öµ£¨£©
-										&loc_arg_1[i], //PID²ÎÊı½á¹¹Ìå
-										&loc_val_1[i],	//PIDÊı¾İ½á¹¹Ìå
-										50,//»ı·ÖÎó²îÏŞ·ù
+			PID_calculate( dT_ms*1e-3f,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
+										loc_ctrl_1.exp[i] ,				//å‰é¦ˆå€¼
+										loc_ctrl_1.exp[i] ,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
+										loc_ctrl_1.fb[i] ,			//åé¦ˆå€¼ï¼ˆï¼‰
+										&loc_arg_1[i], //PIDå‚æ•°ç»“æ„ä½“
+										&loc_val_1[i],	//PIDæ•°æ®ç»“æ„ä½“
+										50,//ç§¯åˆ†è¯¯å·®é™å¹…
 										10 *flag.taking_off
 										 )	;	
 			
-				PID_calculate( dT_ms*1e-3f,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
-										loc_ctrl_1.exp[i] ,				//Ç°À¡Öµ
-										loc_ctrl_1.exp[i] ,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
-										fb_speed_fix[i] ,			//·´À¡Öµ£¨£©
-										&loc_arg_1_fix[i], //PID²ÎÊı½á¹¹Ìå
-										&loc_val_1_fix[i],	//PIDÊı¾İ½á¹¹Ìå
-										50,//»ı·ÖÎó²îÏŞ·ù
+				PID_calculate( dT_ms*1e-3f,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
+										loc_ctrl_1.exp[i] ,				//å‰é¦ˆå€¼
+										loc_ctrl_1.exp[i] ,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
+										fb_speed_fix[i] ,			//åé¦ˆå€¼ï¼ˆï¼‰
+										&loc_arg_1_fix[i], //PIDå‚æ•°ç»“æ„ä½“
+										&loc_val_1_fix[i],	//PIDæ•°æ®ç»“æ„ä½“
+										50,//ç§¯åˆ†è¯¯å·®é™å¹…
 										10 *flag.taking_off
 										 )	;	
 			
 			pos_ctrl_w_out[i] = loc_val_1[i].out + loc_val_1_fix[i].out;	//(PD)+(I)	
 		}	
-		//NWU×ªHXYZË®Æ½º½Ïò×ø±ê
+		//NWUè½¬HXYZæ°´å¹³èˆªå‘åæ ‡
 		w2h_2d_trans(pos_ctrl_w_out,imu_data.hx_vec,pos_ctrl_h_out); 
-		//Êä³ö¸³Öµ
+		//è¾“å‡ºèµ‹å€¼
 		loc_ctrl_1.out[0] = pos_ctrl_h_out[0];
 		loc_ctrl_1.out[1] = pos_ctrl_h_out[1];	
 	}
-	//½öÓĞ¹âÁ÷
+	//ä»…æœ‰å…‰æµ
 	else if(switchs.of_flow_on && (!switchs.gps_on))
 	{
 		s_loc_mode[1] = 1;
@@ -207,30 +207,30 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 		
 		for(u8 i =0;i<2;i++)
 		{
-			PID_calculate( dT_ms*1e-3f,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
-										loc_ctrl_1.exp[i] ,				//Ç°À¡Öµ
-										loc_ctrl_1.exp[i] ,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
-										loc_ctrl_1.fb[i] ,			//·´À¡Öµ£¨£©
-										&loc_arg_1[i], //PID²ÎÊı½á¹¹Ìå
-										&loc_val_1[i],	//PIDÊı¾İ½á¹¹Ìå
-										50,//»ı·ÖÎó²îÏŞ·ù
+			PID_calculate( dT_ms*1e-3f,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
+										loc_ctrl_1.exp[i] ,				//å‰é¦ˆå€¼
+										loc_ctrl_1.exp[i] ,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
+										loc_ctrl_1.fb[i] ,			//åé¦ˆå€¼ï¼ˆï¼‰
+										&loc_arg_1[i], //PIDå‚æ•°ç»“æ„ä½“
+										&loc_val_1[i],	//PIDæ•°æ®ç»“æ„ä½“
+										50,//ç§¯åˆ†è¯¯å·®é™å¹…
 										10 *flag.taking_off
 										 )	;	
 			
-				PID_calculate( dT_ms*1e-3f,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
-										loc_ctrl_1.exp[i] ,				//Ç°À¡Öµ
-										loc_ctrl_1.exp[i] ,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
-										fb_speed_fix[i] ,			//·´À¡Öµ£¨£©
-										&loc_arg_1_fix[i], //PID²ÎÊı½á¹¹Ìå
-										&loc_val_1_fix[i],	//PIDÊı¾İ½á¹¹Ìå
-										50,//»ı·ÖÎó²îÏŞ·ù
+				PID_calculate( dT_ms*1e-3f,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
+										loc_ctrl_1.exp[i] ,				//å‰é¦ˆå€¼
+										loc_ctrl_1.exp[i] ,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
+										fb_speed_fix[i] ,			//åé¦ˆå€¼ï¼ˆï¼‰
+										&loc_arg_1_fix[i], //PIDå‚æ•°ç»“æ„ä½“
+										&loc_val_1_fix[i],	//PIDæ•°æ®ç»“æ„ä½“
+										50,//ç§¯åˆ†è¯¯å·®é™å¹…
 										10 *flag.taking_off
 										 )	;	
 			
 			loc_ctrl_1.out[i] = loc_val_1[i].out + loc_val_1_fix[i].out;	//(PD)+(I)	
 		}		
 	}
-	//½öÓĞGPS
+	//ä»…æœ‰GPS
 	else if (switchs.gps_on)
 	{
 		s_loc_mode[1] = 2;
@@ -241,26 +241,26 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 		}
 		for(u8 j = 0; j < 2; j++)
 		{
-			if (fs.speed_set_h[j] != 0)				//ÅĞ¶ÁÊÇ·ñ¶¯¿ØÖÆÒ¡¸Ë
+			if (fs.speed_set_h[j] != 0)				//åˆ¤è¯»æ˜¯å¦åŠ¨æ§åˆ¶æ‘‡æ†
 			{
-				if (ABS(loc_hand_exp_vel[j]) < ABS(fs.speed_set_h[j]))	//ÅĞ¶ÏËÙ¶ÈÊÇ·ñ´ïµ½ÆÚÍûËÙ¶È
+				if (ABS(loc_hand_exp_vel[j]) < ABS(fs.speed_set_h[j]))	//åˆ¤æ–­é€Ÿåº¦æ˜¯å¦è¾¾åˆ°æœŸæœ›é€Ÿåº¦
 				{
-					if (loc_hand_exp_vel[j]*fs.speed_set_h[j] < 0)	//ÅĞ¶ÏÒ¡¸Ë·½ÏòºÍÆÚÍû·½ÏòÊÇ·ñÏàÍ¬
+					if (loc_hand_exp_vel[j]*fs.speed_set_h[j] < 0)	//åˆ¤æ–­æ‘‡æ†æ–¹å‘å’ŒæœŸæœ›æ–¹å‘æ˜¯å¦ç›¸åŒ
 					{
-						if (fs.speed_set_h[j] > 0)					//ÅĞ¶ÏÒ¡¸Ë·½Ïò
+						if (fs.speed_set_h[j] > 0)					//åˆ¤æ–­æ‘‡æ†æ–¹å‘
 						{
-							fs.speed_set_h[j] = MAX_SPEED;			//ÏŞÖÆ×î´óËÙ¶È
+							fs.speed_set_h[j] = MAX_SPEED;			//é™åˆ¶æœ€å¤§é€Ÿåº¦
 						}
 						else 
 						{
 							fs.speed_set_h[j] = -MAX_SPEED;
 						}
 					}
-					loc_hand_exp_vel[j] += 0.5f*dT_ms*fs.speed_set_h[j]/MAX_SPEED;		//¼ÆËãÆÚÍûËÙ¶È
+					loc_hand_exp_vel[j] += 0.5f*dT_ms*fs.speed_set_h[j]/MAX_SPEED;		//è®¡ç®—æœŸæœ›é€Ÿåº¦
 				}
 				else												
 				{
-					if (loc_hand_exp_vel[j] > 0)					//»Ø¸ËÏìÓ¦°´×î´ó¼ÓËÙ¶ÈÏìÓ¦
+					if (loc_hand_exp_vel[j] > 0)					//å›æ†å“åº”æŒ‰æœ€å¤§åŠ é€Ÿåº¦å“åº”
 					{
 						loc_hand_exp_vel[j] -= vel_diff;
 					}
@@ -272,7 +272,7 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 			}
 			else
 			{
-				if (loc_hand_exp_vel[j] > vel_diff)					//»Ø¸ËÏìÓ¦°´×î´ó¼ÓËÙ¶ÈÏìÓ¦
+				if (loc_hand_exp_vel[j] > vel_diff)					//å›æ†å“åº”æŒ‰æœ€å¤§åŠ é€Ÿåº¦å“åº”
 				{
 					loc_hand_exp_vel[j] -= vel_diff;
 				}
@@ -286,37 +286,37 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 				}
 			}
 		}
-		if (loc_hand_exp_vel[X] || loc_hand_exp_vel[Y])				//ÅĞ¶ÏÊÇ·ñÓĞÊÖ¶¯ÆÚÍûËÙ¶È
+		if (loc_hand_exp_vel[X] || loc_hand_exp_vel[Y])				//åˆ¤æ–­æ˜¯å¦æœ‰æ‰‹åŠ¨æœŸæœ›é€Ÿåº¦
 		{
-			ne_pos_control[0] = 0;									//Î»ÖÃ¿ØÖÆÁ¿ÇåÁã
+			ne_pos_control[0] = 0;									//ä½ç½®æ§åˆ¶é‡æ¸…é›¶
 			ne_pos_control[1] = 0;
-			waite_gps_loc_cnt = 50;									//ÆÚÍûËÙ¶È¹éÁãÖ®ºóµÈ´ı500ms
+			waite_gps_loc_cnt = 50;									//æœŸæœ›é€Ÿåº¦å½’é›¶ä¹‹åç­‰å¾…500ms
 		}
 		else
 		{
 			if (waite_gps_loc_cnt > 0)
 			{
-				ne_pos_control[0] = 0;					//Î»ÖÃ¿ØÖÆÁ¿ÇåÁã
+				ne_pos_control[0] = 0;					//ä½ç½®æ§åˆ¶é‡æ¸…é›¶
 				ne_pos_control[1] = 0;
 				waite_gps_loc_cnt--;
-				if (waite_gps_loc_cnt == 0)				//¹À¼ÆÎ»ÖÃÒÑ¾­ÎÈ¶¨ ¼ÇÂ¼ÆÚÍûÎ»ÖÃÒÔ¼°¶ÔÎ»ÖÃ½øĞĞ¿ØÖÆ
+				if (waite_gps_loc_cnt == 0)				//ä¼°è®¡ä½ç½®å·²ç»ç¨³å®š è®°å½•æœŸæœ›ä½ç½®ä»¥åŠå¯¹ä½ç½®è¿›è¡Œæ§åˆ¶
 				{
-					Gps_information.hope_latitude = Gps_information.latitude_offset;		//ÆÚÍûÎ»ÖÃµÈÓÚµ±Ç°Î»ÖÃ
+					Gps_information.hope_latitude = Gps_information.latitude_offset;		//æœŸæœ›ä½ç½®ç­‰äºå½“å‰ä½ç½®
 					Gps_information.hope_longitude = Gps_information.longitude_offset;
 				}
 			}
 			else
 			{
-				Gps_information.hope_latitude_err = Gps_information.hope_latitude - Gps_information.latitude_offset;		//Î³¶ÈÎó²î
-				Gps_information.hope_longitude_err = Gps_information.hope_longitude - Gps_information.longitude_offset;		//¾­¶ÈÎó²î
-				length_limit(&(Gps_information.hope_latitude_err), &(Gps_information.hope_longitude_err), MAX_SPEED*1.2f, ne_pos_control);	//¿ØÖÆÄ£³¤ÏŞÖÆ
+				Gps_information.hope_latitude_err = Gps_information.hope_latitude - Gps_information.latitude_offset;		//çº¬åº¦è¯¯å·®
+				Gps_information.hope_longitude_err = Gps_information.hope_longitude - Gps_information.longitude_offset;		//ç»åº¦è¯¯å·®
+				length_limit(&(Gps_information.hope_latitude_err), &(Gps_information.hope_longitude_err), MAX_SPEED*1.2f, ne_pos_control);	//æ§åˆ¶æ¨¡é•¿é™åˆ¶
 			}
 		}
 		
 		
-		loc_ctrl_1.exp[X] =  ne_pos_control[0]*g_fc_param.set.pid_gps_loc_2level[KP] + loc_hand_exp_vel[X]*imu_data.hx_vec[0] - loc_hand_exp_vel[Y]*imu_data.hx_vec[1];		//ÆÚÍûËÙ¶È£¨º½Ïò×ø±ê×ª»»µ½ÊÀ½ç×ø±êNED£©
+		loc_ctrl_1.exp[X] =  ne_pos_control[0]*g_fc_param.set.pid_gps_loc_2level[KP] + loc_hand_exp_vel[X]*imu_data.hx_vec[0] - loc_hand_exp_vel[Y]*imu_data.hx_vec[1];		//æœŸæœ›é€Ÿåº¦ï¼ˆèˆªå‘åæ ‡è½¬æ¢åˆ°ä¸–ç•Œåæ ‡NEDï¼‰
 		loc_ctrl_1.exp[Y] = -ne_pos_control[1]*g_fc_param.set.pid_gps_loc_2level[KP] + loc_hand_exp_vel[X]*imu_data.hx_vec[1] + loc_hand_exp_vel[Y]*imu_data.hx_vec[0];		
-		loc_ctrl_1.fb[X] =  (Gps_information.last_N_vel) + (wcx_acc_use*0.2f);			//ËÙ¶È·´À¡+¼ÓËÙ¶ÈÌáÇ°
+		loc_ctrl_1.fb[X] =  (Gps_information.last_N_vel) + (wcx_acc_use*0.2f);			//é€Ÿåº¦åé¦ˆ+åŠ é€Ÿåº¦æå‰
 		loc_ctrl_1.fb[Y] = -(Gps_information.last_E_vel) + (wcy_acc_use*0.2f);
 		
 		fb_speed_fix[X] =  (Gps_information.last_N_vel);
@@ -324,23 +324,23 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 		
 		for(u8 i =0;i<2;i++)
 		{
-			PID_calculate( dT_ms*1e-3f,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
-										loc_ctrl_1.exp[i] ,				//Ç°À¡Öµ
-										loc_ctrl_1.exp[i] ,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
-										loc_ctrl_1.fb[i] ,			//·´À¡Öµ£¨£©
-										&loc_arg_1[i], //PID²ÎÊı½á¹¹Ìå
-										&loc_val_1[i],	//PIDÊı¾İ½á¹¹Ìå
-										50,//»ı·ÖÎó²îÏŞ·ù
+			PID_calculate( dT_ms*1e-3f,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
+										loc_ctrl_1.exp[i] ,				//å‰é¦ˆå€¼
+										loc_ctrl_1.exp[i] ,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
+										loc_ctrl_1.fb[i] ,			//åé¦ˆå€¼ï¼ˆï¼‰
+										&loc_arg_1[i], //PIDå‚æ•°ç»“æ„ä½“
+										&loc_val_1[i],	//PIDæ•°æ®ç»“æ„ä½“
+										50,//ç§¯åˆ†è¯¯å·®é™å¹…
 										10 *flag.taking_off
 										 )	;		
 			
-				PID_calculate( dT_ms*1e-3f,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
-										loc_ctrl_1.exp[i] ,				//Ç°À¡Öµ
-										loc_ctrl_1.exp[i] ,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
-										fb_speed_fix[i] ,			//·´À¡Öµ£¨£©
-										&loc_arg_1_fix[i], //PID²ÎÊı½á¹¹Ìå
-										&loc_val_1_fix[i],	//PIDÊı¾İ½á¹¹Ìå
-										50,//»ı·ÖÎó²îÏŞ·ù
+				PID_calculate( dT_ms*1e-3f,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
+										loc_ctrl_1.exp[i] ,				//å‰é¦ˆå€¼
+										loc_ctrl_1.exp[i] ,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
+										fb_speed_fix[i] ,			//åé¦ˆå€¼ï¼ˆï¼‰
+										&loc_arg_1_fix[i], //PIDå‚æ•°ç»“æ„ä½“
+										&loc_val_1_fix[i],	//PIDæ•°æ®ç»“æ„ä½“
+										50,//ç§¯åˆ†è¯¯å·®é™å¹…
 										10 *flag.taking_off
 										 )	;	
 			
@@ -352,11 +352,11 @@ void Loc_1level_Ctrl(u16 dT_ms,s16 *CH_N)
 		//
 		pos_ctrl_w_out[0] = loc_val_1[0].out + loc_val_1_fix[0].out;//(PD)+(I)
 		pos_ctrl_w_out[1] = loc_val_1[1].out + loc_val_1_fix[1].out;//(PD)+(I)
-		w2h_2d_trans(pos_ctrl_w_out, imu_data.hx_vec, pos_ctrl_h_out);	//ÊÀ½ç×ø±ê£¨NWU£©¿ØÖÆ½á¹û×ª»»µ½º½Ïò×ø±êÏÂ
+		w2h_2d_trans(pos_ctrl_w_out, imu_data.hx_vec, pos_ctrl_h_out);	//ä¸–ç•Œåæ ‡ï¼ˆNWUï¼‰æ§åˆ¶ç»“æœè½¬æ¢åˆ°èˆªå‘åæ ‡ä¸‹
 		loc_ctrl_1.out[X] = pos_ctrl_h_out[0];
 		loc_ctrl_1.out[Y] = pos_ctrl_h_out[1];
 	}
-	//×ËÌ¬Ä£Ê½£¬Ö±½ÓÓÃÆÚÍûËÙ¶È×ªÎª½Ç¶È£¨ÆÚÍû½Ç¶È£©
+	//å§¿æ€æ¨¡å¼ï¼Œç›´æ¥ç”¨æœŸæœ›é€Ÿåº¦è½¬ä¸ºè§’åº¦ï¼ˆæœŸæœ›è§’åº¦ï¼‰
 	else
 	{
 		s_loc_mode[1] = 255;

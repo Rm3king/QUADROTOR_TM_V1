@@ -1,7 +1,7 @@
 /*
- * Ä£¿éÃû³Æ£ºParameter
- * Ä£¿éÖ°Ôğ£ºÎ¬»¤Ä¬ÈÏ²ÎÊı¡¢²ÎÊı¾µÏñÍ¬²½ºÍÑÓÊ±±£´æÁ÷³Ì¡£
- * Ê¹ÓÃÔ¼Êø£º±¾ÎÄ¼şÖ±½Ó¹ØÁª²ÎÊıº¬ÒåÓë´æ´¢Ê±Ğò£¬ÖØ¹¹Ê±²»ÔÊĞí¸Ä±äÄ¬ÈÏÖµÓïÒåºÍĞ´Èë´¥·¢Âß¼­¡£
+ * æ¨¡å—åç§°ï¼šParameter
+ * æ¨¡å—èŒè´£ï¼šç»´æŠ¤é»˜è®¤å‚æ•°ã€å‚æ•°é•œåƒåŒæ­¥å’Œå»¶æ—¶ä¿å­˜æµç¨‹ã€‚
+ * ä½¿ç”¨çº¦æŸï¼šæœ¬æ–‡ä»¶ç›´æ¥å…³è”å‚æ•°å«ä¹‰ä¸å­˜å‚¨æ—¶åºï¼Œé‡æ„æ—¶ä¸å…è®¸æ”¹å˜é»˜è®¤å€¼è¯­ä¹‰å’Œå†™å…¥è§¦å‘é€»è¾‘ã€‚
  */
 
 //#include "Drv_w25qxx.h"
@@ -15,15 +15,15 @@
 #include "DT.h"
 
 
-/* ²ÎÊı¾µÏñÓë±£´æ×´Ì¬ÊµÀı¡£ */
+/* å‚æ•°é•œåƒä¸ä¿å­˜çŠ¶æ€å®ä¾‹ã€‚ */
 union Parameter g_fc_param;
 param_state_t g_param_state;
 
-/* ×¢Òâ£ºÕâÀï¶¨ÒåµÄÊÇ²ÎÊıÄ¬ÈÏÖµ¡£ÈôÎ´´¥·¢±£´æ£¬´æ´¢ÇøÖĞµÄ¾ÉÖµ²»»á×Ô¶¯¸üĞÂ¡£ */
-/* »Ö¸´Ä¬ÈÏ PID ²ÎÊı£¬²»¸Ä±ä²ÎÊıÏîÓïÒå¡£ */
+/* æ³¨æ„ï¼šè¿™é‡Œå®šä¹‰çš„æ˜¯å‚æ•°é»˜è®¤å€¼ã€‚è‹¥æœªè§¦å‘ä¿å­˜ï¼Œå­˜å‚¨åŒºä¸­çš„æ—§å€¼ä¸ä¼šè‡ªåŠ¨æ›´æ–°ã€‚ */
+/* æ¢å¤é»˜è®¤ PID å‚æ•°ï¼Œä¸æ”¹å˜å‚æ•°é¡¹è¯­ä¹‰ã€‚ */
 void FC_Param_ResetPid(void)
 {
-/* ×ËÌ¬¿ØÖÆ½ÇËÙ¶È»· PID ²ÎÊı¡£ */
+/* å§¿æ€æ§åˆ¶è§’é€Ÿåº¦ç¯ PID å‚æ•°ã€‚ */
 	g_fc_param.set.pid_att_1level[ROL][KP] = 4.0f;
 	g_fc_param.set.pid_att_1level[ROL][KI] = 3.0f;
 	g_fc_param.set.pid_att_1level[ROL][KD] = 0.15f;
@@ -35,7 +35,7 @@ void FC_Param_ResetPid(void)
 	g_fc_param.set.pid_att_1level[YAW][KP] = 6.0f;
 	g_fc_param.set.pid_att_1level[YAW][KI] = 0.5f;
 	g_fc_param.set.pid_att_1level[YAW][KD] = 0.0f;
-/* ×ËÌ¬¿ØÖÆ½Ç¶È»· PID ²ÎÊı¡£ */
+/* å§¿æ€æ§åˆ¶è§’åº¦ç¯ PID å‚æ•°ã€‚ */
 	g_fc_param.set.pid_att_2level[ROL][KP] = 7.0f;
 	g_fc_param.set.pid_att_2level[ROL][KI] = 0.0f;
 	g_fc_param.set.pid_att_2level[ROL][KD] = 0.00f;
@@ -47,27 +47,27 @@ void FC_Param_ResetPid(void)
 	g_fc_param.set.pid_att_2level[YAW][KP] = 5.0f;
 	g_fc_param.set.pid_att_2level[YAW][KI] = 0.0f;
 	g_fc_param.set.pid_att_2level[YAW][KD] = 0.5;
-/* ¸ß¶È¿ØÖÆËÙ¶È»· PID ²ÎÊı¡£ */
+/* é«˜åº¦æ§åˆ¶é€Ÿåº¦ç¯ PID å‚æ•°ã€‚ */
 	g_fc_param.set.pid_alt_1level[KP] = 2.0f;
 	g_fc_param.set.pid_alt_1level[KI] = 1.0f;
 	g_fc_param.set.pid_alt_1level[KD] = 0.05f;
-/* ¸ß¶È¿ØÖÆ¸ß¶È»· PID ²ÎÊı¡£ */
+/* é«˜åº¦æ§åˆ¶é«˜åº¦ç¯ PID å‚æ•°ã€‚ */
 	g_fc_param.set.pid_alt_2level[KP] = 1.0f;
 	g_fc_param.set.pid_alt_2level[KI] = 0;
 	g_fc_param.set.pid_alt_2level[KD] = 0;
-/* Î»ÖÃ¿ØÖÆËÙ¶È»· PID ²ÎÊı¡£ */
+/* ä½ç½®æ§åˆ¶é€Ÿåº¦ç¯ PID å‚æ•°ã€‚ */
 	g_fc_param.set.pid_loc_1level[KP] = 0.15f;
 	g_fc_param.set.pid_loc_1level[KI] = 0.10f;
 	g_fc_param.set.pid_loc_1level[KD] = 0.00f;
-/* Î»ÖÃ¿ØÖÆÎ»ÖÃ»· PID ²ÎÊı¡£ */
+/* ä½ç½®æ§åˆ¶ä½ç½®ç¯ PID å‚æ•°ã€‚ */
 	g_fc_param.set.pid_loc_2level[KP] = 0;
 	g_fc_param.set.pid_loc_2level[KI] = 0;
 	g_fc_param.set.pid_loc_2level[KD] = 0;
-/* GPS Î»ÖÃ¿ØÖÆËÙ¶È»· PID ²ÎÊı¡£ */
+/* GPS ä½ç½®æ§åˆ¶é€Ÿåº¦ç¯ PID å‚æ•°ã€‚ */
 	g_fc_param.set.pid_gps_loc_1level[KP] = 0.15f;
 	g_fc_param.set.pid_gps_loc_1level[KI] = 0.10f;
 	g_fc_param.set.pid_gps_loc_1level[KD] = 0.00f;
-/* GPS Î»ÖÃ¿ØÖÆÎ»ÖÃ»· PID ²ÎÊı¡£ */
+/* GPS ä½ç½®æ§åˆ¶ä½ç½®ç¯ PID å‚æ•°ã€‚ */
 	g_fc_param.set.pid_gps_loc_2level[KP] = 0.3f;
 	g_fc_param.set.pid_gps_loc_2level[KI] = 0;
 	g_fc_param.set.pid_gps_loc_2level[KD] = 0;
@@ -76,7 +76,7 @@ void FC_Param_ResetPid(void)
 }
 
 
-/* ½«²ÎÊı¾µÏñÖĞµÄĞ£×¼Êı¾İÍ¬²½µ½·É¿ØÔËĞĞÊ±×´Ì¬¡£ */
+/* å°†å‚æ•°é•œåƒä¸­çš„æ ¡å‡†æ•°æ®åŒæ­¥åˆ°é£æ§è¿è¡Œæ—¶çŠ¶æ€ã€‚ */
 static void FC_Param_CopyParamToRuntime(void)
 {
 	for(u8 i = 0;i<3;i++)
@@ -91,7 +91,7 @@ static void FC_Param_CopyParamToRuntime(void)
 	}
 }
 
-/* ½«·É¿ØÔËĞĞÊ±Ğ£×¼Êı¾İ»ØÌîµ½²ÎÊı¾µÏñ¡£ */
+/* å°†é£æ§è¿è¡Œæ—¶æ ¡å‡†æ•°æ®å›å¡«åˆ°å‚æ•°é•œåƒã€‚ */
 static void FC_Param_CopyRuntimeToParam(void)
 {
 
@@ -105,7 +105,7 @@ static void FC_Param_CopyRuntimeToParam(void)
 		
 	}
 }
-/* »Ö¸´Ä¬ÈÏ·É¿Ø²ÎÊı£¬²»¸Ä±äÍâ²¿²ÎÊı±àºÅºÍº¬Òå¡£ */
+/* æ¢å¤é»˜è®¤é£æ§å‚æ•°ï¼Œä¸æ”¹å˜å¤–éƒ¨å‚æ•°ç¼–å·å’Œå«ä¹‰ã€‚ */
 void FC_Param_Reset(void)
 {
 	g_fc_param.set.pwmInMode = SBUS;
@@ -137,10 +137,10 @@ void FC_Param_Reset(void)
 
 
 
-/* ½«µ±Ç°²ÎÊı¾µÏñĞ´Èë´æ´¢Çø¡£Ğ´ÈëºóÖØĞÂ×°ÔØ¿ØÖÆÆ÷²ÎÊı¡£ */
+/* å°†å½“å‰å‚æ•°é•œåƒå†™å…¥å­˜å‚¨åŒºã€‚å†™å…¥åé‡æ–°è£…è½½æ§åˆ¶å™¨å‚æ•°ã€‚ */
 static void FC_Param_Write(void)
 {
-	All_PID_Init();	/* ´æ´¢ PID ²ÎÊıºóÖØĞÂ³õÊ¼»¯¿ØÖÆÆ÷¡£ */
+	All_PID_Init();	/* å­˜å‚¨ PID å‚æ•°åé‡æ–°åˆå§‹åŒ–æ§åˆ¶å™¨ã€‚ */
 	g_fc_param.set.frist_init = SOFT_VER;
 
 	FC_Param_CopyRuntimeToParam();
@@ -148,7 +148,7 @@ static void FC_Param_Write(void)
 	Dvr_ParamterSave();
 }
 
-/* ¶ÁÈ¡²ÎÊıÇø¡£Èô¼ì²âµ½°æ±¾²»Æ¥Åä£¬Ôò»Ö¸´Ä¬ÈÏÖµ²¢Ğ´»Ø¡£ */
+/* è¯»å–å‚æ•°åŒºã€‚è‹¥æ£€æµ‹åˆ°ç‰ˆæœ¬ä¸åŒ¹é…ï¼Œåˆ™æ¢å¤é»˜è®¤å€¼å¹¶å†™å›ã€‚ */
 void FC_Param_Read(void)
 {
 	Dvr_ParamterRead();
@@ -167,8 +167,8 @@ void FC_Param_Read(void)
 
 
 /*
- * ²ÎÊıÑÓÊ±±£´æÈÎÎñ£¬±ÜÃâ·ÉĞĞÖĞÁ¢¼´Ğ´Èë Flash¡£
- * ËµÃ÷£º½öÔÚÔÊĞí±£´æÊ±½øÈëÑÓÊ±¼ÆÊ±£¬·ÉĞĞÖĞ²»Ö±½ÓĞ´Èë²ÎÊıÇø¡£
+ * å‚æ•°å»¶æ—¶ä¿å­˜ä»»åŠ¡ï¼Œé¿å…é£è¡Œä¸­ç«‹å³å†™å…¥ Flashã€‚
+ * è¯´æ˜ï¼šä»…åœ¨å…è®¸ä¿å­˜æ—¶è¿›å…¥å»¶æ—¶è®¡æ—¶ï¼Œé£è¡Œä¸­ä¸ç›´æ¥å†™å…¥å‚æ•°åŒºã€‚
  */
 void FC_Param_WriteTask(u16 dT_ms)
 {
@@ -176,7 +176,7 @@ void FC_Param_WriteTask(u16 dT_ms)
 	{
 		if(g_param_state.save_trig == 1)
 		{
-			/* ÊÕµ½±£´æÇëÇóºó£¬ÏÈ½øÈëÑÓÊ±µÈ´ı¡£ */
+			/* æ”¶åˆ°ä¿å­˜è¯·æ±‚åï¼Œå…ˆè¿›å…¥å»¶æ—¶ç­‰å¾…ã€‚ */
 			LED_STA.saving = 1;
 			
 			g_param_state.time_delay = 0;
@@ -191,7 +191,7 @@ void FC_Param_WriteTask(u16 dT_ms)
 			}
 			else
 			{
-				/* ÑÓÊ±µ½´ïºóÔÙÕæÕıĞ´Èë²ÎÊıÇø¡£ */
+				/* å»¶æ—¶åˆ°è¾¾åå†çœŸæ­£å†™å…¥å‚æ•°åŒºã€‚ */
 				g_param_state.save_trig = 0;
 				FC_Param_Write();
 				ANO_DT_SendString("Set save OK!");

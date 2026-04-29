@@ -8,25 +8,25 @@
 union PPM  RC_PPM;
 //RCData_t   SbusData;
 /**********************************************************************************************************
-*�� �� ��: PPM_Cal
-*����˵��: PPMͨ�����ݼ���
-*��    ��: ��
-*�� �� ֵ: ��
+*函 数 名: PPM_Cal
+*功能说明: PPM通道数据计算
+*形    参: 无
+*返 回 值: 无
 **********************************************************************************************************/
 static void PPM_Cal(uint32_t  PulseHigh)
 {
     static uint8_t Chan = 0;
-    /*��������һ��ֵ˵��һ֡�����Ѿ�����*/
+    /*脉宽高于一定值说明一帧数据已经结束*/
     if(PulseHigh > 5000)
     {
-        /*һ֡���ݽ������*/
+        /*一帧数据解析完成*/
         
         Chan = 0;
 
     }
     else
     {
-		/*����߶�����*/
+		/*脉冲高度正常*/
         if (PulseHigh > PULSE_MIN && PulseHigh < PULSE_MAX)
         {
             if(Chan < 16)
@@ -37,14 +37,14 @@ static void PPM_Cal(uint32_t  PulseHigh)
         }
     }
 }
-/* ����һ֡ PPM ���� */
+/* 解析一帧 PPM 数据 */
 static void PPM_Decode(void)
 {
 	static uint32_t	PeriodVal1,PeriodVal2 = 0;
 	static uint32_t PulseHigh;
-	/*����жϱ�־*/
+	/*清除中断标志*/
 	ROM_TimerIntClear( WTIMER1_BASE , TIMER_CAPB_EVENT );
-	/*��ȡ����ֵ*/	
+	/*获取捕获值*/	
 	PeriodVal1 = ROM_TimerValueGet( WTIMER1_BASE , TIMER_B );
 	if( PeriodVal1 > PeriodVal2 )
 		PulseHigh =  (PeriodVal1 - PeriodVal2) /80;
@@ -53,20 +53,20 @@ static void PPM_Decode(void)
 		PeriodVal2 = PeriodVal1;
 		PPM_Cal(PulseHigh);
 }
-/* ��ʼ�� PPM ���� */
+/* 初始化 PPM 输入 */
 void Drv_PpmInit(void)
 {
 	ROM_SysCtlPeripheralEnable(PPM_SYSCTL);
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER1);
-	/*GPIOC����Ϊ��ʱ������ģʽ*/
+	/*GPIOC配置为定时器捕获模式*/
 	ROM_GPIOPinTypeTimer(PPM_PORTS, PPM_PIN);
 	ROM_GPIOPinConfigure(PPM_FUNCTION);
-	/*���ö�ʱ��5BΪ����������*/
+	/*配置定时器5B为捕获上升沿*/
 	ROM_TimerConfigure( WTIMER1_BASE ,TIMER_CFG_SPLIT_PAIR | TIMER_CFG_B_CAP_TIME_UP ); 
 	ROM_TimerControlEvent(WTIMER1_BASE,TIMER_B,TIMER_EVENT_POS_EDGE);	
 	ROM_TimerLoadSet( WTIMER1_BASE , TIMER_B , 0xffff );
 	ROM_TimerPrescaleSet( WTIMER1_BASE , TIMER_B , 0xff );
-	/*������ʱ���ж�*/
+	/*开启定时器中断*/
 	TimerIntRegister(WTIMER1_BASE,  TIMER_B , PPM_Decode);	
 	ROM_IntPrioritySet( INT_WTIMER1B , USER_INT6);
 	ROM_TimerIntEnable( WTIMER1_BASE , TIMER_CAPB_EVENT);
@@ -78,8 +78,8 @@ void Drv_PpmInit(void)
 u16 Rc_Sbus_In[16];
 u8 sbus_flag;
 /*
-sbus flags�Ľṹ������ʾ��
-flags��
+sbus flags的结构如下所示：
+flags：
 bit7 = ch17 = digital channel (0x80)
 bit6 = ch18 = digital channel (0x40)
 bit5 = Frame lost, equivalent red LED on receiver (0x20)
@@ -90,18 +90,18 @@ bit1 = n/a
 bit0 = n/a
 
 */
-/* ����һ�ֽ� SBUS ���� */
+/* 解析一字节 SBUS 数据 */
 static void Sbus_Decode(uint8_t data)
 {
 	static uint8_t i;
     static uint8_t DataCnt  = 0;
 	static uint8_t SUBS_RawData[25];
-	/*��������*/
+	/*接收数据*/
 	 SUBS_RawData[DataCnt++]=data;  
-    /*ÿ֡���ݳ���Ϊ25*/
+    /*每帧数据长度为25*/
     if(DataCnt >= 25)
     {
-        /*�ж�֡ͷ֡β�Ƿ���ȷ ֻҪ��һ������ȷ���˳�����*/
+        /*判断帧头帧尾是否正确 只要有一个不正确就退出函数*/
         if(SUBS_RawData[0] == 0x0F && SUBS_RawData[24] == 0)
 		{
 			DataCnt = 0;
@@ -123,18 +123,18 @@ static void Sbus_Decode(uint8_t data)
 			Rc_Sbus_In[14] = (s16)(SUBS_RawData[21] & 0x1F) << 6 | (SUBS_RawData[20] >> 2);
 			Rc_Sbus_In[15] = (s16)SUBS_RawData[22] << 3 | (SUBS_RawData[21] >> 5);
 			sbus_flag = SUBS_RawData[23];
-			/*һ֡���ݽ������*/
+			/*一帧数据解析完成*/
 			
 			//user
 			//
 			if(sbus_flag & 0x10)
 			{
-				//������������ܽ��յ���ʧ�ر�ǣ��򲻴�����ת�޳�������ʧ�ء�
+				//如果有数据且能接收到有失控标记，则不处理，转嫁成无数据失控。
 			}
 			else
 			{
-				//���������ݾ�ι��
-				for(u8 i = 0;i < 8;i++)//ԭRC���ճ���ֻ�����8��ͨ��
+				//否则有数据就喂狗
+				for(u8 i = 0;i < 8;i++)//原RC接收程序只设计了8个通道
 				{
 					FC_Rc_ChannelWatchdogFeed(i);
 				}
@@ -149,38 +149,38 @@ static void Sbus_Decode(uint8_t data)
 	}
 
 }
-/* SBUS �����жϷ��� */
+/* SBUS 接收中断服务 */
 static void Sbus_IRQHandler(void)
 {
 	uint8_t com_data;	
-	/*��ȡ�жϱ�־ ԭʼ�ж�״̬ �����жϱ�־*/		
+	/*获取中断标志 原始中断状态 屏蔽中断标志*/		
 	uint32_t flag = ROM_UARTIntStatus(SBUS_UART,1);
-	/*����жϱ�־*/
+	/*清除中断标志*/
 	ROM_UARTIntClear(SBUS_UART,flag);
 	ROM_UARTRxErrorClear( SBUS_UART );
-	/*�ж�FIFO�Ƿ�������*/
+	/*判断FIFO是否还有数据*/
 	while(ROM_UARTCharsAvail(SBUS_UART))			
 	{		
 		com_data=UART3->DR;
 		Sbus_Decode(com_data);	
 	}
 }
-/* ��ʼ�� SBUS ���� */
+/* 初始化 SBUS 输入 */
 void Drv_SbusInit(void)
 {
 	ROM_SysCtlPeripheralEnable(SBUS_SYSCTL);
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART3);
-	/*GPIO��UARTģʽ����*/
+	/*GPIO的UART模式配置*/
 	ROM_GPIOPinConfigure(UART3_RX);
 	ROM_GPIOPinTypeUART( UART3_PORT ,UART3_PIN_RX );
-	/*���ô��ڵĲ����ʺ�ʱ��Դ*/
+	/*配置串口的波特率和时钟源*/
 	ROM_UARTConfigSetExpClk( SBUS_UART ,SysCtlClockGet(), SBUS_BAUDRATE ,UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_TWO | UART_CONFIG_PAR_EVEN );
-	/*FIFO����*/	
+	/*FIFO设置*/	
 	ROM_UARTFIFOLevelSet( SBUS_UART , UART_FIFO_TX1_8 , UART_FIFO_RX1_8 );
 	ROM_UARTFIFOEnable(SBUS_UART);
-	/*ʹ�ܴ���*/
+	/*使能串口*/
 	ROM_UARTEnable( SBUS_UART );
-	/*�����ж�������ʹ��*/		
+	/*串口中断配置与使能*/		
 	UARTIntRegister( SBUS_UART , Sbus_IRQHandler );
 	ROM_IntPrioritySet( INT_UART3 , USER_INT6 );
 	ROM_UARTIntEnable( SBUS_UART , UART_INT_RX | UART_INT_OE );

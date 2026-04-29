@@ -4,8 +4,8 @@
 #include "sysconfig.h"
 
 /*
- * ģ�����ƣ�Drv_Spi
- * ģ��ְ���ṩ SPI0 ��ʼ���ͻ����շ��ӿڡ�
+ * 模块名称：Drv_Spi
+ * 模块职责：提供 SPI0 初始化和基础收发接口。
  */
 
 void Drv_Spi0Init(void);

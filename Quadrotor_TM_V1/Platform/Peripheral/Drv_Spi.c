@@ -6,29 +6,29 @@ void Drv_Spi0Init(void)
 {	
 	ROM_SysCtlPeripheralEnable( SYSCTL_PERIPH_SSI0 );
 	ROM_SysCtlPeripheralEnable(SPI0_SYSCTL);
-	/*ÅäÖÃIO¿Ú*/	
+	/*é…ç½®IOå£*/	
 	ROM_GPIOPinTypeSSI(SPI0_PROT,SPI0_CLK_PIN|SPI0_RX_PIN|SPI0_TX_PIN);
 	ROM_GPIOPinConfigure(SPI0_CLK);	
 	ROM_GPIOPinConfigure(SPI0_RX);
 	ROM_GPIOPinConfigure(SPI0_TX);
-	/*ÅäÖÃSPIÊ±ÖÓÎª1Mhz*/
+	/*é…ç½®SPIæ—¶é’Ÿä¸º1Mhz*/
 	ROM_SSIConfigSetExpClk(SPI0_BASE, ROM_SysCtlClockGet(), SSI_FRF_MOTO_MODE_3,  SSI_MODE_MASTER, 10000000,  8);
-	/*¿ªÆôSSI0*/
+	/*å¼€å¯SSI0*/
 	ROM_SSIEnable(SPI0_BASE);
 }
 
-/* SPI¶ÁĞ´º¯Êı */
+/* SPIè¯»å†™å‡½æ•° */
 uint8_t Drv_Spi0SingleWirteAndRead(uint8_t SendData)
 {
     uint32_t ui_TempData;
     uint8_t uc_ReceiveData;
-    /* ÏòSSI FIFOĞ´ÈëÊı¾İ */
+    /* å‘SSI FIFOå†™å…¥æ•°æ® */
     ROM_SSIDataPut(SPI0_BASE, SendData);
-    /* µÈ´ıSSI²»Ã¦ */
+    /* ç­‰å¾…SSIä¸å¿™ */
     while(ROM_SSIBusy(SPI0_BASE));
-    /* ´ÓFIFO¶ÁÈ¡Êı¾İ */
+    /* ä»FIFOè¯»å–æ•°æ® */
     ROM_SSIDataGet(SPI0_BASE, &ui_TempData);
-    /* ½ØÈ¡Êı¾İµÄµÍ°ËÎ» */
+    /* æˆªå–æ•°æ®çš„ä½å…«ä½ */
     uc_ReceiveData = ui_TempData & 0xff;
     return uc_ReceiveData;
 }
@@ -36,7 +36,7 @@ uint8_t Drv_Spi0SingleWirteAndRead(uint8_t SendData)
 void Drv_Spi0Transmit(uint8_t *ucp_Data, uint16_t us_Size)
 {
     uint16_t i = 0;
-    /* Á¬ĞøĞ´ÈëÊı¾İ */
+    /* è¿ç»­å†™å…¥æ•°æ® */
     for(i = 0; i < us_Size; i++)
     {
         Drv_Spi0SingleWirteAndRead(ucp_Data[i]);
@@ -46,7 +46,7 @@ void Drv_Spi0Transmit(uint8_t *ucp_Data, uint16_t us_Size)
 void Drv_Spi0Receive(uint8_t *ucp_Data, uint16_t us_Size)
 {
     uint16_t i = 0;
-    /* Á¬Ğø¶ÁÈ¡Êı¾İ */
+    /* è¿ç»­è¯»å–æ•°æ® */
     for(i = 0; i < us_Size; i++)
     {
         ucp_Data[i] = Drv_Spi0SingleWirteAndRead(0xFF);

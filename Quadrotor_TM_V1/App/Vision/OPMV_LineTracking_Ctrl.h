@@ -3,27 +3,27 @@
 #include "sysconfig.h"
 #include "FcData.h"
 /*
- * ģ��˵����
- * OpenMV Ѱ�߿���״̬��
- * �����Ӿ�������ƫ��ٶ������ת����������ϲ�̿�����ʹ�á�
+ * 模块说明。
+ * OpenMV 寻线控制状态。
+ * 保存视觉解耦后的偏差、速度输出和转向输出，供上层程控任务使用。
  */
 typedef struct
 {
-    /* Ŀ�궪ʧ��־�� */
+    /* 目标丢失标志。 */
     u8 target_loss;
-    /* OpenMV ԭʼ��ƫ� */
+    /* OpenMV 原始线偏差。 */
     s16 opmv_pos;
-    /* ��̬������Ӧ������ƫ�ơ� */
+    /* 姿态补偿对应的像素偏移。 */
     s16 r2pixel_val;
-    /* ����������ƫ� */
+    /* 解耦后的像素偏差。 */
     float decou_pos_pixel;
-    /* ����λ������λ cm�� */
+    /* 地面位置误差，单位 cm。 */
     float ground_pos_err_h_cm;
-    /* ����λ�����΢�֣���λ cm/s�� */
+    /* 地面位置误差微分，单位 cm/s。 */
     float ground_pos_err_d_h_cmps;
-    /* ���������ˮƽ�ٶȡ� */
+    /* 输出的期望水平速度。 */
     float exp_velocity_h_cmps[2];
-    /* ���������������ٶȡ� */
+    /* 输出的期望航向角速度。 */
     float exp_yaw_pal_dps;
 } _ano_opmv_lt_ctrl_st;
 

@@ -10,7 +10,7 @@ void Dvr_LedInit(void)
 	ROM_GPIOPinTypeGPIOOutput(LED2_PORT, LED2_PIN);
 	ROM_GPIOPinTypeGPIOOutput(LED3_PORT, LED3_PIN);
 	ROM_GPIOPinTypeGPIOOutput(LEDS_PORT, LEDS_PIN);
-	//³õÊ¼»¯µãÁÁÀ¶É«
+	//åˆå§‹åŒ–ç‚¹äº®è“è‰²
 	Drv_LedOnOff(LED_B, 1);
 }
 

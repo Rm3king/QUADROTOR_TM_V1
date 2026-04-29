@@ -1,5 +1,40 @@
 # Changelog
 
+## [Stage2-R3] 全项目编码统一：GBK → UTF-8 + 乱码注释修复 (2026-04-29)
+
+### 改动概述
+将全项目约 90 个 `.c`/`.h` 源文件从 GBK 编码批量转换为 UTF-8，
+并手工修复因早期编码转换损坏（`?` 替换或 U+FFFD 替换）的注释。
+
+### 改动详情
+
+#### 批量 iconv 转换（~81 个文件）
+- 使用 `iconv -f GBK -t UTF-8` 一次性转换所有纯 GBK 文件
+- 覆盖 `FlightControl/`、`App/`、`Platform/` 三个目录
+- 转换后所有中文注释均可在 UTF-8 编辑器中正常显示
+
+#### 手工修复混合编码文件（3 个文件）
+- **FlightCtrl.c**：55 行乱码注释重写（原始中文已被 `?`/U+FFFD 替代，不可恢复）
+- **AltCtrl.c**：31 行乱码注释重写（GBK 与 UTF-8 混合，iconv 失败）
+- **config.h**：3 行模块头注释修复
+
+#### 手工修复 `?` 残留（8 个文件）
+- `FlightDataCal.h`、`Imu.c`、`AttCtrl.c`、`MagProcess.c`
+- `Sensor_Basic.c`、`Pid.h`、`AltCtrl_2.h`
+- `OF.c`、`OF.h`、`Drv_spl06.c`
+- `sysconfig.h`、`RC.c`
+
+#### 未转换文件（2 个，非项目源码）
+- `Legacy/` 下的历史冲突备份文件
+- `TiDriver/` 下的 TI 官方驱动头文件
+
+### 验证方式
+1. Python 脚本扫描全部 196 个 `.c`/`.h` 文件，确认零 GBK / 零 `???` / 零 U+FFFD
+2. Keil 编译通过（0 Error, 0 Warning）
+3. 烧录后功能正常
+
+---
+
 ## [Stage2-R2] 命名规范化 + 魔法数字清理 + 死代码删除 (2026-04-29)
 
 ### 改动概述

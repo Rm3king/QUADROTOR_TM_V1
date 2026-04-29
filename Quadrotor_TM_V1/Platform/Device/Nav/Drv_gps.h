@@ -3,7 +3,7 @@
 
 #include "sysconfig.h"
 
-/* GPS状态与导航数据 */
+/* GPS鐘舵�佷笌瀵艰埅鏁版嵁 */
 typedef struct
 {
     unsigned char satellite_num;

@@ -29,9 +29,9 @@
 #include "OF_DecoFusion.h"
 #include "User_control.h"
 /*
- * Ä£¿éËµÃ÷¡£
- * Ö÷ÈÎÎñµ÷¶ÈÆ÷¸ºÔğÎ¬»¤ 1ms »ù×¼½ÚÅÄ£¬²¢ÂÖÑ¯ 2ms¡¢6ms¡¢11ms¡¢20ms¡¢50ms ÖÜÆÚÈÎÎñ¡£
- * ±¾ÎÄ¼şÖ»ÕûÀí´úÂë±í´ï£¬²»¸Ä±äÈÎÎñÆµÂÊ¡¢µ÷ÓÃË³ĞòºÍ´¥·¢Ìõ¼ş¡£
+ * æ¨¡å—è¯´æ˜ã€‚
+ * ä¸»ä»»åŠ¡è°ƒåº¦å™¨è´Ÿè´£ç»´æŠ¤ 1ms åŸºå‡†èŠ‚æ‹ï¼Œå¹¶è½®è¯¢ 2msã€6msã€11msã€20msã€50ms å‘¨æœŸä»»åŠ¡ã€‚
+ * æœ¬æ–‡ä»¶åªæ•´ç†ä»£ç è¡¨è¾¾ï¼Œä¸æ”¹å˜ä»»åŠ¡é¢‘ç‡ã€è°ƒç”¨é¡ºåºå’Œè§¦å‘æ¡ä»¶ã€‚
  */
 #define CIRCLE_NUM   20
 
@@ -46,8 +46,8 @@ static void Loop_Task_8(u32 dT_us);
 static void Loop_Task_9(u32 dT_us);
 
 /*
- * ¹¦ÄÜ£º1ms ÖĞ¶ÏÈÎÎñ¡£
- * ËµÃ÷£ºÀÛ¼Óµ÷¶È½ÚÅÄ£¬Í¬Ê±Çı¶¯ LED Èí¼ş PWM¡£
+ * åŠŸèƒ½ï¼š1ms ä¸­æ–­ä»»åŠ¡ã€‚
+ * è¯´æ˜ï¼šç´¯åŠ è°ƒåº¦èŠ‚æ‹ï¼ŒåŒæ—¶é©±åŠ¨ LED è½¯ä»¶ PWMã€‚
  */
 void INT_1ms_Task(void)
 {
@@ -60,7 +60,7 @@ void INT_1ms_Task(void)
     }
 }
 
-/* 1ms ÖÜÆÚÈÎÎñ¡£ */
+/* 1ms å‘¨æœŸä»»åŠ¡ã€‚ */
 static void Loop_Task_0(void)
 {
     Fc_Sensor_Get();
@@ -74,7 +74,7 @@ static void Loop_Task_0(void)
     ANO_DT_Data_Exchange();
 }
 
-/* 2ms ÖÜÆÚÈÎÎñ¡£ */
+/* 2ms å‘¨æœŸä»»åŠ¡ã€‚ */
 static void Loop_Task_1(u32 dT_us)
 {
     (void)dT_us;
@@ -82,7 +82,7 @@ static void Loop_Task_1(u32 dT_us)
     Motor_Ctrl_Task(2);
 }
 
-/* 6ms ÖÜÆÚÈÎÎñ¡£ */
+/* 6ms å‘¨æœŸä»»åŠ¡ã€‚ */
 static void Loop_Task_2(u32 dT_us)
 {
     (void)dT_us;
@@ -90,7 +90,7 @@ static void Loop_Task_2(u32 dT_us)
     Att_2level_Ctrl(6e-3f, CH_N);
 }
 
-/* 11ms ÖÜÆÚÈÎÎñ¡£ */
+/* 11ms å‘¨æœŸä»»åŠ¡ã€‚ */
 static void Loop_Task_5(u32 dT_us)
 {
     (void)dT_us;
@@ -109,7 +109,7 @@ static void Loop_Task_5(u32 dT_us)
     LED_Task2(11);
 }
 
-/* 20ms ÖÜÆÚÈÎÎñ¡£ */
+/* 20ms å‘¨æœŸä»»åŠ¡ã€‚ */
 static void Loop_Task_8(u32 dT_us)
 {
     (void)dT_us;
@@ -125,7 +125,7 @@ static void Loop_Task_8(u32 dT_us)
     InspectionTask(20);
 }
 
-/* 50ms ÖÜÆÚÈÎÎñ¡£ */
+/* 50ms å‘¨æœŸä»»åŠ¡ã€‚ */
 static void Loop_Task_9(u32 dT_us)
 {
     (void)dT_us;
@@ -134,7 +134,7 @@ static void Loop_Task_9(u32 dT_us)
     FC_Param_WriteTask(50);
 }
 
-/* µ÷¶È±í¡£ */
+/* è°ƒåº¦è¡¨ã€‚ */
 static sched_task_t sched_tasks[] =
 {
     {Loop_Task_1,  2000,  0},
@@ -147,8 +147,8 @@ static sched_task_t sched_tasks[] =
 #define TASK_NUM   (sizeof(sched_tasks) / sizeof(sched_task_t))
 
 /*
- * ¹¦ÄÜ£ºÖ÷Ñ­»·µ÷¶ÈÈë¿Ú¡£
- * ËµÃ÷£ºÏÈ´¦Àí 1ms ¿ìËÙÈÎÎñ£¬ÔÙ°´ÖÜÆÚÂÖÑ¯ÆäÓàÈÎÎñ¡£
+ * åŠŸèƒ½ï¼šä¸»å¾ªç¯è°ƒåº¦å…¥å£ã€‚
+ * è¯´æ˜ï¼šå…ˆå¤„ç† 1ms å¿«é€Ÿä»»åŠ¡ï¼Œå†æŒ‰å‘¨æœŸè½®è¯¢å…¶ä½™ä»»åŠ¡ã€‚
  */
 u8 Main_Task(void)
 {

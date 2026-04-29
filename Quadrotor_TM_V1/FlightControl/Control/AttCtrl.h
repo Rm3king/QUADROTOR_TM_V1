@@ -5,7 +5,7 @@
 #include "Math.h"
 #include "Pid.h"
 
-/* Ò»¼ü·­¹ö½×¶Î¶¨Òå */
+/* ä¸€é”®ç¿»æ»šé˜¶æ®µå®šä¹‰ */
 enum
 {
     ROLL_END = 0,
@@ -14,7 +14,7 @@ enum
     ROLL_KEEP,
 };
 
-/* Ò»¼ü·­¹ö¹ı³Ì×´Ì¬ */
+/* ä¸€é”®ç¿»æ»šè¿‡ç¨‹çŠ¶æ€ */
 typedef struct
 {
     u8 roll_mode;
@@ -29,7 +29,7 @@ typedef struct
 } _rolling_flag_st;
 extern _rolling_flag_st rolling_flag;
 
-/* ½ÇËÙ¶ÈÄÚ»·¿ØÖÆÁ¿ */
+/* è§’é€Ÿåº¦å†…ç¯æ§åˆ¶é‡ */
 typedef struct
 {
     float set_yaw_speed;
@@ -38,7 +38,7 @@ typedef struct
 } _att_1l_ct_st;
 extern _att_1l_ct_st att_1l_ct;
 
-/* ×ËÌ¬½ÇÍâ»·¿ØÖÆÁ¿ */
+/* å§¿æ€è§’å¤–ç¯æ§åˆ¶é‡ */
 typedef struct
 {
     float yaw_err;

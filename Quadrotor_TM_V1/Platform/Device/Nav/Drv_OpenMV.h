@@ -3,7 +3,7 @@
 #include "sysconfig.h"
 #include "FcData.h"
 
-/* É«¿é¸ú×Ù½á¹û¡£ */
+/* è‰²å—è·Ÿè¸ªç»“æœã€‚ */
 typedef struct
 {
     u8 color_flag;
@@ -13,7 +13,7 @@ typedef struct
     u8 dT_ms;
 } _openmv_color_block_st;
 
-/* Ñ°Ïß½á¹û¡£ */
+/* å¯»çº¿ç»“æœã€‚ */
 typedef struct
 {
     u8 sta;
@@ -25,7 +25,7 @@ typedef struct
     u8 dT_ms;
 } _openmv_line_tracking_st;
 
-/* OpenMV Êı¾İ×Ü×´Ì¬¡£ */
+/* OpenMV æ•°æ®æ€»çŠ¶æ€ã€‚ */
 typedef struct
 {
     u8 offline;

@@ -2,7 +2,7 @@
 #define __IMU_H__
 #include "FcData.h"
 
-/* ×ËÌ¬½âËã½á¹ûÓëÖĞ¼äÁ¿ */
+/* å§¿æ€è§£ç®—ç»“æœä¸ä¸­é—´é‡ */
 typedef struct
 {
     float w;
@@ -35,7 +35,7 @@ typedef struct
 } _imu_st;
 extern _imu_st imu_data;
 
-/* ×ËÌ¬½âËãÊ¹ÄÜÓëÔöÒæÅäÖÃ */
+/* å§¿æ€è§£ç®—ä½¿èƒ½ä¸å¢ç›Šé…ç½® */
 typedef struct
 {
     float gkp;

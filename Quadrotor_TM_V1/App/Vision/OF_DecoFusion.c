@@ -7,9 +7,9 @@
 #include "Drv_laser.h"
 
 /*
- * Ä£¿éËµÃ÷¡£
- * ÓÅÏñ¹âÁ÷½âñîÓëÈÚºÏÊµÏÖ¡£
- * ¸ºÔğ½âÎö¹âÁ÷Ô­Ê¼Êı¾İ¡¢Ö´ĞĞ×ËÌ¬Ğı×ª²¹³¥£¬²¢½«¹âÁ÷¹Û²âÓë¹ßĞÔ¹À¼Æ½øĞĞ»¥²¹ÈÚºÏ¡£
+ * æ¨¡å—è¯´æ˜ã€‚
+ * ä¼˜åƒå…‰æµè§£è€¦ä¸èåˆå®ç°ã€‚
+ * è´Ÿè´£è§£æå…‰æµåŸå§‹æ•°æ®ã€æ‰§è¡Œå§¿æ€æ—‹è½¬è¡¥å¿ï¼Œå¹¶å°†å…‰æµè§‚æµ‹ä¸æƒ¯æ€§ä¼°è®¡è¿›è¡Œäº’è¡¥èåˆã€‚
  */
 static void ANO_OF_Data_Get(float *dT_s, u8 *of_data_buf);
 static void OF_INS_Get(float *dT_s, float rad_ps_x, float rad_ps_y, float acc_wx, float acc_wy);
@@ -40,14 +40,14 @@ float of_fus_err[2],of_fus_err_i[2];
 #define UPOF_UP_DW             0
 #define OBJREF_HEIGHT_CM       280
 
-/* ¹¦ÄÜ£º×¼±¸¹âÁ÷Ô­Ê¼Êı¾İÓë¹ßĞÔ¹À¼ÆÁ¿¡£ */
+/* åŠŸèƒ½ï¼šå‡†å¤‡å…‰æµåŸå§‹æ•°æ®ä¸æƒ¯æ€§ä¼°è®¡é‡ã€‚ */
 void ANO_OF_Data_Prepare_Task(float dT_s)
 {
     ANO_OF_Data_Get(&dT_s, OF_DATA_BUF);
     OF_INS_Get(&dT_s, RADPS_X, RADPS_Y, imu_data.w_acc[0], imu_data.w_acc[1]);
 }
 
-/* ¹¦ÄÜ£ºÖ´ĞĞ¹âÁ÷½âñîÓëÈÚºÏÈÎÎñ¡£ */
+/* åŠŸèƒ½ï¼šæ‰§è¡Œå…‰æµè§£è€¦ä¸èåˆä»»åŠ¡ã€‚ */
 void ANO_OFDF_Task(u8 dT_ms)
 {
     OF_State();
@@ -55,12 +55,12 @@ void ANO_OFDF_Task(u8 dT_ms)
     ANO_OF_Fusion(&dT_ms, (s32)RELATIVE_HEIGHT_CM);
 }
 
-/* ¹¦ÄÜ£º¸üĞÂ¹ßĞÔ²à¹À¼ÆÁ¿¡£ */
+/* åŠŸèƒ½ï¼šæ›´æ–°æƒ¯æ€§ä¾§ä¼°è®¡é‡ã€‚ */
 static void OF_INS_Get(float *dT_s,float rad_ps_x,float rad_ps_y,float acc_wx,float acc_wy)
 {
     static float rad_ps_lpf[2];
 
-    /* µÍÍ¨ÂË²¨ºóÔÙ²ÎÓë¹âÁ÷Ğı×ª²¹³¥£¬±ãÓÚÏàÎ»¶ÔÆë¡£ */
+    /* ä½é€šæ»¤æ³¢åå†å‚ä¸å…‰æµæ—‹è½¬è¡¥å¿ï¼Œä¾¿äºç›¸ä½å¯¹é½ã€‚ */
     LPF_1_(5.0f,*dT_s,rad_ps_x,rad_ps_lpf[0]);
     LPF_1_(5.0f,*dT_s,rad_ps_y,rad_ps_lpf[1]);
     of_rot_d_degs[0] = rad_ps_lpf[0] * DEG_PER_RAD;
@@ -74,7 +74,7 @@ static void OF_INS_Get(float *dT_s,float rad_ps_x,float rad_ps_y,float acc_wx,fl
     }
 }
 
-/* ¹¦ÄÜ£º¶ÁÈ¡²¢½âÎö¹âÁ÷Ô­Ê¼»º³åÇø¡£ */
+/* åŠŸèƒ½ï¼šè¯»å–å¹¶è§£æå…‰æµåŸå§‹ç¼“å†²åŒºã€‚ */
 static void ANO_OF_Data_Get(float *dT_s,u8 *of_data_buf)
 {
     static float offline_delay_time_s;
@@ -99,7 +99,7 @@ static void ANO_OF_Data_Get(float *dT_s,u8 *of_data_buf)
             }
             else
             {
-                /* Ô­Ê¼Ğ­ÒéÖĞ X/Y Öá¶¨ÒåÓë±¾µØ×ø±ê´æÔÚ½»²æ£¬¶ÔÆë·½Ê½±£³Ö²»±ä¡£ */
+                /* åŸå§‹åè®®ä¸­ X/Y è½´å®šä¹‰ä¸æœ¬åœ°åæ ‡å­˜åœ¨äº¤å‰ï¼Œå¯¹é½æ–¹å¼ä¿æŒä¸å˜ã€‚ */
                 of_data.flow_x_integral = (s16)(of_data_buf[12] | (of_data_buf[13] << 8));
                 of_data.flow_y_integral = (s16)(of_data_buf[10] | (of_data_buf[11] << 8));
             }
@@ -126,7 +126,7 @@ static void ANO_OF_Data_Get(float *dT_s,u8 *of_data_buf)
     }
 }
 
-/* ¹¦ÄÜ£ºÖ´ĞĞ¹âÁ÷È¥Ğı×ª²¹³¥¡£ */
+/* åŠŸèƒ½ï¼šæ‰§è¡Œå…‰æµå»æ—‹è½¬è¡¥å¿ã€‚ */
 static void ANO_OF_Decouple(u8 *dT_ms)
 {
     if(of_data.valid != 0xf5)
@@ -158,7 +158,7 @@ static void ANO_OF_Decouple(u8 *dT_ms)
     (void)dT_ms;
 }
 
-/* ¹¦ÄÜ£ºÈÚºÏ¹âÁ÷¹Û²âÓë¹ßĞÔ¹À¼Æ¡£ */
+/* åŠŸèƒ½ï¼šèåˆå…‰æµè§‚æµ‹ä¸æƒ¯æ€§ä¼°è®¡ã€‚ */
 static void ANO_OF_Fusion(u8 *dT_ms,s32 ref_height_cm)
 {
     static float F_KP,F_KI;
@@ -190,7 +190,7 @@ static void ANO_OF_Fusion(u8 *dT_ms,s32 ref_height_cm)
 
         case 1:
         {
-            /* ²ÉÓÃ PI »¥²¹ÈÚºÏ£¬±£ÁôÏÖÓĞĞŞÕıË³ĞòÓë²ÎÊı¡£ */
+            /* é‡‡ç”¨ PI äº’è¡¥èåˆï¼Œä¿ç•™ç°æœ‰ä¿®æ­£é¡ºåºä¸å‚æ•°ã€‚ */
             if(of_data.valid == 0xf5)
             {
                 for(u8 i = 0;i < 2;i++)
@@ -213,7 +213,7 @@ static void ANO_OF_Fusion(u8 *dT_ms,s32 ref_height_cm)
     }
 }
 
-/* ¹¦ÄÜ£º¸´Î»¹ßĞÔ¹À¼ÆÄÚ²¿×´Ì¬¡£ */
+/* åŠŸèƒ½ï¼šå¤ä½æƒ¯æ€§ä¼°è®¡å†…éƒ¨çŠ¶æ€ã€‚ */
 static void OF_INS_Reset()
 {
     for(u8 i = 0;i < 2;i++)
@@ -223,7 +223,7 @@ static void OF_INS_Reset()
     }
 }
 
-/* ¹¦ÄÜ£º¸üĞÂ¹âÁ÷ÈÚºÏ×´Ì¬»ú¡£ */
+/* åŠŸèƒ½ï¼šæ›´æ–°å…‰æµèåˆçŠ¶æ€æœºã€‚ */
 static void OF_State()
 {
     if(imu_state.G_reset)

@@ -3,9 +3,9 @@
 #include "sysconfig.h"
 #include "FcData.h"
 
-/* ¹âÁ÷´®¿ÚÔ­Ê¼»º³åË¢ĞÂ¼ÆÊı¡£ */
+/* å…‰æµä¸²å£åŸå§‹ç¼“å†²åˆ·æ–°è®¡æ•°ã€‚ */
 extern uint8_t of_buf_update_cnt;
-/* ¹âÁ÷Ä£¿éÔ­Ê¼Êı¾İ»º³åÇø¡£ */
+/* å…‰æµæ¨¡å—åŸå§‹æ•°æ®ç¼“å†²åŒºã€‚ */
 extern uint8_t OF_DATA[];
 
 u8 Drv_OFInit(void);

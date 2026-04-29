@@ -1,7 +1,7 @@
 /*
- * Ä£¿é£º´«¸ĞÆ÷»ù´¡´¦Àí
- * Ö°Ôğ£ºÍê³ÉÔ­Ê¼¹ßµ¼Êı¾İµÄÁãÆ«Ğ£×¼¡¢ÂË²¨Óë»ù´¡²¹³¥¡£
- * Ô¼Êø£º±£³ÖĞ£×¼´¥·¢Ìõ¼ş¡¢ÂË²¨Ë³ĞòÓëÊä³öº¬Òå²»±ä¡£
+ * æ¨¡å—ï¼šä¼ æ„Ÿå™¨åŸºç¡€å¤„ç†
+ * èŒè´£ï¼šå®ŒæˆåŸå§‹æƒ¯å¯¼æ•°æ®çš„é›¶åæ ¡å‡†ã€æ»¤æ³¢ä¸åŸºç¡€è¡¥å¿ã€‚
+ * çº¦æŸï¼šä¿æŒæ ¡å‡†è§¦å‘æ¡ä»¶ã€æ»¤æ³¢é¡ºåºä¸è¾“å‡ºå«ä¹‰ä¸å˜ã€‚
  */
 #include "Sensor_Basic.h"
 #include "Math.h"
@@ -12,14 +12,14 @@
 #define Z_POS_OFFSET_CM    (0)
 #define LED_STA_CALI_ACC   (LED_STA.calAcc)
 #define LED_STA_CALI_GYR   (LED_STA.calGyr)
-/* ´«¸ĞÆ÷»ù´¡×´Ì¬³õÊ¼»¯¡£ */
+/* ä¼ æ„Ÿå™¨åŸºç¡€çŠ¶æ€åˆå§‹åŒ–ã€‚ */
 void Sensor_Basic_Init(void)
 {
-	/*ÉèÖÃÖØĞÄÏà¶Ô´«¸ĞÆ÷µÄÆ«ÒÆÁ¿*/
+	/*è®¾ç½®é‡å¿ƒç›¸å¯¹ä¼ æ„Ÿå™¨çš„åç§»é‡*/
 	Center_Pos_Set();
 	
-	sensor.acc_z_auto_CALIBRATE = 1; //¿ª»ú×Ô¶¯¶Ô×¼ZÖá
-	sensor.gyr_CALIBRATE = 2;//¿ª»ú×Ô¶¯Ğ£×¼ÍÓÂİÒÇ
+	sensor.acc_z_auto_CALIBRATE = 1; //å¼€æœºè‡ªåŠ¨å¯¹å‡†Zè½´
+	sensor.gyr_CALIBRATE = 2;//å¼€æœºè‡ªåŠ¨æ ¡å‡†é™€èºä»ª
 }
 _center_pos_st center_pos;
 _sensor_st sensor;
@@ -32,7 +32,7 @@ s16 acc_z_auto[4];
 u16 acc_sum_cnt = 0,gyro_sum_cnt = 0,acc_z_auto_cnt;
 s16 g_old[VEC_XYZ];
 float g_d_sum[VEC_XYZ] = {500,500,500};
-/* ZÖá¼ÓËÙ¶È¾²Ì¬ĞŞÕı */
+/* Zè½´åŠ é€Ÿåº¦é™æ€ä¿®æ­£ */
 static void Sensor_AutoCalibrateAccZ(void)
 {
 	if(sensor.acc_z_auto_CALIBRATE)
@@ -68,7 +68,7 @@ static void Sensor_AutoCalibrateAccZ(void)
 		
 	}
 }
-/* ¾²Ö¹×´Ì¬¼ì²â */
+/* é™æ­¢çŠ¶æ€æ£€æµ‹ */
 static void MotionlessCheck(u8 dT_ms)
 {
 	u8 t = 0;
@@ -96,14 +96,14 @@ static void MotionlessCheck(u8 dT_ms)
 		flag.motionless = 1;
 	}
 }
-/* MPU6050 ÁãÆ«Ğ£×¼ */
+/* MPU6050 é›¶åæ ¡å‡† */
 static void Sensor_UpdateOffsets(void)
 {
 	static u8 off_cnt;
 	
 	if(sensor.gyr_CALIBRATE || sensor.acc_CALIBRATE || sensor.acc_z_auto_CALIBRATE)
 	{	
-		/* ?????????????? */
+		/* æ ¡å‡†æ—¶å¿…é¡»é™æ­¢ä¸”æ¸©åº¦å°±ç»ª */
 		if(flag.motionless == 0 || sensor_val[A_Z]<(GRAVITY_ACC_PN16G/2) || (flag.mems_temperature_ok == 0))
 		{
 				gyro_sum_cnt = 0;
@@ -194,7 +194,7 @@ float wh_matrix[VEC_XYZ][VEC_XYZ] =
 	{0,1,0},
 	{0,0,1}
 };
-/* »úÌåÖĞĞÄµã²¹³¥¸üĞÂ */
+/* æœºä½“ä¸­å¿ƒç‚¹è¡¥å¿æ›´æ–° */
 void Center_Pos_Set()
 {
 	center_pos.center_pos_cm[X] = X_POS_OFFSET_CM;//+0.0f;
@@ -202,18 +202,18 @@ void Center_Pos_Set()
 	center_pos.center_pos_cm[Z] = Z_POS_OFFSET_CM;//+0.0f;
 }
 static float gyr_f[5][VEC_XYZ],acc_f[5][VEC_XYZ];
-/* ´«¸ĞÆ÷Êı¾İÔ¤´¦Àí */
+/* ä¼ æ„Ÿå™¨æ•°æ®é¢„å¤„ç† */
 void Sensor_Data_Prepare(u8 dT_ms)
 {	
 	float hz = 0 ;
 	if(dT_ms != 0) hz = 1000/dT_ms;
 	
 	
-	/*¾²Ö¹¼ì²â*/
+	/*é™æ­¢æ£€æµ‹*/
 	MotionlessCheck(dT_ms);
 			
-	Sensor_UpdateOffsets(); //Ğ£×¼º¯Êı
-	/*µÃ³öĞ£×¼ºóµÄÊı¾İ*/
+	Sensor_UpdateOffsets(); //æ ¡å‡†å‡½æ•°
+	/*å¾—å‡ºæ ¡å‡†åçš„æ•°æ®*/
 	for(u8 i=0;i<3;i++)
 	{ 
 		
@@ -221,7 +221,7 @@ void Sensor_Data_Prepare(u8 dT_ms)
 		sensor_val[G_X+i] = sensor.Gyro_Original[i] - save.gyro_offset[i] ;
 	}
 	
-	/*¿É½«Õû¸ö´«¸ĞÆ÷×ø±ê½øĞĞĞı×ª*/
+	/*å¯å°†æ•´ä¸ªä¼ æ„Ÿå™¨åæ ‡è¿›è¡Œæ—‹è½¬*/
 //	for(u8 j=0;j<3;j++)
 //	{
 //		float t = 0;
@@ -246,12 +246,12 @@ void Sensor_Data_Prepare(u8 dT_ms)
 //		
 //		sensor_val_rot[G_X + j] = t;
 //	}	
-	/*¸³Öµ*/
+	/*èµ‹å€¼*/
 	for(u8 i = 0;i<6;i++)
 	{
 		sensor_val_rot[i] = sensor_val[i];
 	}
-	/*Êı¾İ×ø±ê×ª90¶È*/
+	/*æ•°æ®åæ ‡è½¬90åº¦*/
 	sensor_val_ref[G_X] =  sensor_val_rot[G_Y] ;
 	sensor_val_ref[G_Y] = -sensor_val_rot[G_X] ;
 	sensor_val_ref[G_Z] =  sensor_val_rot[G_Z];
@@ -260,10 +260,10 @@ void Sensor_Data_Prepare(u8 dT_ms)
 	sensor_val_ref[A_Y] = -(sensor_val_rot[A_X] - save.acc_offset[X] ) ;
 	sensor_val_ref[A_Z] =  (sensor_val_rot[A_Z] - save.acc_offset[Z] ) ;
 	
-	/*µ¥¶ÀĞ£×¼zÖáÄ£³¤*/
+	/*å•ç‹¬æ ¡å‡†zè½´æ¨¡é•¿*/
 	Sensor_AutoCalibrateAccZ();
 	
-	/*Èí¼şµÍÍ¨ÂË²¨*/
+	/*è½¯ä»¶ä½é€šæ»¤æ³¢*/
 	for(u8 i=0;i<3;i++)
 	{	
 		//
@@ -280,8 +280,8 @@ void Sensor_Data_Prepare(u8 dT_ms)
 				
 	}
 	
-			/*Ğı×ª¼ÓËÙ¶È²¹³¥*/
-/* ´«¸ĞÆ÷»ù´¡×´Ì¬³õÊ¼»¯¡£ */
+			/*æ—‹è½¬åŠ é€Ÿåº¦è¡¥å¿*/
+/* ä¼ æ„Ÿå™¨åŸºç¡€çŠ¶æ€åˆå§‹åŒ–ã€‚ */
 	for(u8 i=0;i<3;i++)
 	{	
 		center_pos.gyro_rad_old[i] = center_pos.gyro_rad[i];
@@ -293,7 +293,7 @@ void Sensor_Data_Prepare(u8 dT_ms)
 	center_pos.linear_acc[Y] = -center_pos.gyro_rad_acc[Z] *center_pos.center_pos_cm[X] + center_pos.gyro_rad_acc[X] *center_pos.center_pos_cm[Z];
 	center_pos.linear_acc[Z] = +center_pos.gyro_rad_acc[Y] *center_pos.center_pos_cm[X] - center_pos.gyro_rad_acc[X] *center_pos.center_pos_cm[Y];
 	
-	/*¸³Öµ*/
+	/*èµ‹å€¼*/
 	for(u8 i=0;i<3;i++)
 	{
 		
@@ -302,15 +302,15 @@ void Sensor_Data_Prepare(u8 dT_ms)
 		sensor.Acc[X+i] = acc_f[0][i] - center_pos.linear_acc[i] / RANGE_PN16G_TO_CMSS;
 	}
 	
-	/*×ª»»µ¥Î»*/
+	/*è½¬æ¢å•ä½*/
 		for(u8 i =0 ;i<3;i++)
 		{
-			/*ÍÓÂİÒÇ×ª»»µ½¶ÈÃ¿Ãë£¬Á¿³Ì+-2000¶È*/
-			sensor.Gyro_deg[i] = sensor.Gyro[i] *0.061036f ;//  /65535 * 4000; +-2000¶È 0.061
-			/*ÍÓÂİÒÇ×ª»»µ½»¡¶È¶ÈÃ¿Ãë£¬Á¿³Ì+-2000¶È*/
-			sensor.Gyro_rad[i] = sensor.Gyro_deg[i] *0.01745f;//sensor.Gyro[i] *RANGE_PN2000_TO_RAD ;//  0.001065264436f //Î¢µ÷Öµ 0.0010652f
+			/*é™€èºä»ªè½¬æ¢åˆ°åº¦æ¯ç§’ï¼Œé‡ç¨‹+-2000åº¦*/
+			sensor.Gyro_deg[i] = sensor.Gyro[i] *0.061036f ;//  /65535 * 4000; +-2000åº¦ 0.061
+			/*é™€èºä»ªè½¬æ¢åˆ°å¼§åº¦åº¦æ¯ç§’ï¼Œé‡ç¨‹+-2000åº¦*/
+			sensor.Gyro_rad[i] = sensor.Gyro_deg[i] *0.01745f;//sensor.Gyro[i] *RANGE_PN2000_TO_RAD ;//  0.001065264436f //å¾®è°ƒå€¼ 0.0010652f
 		
-			/*¼ÓËÙ¶È¼Æ×ª»»µ½ÀåÃ×Ã¿Æ½·½Ãë£¬Á¿³Ì+-8G*/
+			/*åŠ é€Ÿåº¦è®¡è½¬æ¢åˆ°å˜ç±³æ¯å¹³æ–¹ç§’ï¼Œé‡ç¨‹+-8G*/
 			sensor.Acc_cmss[i] = (sensor.Acc[i] *RANGE_PN16G_TO_CMSS );//   /65535 * 16*981; +-8G
 		
 		}

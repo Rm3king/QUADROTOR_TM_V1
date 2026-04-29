@@ -12,19 +12,19 @@
 #include "Sensor_Basic.h"
 #include "ProgramCtrl_User.h"
 /*
- * Ä£¿éÃû³Æ£ºAttCtrl
- * Ä£¿éÖ°Ôğ£ºÖ´ĞĞ×ËÌ¬½ÇÍâ»·Óë½ÇËÙ¶ÈÄÚ»·Ë«»·¿ØÖÆ¡£
- * Ê¹ÓÃÔ¼Êø£ºPID ½á¹¹¡¢¿ØÖÆË³ĞòºÍÄ£Ê½ÇĞ»»Âß¼­±£³Ö²»±ä¡£
+ * æ¨¡å—åç§°ï¼šAttCtrl
+ * æ¨¡å—èŒè´£ï¼šæ‰§è¡Œå§¿æ€è§’å¤–ç¯ä¸è§’é€Ÿåº¦å†…ç¯åŒç¯æ§åˆ¶ã€‚
+ * ä½¿ç”¨çº¦æŸï¼šPID ç»“æ„ã€æ§åˆ¶é¡ºåºå’Œæ¨¡å¼åˆ‡æ¢é€»è¾‘ä¿æŒä¸å˜ã€‚
  */
-//½Ç¶È»·¿ØÖÆ²ÎÊı
+//è§’åº¦ç¯æ§åˆ¶å‚æ•°
 _PID_arg_st arg_2[VEC_RPY] ; 
-//½ÇËÙ¶È»·¿ØÖÆ²ÎÊı
+//è§’é€Ÿåº¦ç¯æ§åˆ¶å‚æ•°
 _PID_arg_st arg_1[VEC_RPY] ;
-//½Ç¶È»·¿ØÖÆÊı¾İ
+//è§’åº¦ç¯æ§åˆ¶æ•°æ®
 _PID_val_st val_2[VEC_RPY];
-//½ÇËÙ¶È»·¿ØÖÆÊı¾İ
+//è§’é€Ÿåº¦ç¯æ§åˆ¶æ•°æ®
 _PID_val_st val_1[VEC_RPY];
-/* ×ËÌ¬½ÇÍâ»· PID ²ÎÊı³õÊ¼»¯ */
+/* å§¿æ€è§’å¤–ç¯ PID å‚æ•°åˆå§‹åŒ– */
 void Att_2level_PID_Init()
 {
 	arg_2[ROL].kp = g_fc_param.set.pid_att_2level[ROL][KP];
@@ -45,13 +45,13 @@ void Att_2level_PID_Init()
 	arg_2[YAW].k_ff = 0.0f;		
 }
 /*
-×ËÌ¬½ÇËÙÂÊ²¿·Ö¿ØÖÆ²ÎÊı
-arg_1_kp£ºµ÷Õû½ÇËÙ¶ÈÏìÓ¦ËÙ¶È£¬²»Õğµ´µÄÇ°ÌáÏÂ£¬¾¡Á¿Ô½¸ßÔ½ºÃ¡£
-Õğµ´ÊÔ£¬¿ÉÒÔ½µµÍarg_1_kp£¬Ôö´óarg_1_kd¡£
-ÈôÔö´óarg_1_kdÒÑ¾­²»ÄÜÒÖÖÆÕğµ´£¬ĞèÒª½«kpºÍkdÍ¬Ê±¼õĞ¡¡£
+å§¿æ€è§’é€Ÿç‡éƒ¨åˆ†æ§åˆ¶å‚æ•°
+arg_1_kpï¼šè°ƒæ•´è§’é€Ÿåº¦å“åº”é€Ÿåº¦ï¼Œä¸éœ‡è¡çš„å‰æä¸‹ï¼Œå°½é‡è¶Šé«˜è¶Šå¥½ã€‚
+éœ‡è¡è¯•ï¼Œå¯ä»¥é™ä½arg_1_kpï¼Œå¢å¤§arg_1_kdã€‚
+è‹¥å¢å¤§arg_1_kdå·²ç»ä¸èƒ½æŠ‘åˆ¶éœ‡è¡ï¼Œéœ€è¦å°†kpå’ŒkdåŒæ—¶å‡å°ã€‚
 */
 #define CTRL_1_KI_START 0.f
-/* ½ÇËÙ¶ÈÄÚ»· PID ²ÎÊı³õÊ¼»¯ */
+/* è§’é€Ÿåº¦å†…ç¯ PID å‚æ•°åˆå§‹åŒ– */
 void Att_1level_PID_Init()
 {
 	arg_1[ROL].kp = g_fc_param.set.pid_att_1level[ROL][KP];
@@ -81,7 +81,7 @@ void Att_1level_PID_Init()
 	arg_1[PIT].kd_fb = arg_1[PIT].kd_fb *DIFF_GAIN;
 #endif
 }
-/* °´Ä£Ê½ÉèÖÃ½ÇËÙ¶ÈÄÚ»·»ı·ÖÏî */
+/* æŒ‰æ¨¡å¼è®¾ç½®è§’é€Ÿåº¦å†…ç¯ç§¯åˆ†é¡¹ */
 void Set_Att_1level_Ki(u8 mode)
 {
 	if(mode == 0)
@@ -98,7 +98,7 @@ void Set_Att_1level_Ki(u8 mode)
 		arg_1[ROL].ki = arg_1[PIT].ki = CTRL_1_KI_START;
 	}
 }
-/* °´Ä£Ê½ÉèÖÃ×ËÌ¬½ÇÍâ»·»ı·ÖÏî */
+/* æŒ‰æ¨¡å¼è®¾ç½®å§¿æ€è§’å¤–ç¯ç§¯åˆ†é¡¹ */
 void Set_Att_2level_Ki(u8 mode)
 {
 	if(mode == 0)
@@ -116,10 +116,10 @@ static s32 max_yaw_speed,set_yaw_av_tmp;
 #define POS_V_DAMPING 0.02f
 static float exp_rol_tmp,exp_pit_tmp;
 	
-/* ×ËÌ¬½ÇÍâ»·¿ØÖÆÈÎÎñ */
+/* å§¿æ€è§’å¤–ç¯æ§åˆ¶ä»»åŠ¡ */
 void Att_2level_Ctrl(float dT_s,s16 *CH_N)
 {
-	/*»ı·ÖÎ¢µ÷*/
+	/*ç§¯åˆ†å¾®è°ƒ*/
 	exp_rol_tmp = - loc_ctrl_1.out[Y];
 	exp_pit_tmp = - loc_ctrl_1.out[X];
 	
@@ -143,11 +143,11 @@ void Att_2level_Ctrl(float dT_s,s16 *CH_N)
 		att_2l_ct.exp_pit_adj = 0;
 	}
 	
-	/*Õı¸º²Î¿¼ANO×ø±ê²Î¿¼·½Ïò*/
+	/*æ­£è´Ÿå‚è€ƒANOåæ ‡å‚è€ƒæ–¹å‘*/
 	att_2l_ct.exp_rol = exp_rol_tmp + att_2l_ct.exp_rol_adj;// + POS_V_DAMPING *imu_data.h_acc[Y];
 	att_2l_ct.exp_pit = exp_pit_tmp + att_2l_ct.exp_pit_adj;// + POS_V_DAMPING *imu_data.h_acc[X];
 	
-	/*ÆÚÍû½Ç¶ÈÏŞ·ù*/
+	/*æœŸæœ›è§’åº¦é™å¹…*/
 	att_2l_ct.exp_rol = LIMIT(att_2l_ct.exp_rol,-MAX_ANGLE,MAX_ANGLE);
 	att_2l_ct.exp_pit = LIMIT(att_2l_ct.exp_pit,-MAX_ANGLE,MAX_ANGLE);
 	
@@ -165,18 +165,18 @@ void Att_2level_Ctrl(float dT_s,s16 *CH_N)
 	}
 	//
 	fc_stv.yaw_pal_limit = max_yaw_speed;
-	/*Ò¡¸ËÁ¿×ª»»ÎªYAWÆÚÍû½ÇËÙ¶È + ³Ì¿ØÆÚÍû½ÇËÙ¶È*/
+	/*æ‘‡æ†é‡è½¬æ¢ä¸ºYAWæœŸæœ›è§’é€Ÿåº¦ + ç¨‹æ§æœŸæœ›è§’é€Ÿåº¦*/
 	set_yaw_av_tmp = (s32)(0.0023f *my_deadzone(CH_N[CH_YAW],0,65) *max_yaw_speed) + (-program_ctrl.yaw_pal_dps) + pc_user.pal_dps_set;
-	/*×î´óYAW½ÇËÙ¶ÈÏŞ·ù*/
+	/*æœ€å¤§YAWè§’é€Ÿåº¦é™å¹…*/
 	set_yaw_av_tmp = LIMIT(set_yaw_av_tmp ,-max_yaw_speed,max_yaw_speed);
 	
-	/*Ã»ÓĞÆğ·É£¬¸´Î»*/
+	/*æ²¡æœ‰èµ·é£ï¼Œå¤ä½*/
 	if(flag.taking_off == 0)
 	{
 		att_2l_ct.exp_rol = att_2l_ct.exp_pit = set_yaw_av_tmp = 0;
 		att_2l_ct.exp_yaw = att_2l_ct.fb_yaw;
 	}
-	/*ÏŞÖÆÎó²îÔö´ó*/
+	/*é™åˆ¶è¯¯å·®å¢å¤§*/
 	if(att_2l_ct.yaw_err>90)
 	{
 		if(set_yaw_av_tmp>0)
@@ -191,90 +191,90 @@ void Att_2level_Ctrl(float dT_s,s16 *CH_N)
 			set_yaw_av_tmp = 0;
 		}
 	}	
-	//ÔöÁ¿ÏŞ·ù
+	//å¢é‡é™å¹…
 	att_1l_ct.set_yaw_speed += LIMIT((set_yaw_av_tmp - att_1l_ct.set_yaw_speed),-30,30);
-	/*ÉèÖÃÆÚÍûYAW½Ç¶È*/
+	/*è®¾ç½®æœŸæœ›YAWè§’åº¦*/
 	att_2l_ct.exp_yaw += att_1l_ct.set_yaw_speed *dT_s;
-	/*ÏŞÖÆÎª+-180¶È*/
+	/*é™åˆ¶ä¸º+-180åº¦*/
 	if(att_2l_ct.exp_yaw<-180) att_2l_ct.exp_yaw += 360;
 	else if(att_2l_ct.exp_yaw>180) att_2l_ct.exp_yaw -= 360;	
 	
-	/*¼ÆËãYAW½Ç¶ÈÎó²î*/
+	/*è®¡ç®—YAWè§’åº¦è¯¯å·®*/
 	att_2l_ct.yaw_err = (att_2l_ct.exp_yaw - att_2l_ct.fb_yaw);
-	/*ÏŞÖÆÎª+-180¶È*/
+	/*é™åˆ¶ä¸º+-180åº¦*/
 	if(att_2l_ct.yaw_err<-180) att_2l_ct.yaw_err += 360;
 	else if(att_2l_ct.yaw_err>180) att_2l_ct.yaw_err -= 360;
 	
-		/*¸³Öµ·´À¡½Ç¶ÈÖµ*/
+		/*èµ‹å€¼åé¦ˆè§’åº¦å€¼*/
 		att_2l_ct.fb_yaw = imu_data.yaw ;
 			
 		att_2l_ct.fb_rol = (imu_data.rol ) ;
 		att_2l_ct.fb_pit = (imu_data.pit ) ;
 			
 	
-	PID_calculate( dT_s,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
-										0 ,				//Ç°À¡Öµ
-										att_2l_ct.exp_rol ,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
-										att_2l_ct.fb_rol ,			//·´À¡Öµ£¨£©
-										&arg_2[ROL], //PID²ÎÊı½á¹¹Ìå
-										&val_2[ROL],	//PIDÊı¾İ½á¹¹Ìå
-	                  5,//»ı·ÖÎó²îÏŞ·ù
+	PID_calculate( dT_s,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
+										0 ,				//å‰é¦ˆå€¼
+										att_2l_ct.exp_rol ,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
+										att_2l_ct.fb_rol ,			//åé¦ˆå€¼ï¼ˆï¼‰
+										&arg_2[ROL], //PIDå‚æ•°ç»“æ„ä½“
+										&val_2[ROL],	//PIDæ•°æ®ç»“æ„ä½“
+	                  5,//ç§¯åˆ†è¯¯å·®é™å¹…
 										5 *flag.taking_off
 										 )	;
 										
-	PID_calculate( dT_s,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
-										0 ,				//Ç°À¡Öµ
-										att_2l_ct.exp_pit ,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
-										att_2l_ct.fb_pit ,			//·´À¡Öµ£¨£©
-										&arg_2[PIT], //PID²ÎÊı½á¹¹Ìå
-										&val_2[PIT],	//PIDÊı¾İ½á¹¹Ìå
-	                  5,//»ı·ÖÎó²îÏŞ·ù
+	PID_calculate( dT_s,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
+										0 ,				//å‰é¦ˆå€¼
+										att_2l_ct.exp_pit ,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
+										att_2l_ct.fb_pit ,			//åé¦ˆå€¼ï¼ˆï¼‰
+										&arg_2[PIT], //PIDå‚æ•°ç»“æ„ä½“
+										&val_2[PIT],	//PIDæ•°æ®ç»“æ„ä½“
+	                  5,//ç§¯åˆ†è¯¯å·®é™å¹…
 										5 *flag.taking_off
 										 )	;
 	
-	PID_calculate( dT_s,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
-										0 ,				//Ç°À¡Öµ
-										att_2l_ct.yaw_err ,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
-										0 ,			//·´À¡Öµ£¨£©
-										&arg_2[YAW], //PID²ÎÊı½á¹¹Ìå
-										&val_2[YAW],	//PIDÊı¾İ½á¹¹Ìå
-	                  5,//»ı·ÖÎó²îÏŞ·ù
+	PID_calculate( dT_s,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
+										0 ,				//å‰é¦ˆå€¼
+										att_2l_ct.yaw_err ,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
+										0 ,			//åé¦ˆå€¼ï¼ˆï¼‰
+										&arg_2[YAW], //PIDå‚æ•°ç»“æ„ä½“
+										&val_2[YAW],	//PIDæ•°æ®ç»“æ„ä½“
+	                  5,//ç§¯åˆ†è¯¯å·®é™å¹…
 										5 *flag.taking_off
 										 )	;
 }
 _att_1l_ct_st att_1l_ct;
 static float ct_val[4];
-/*½ÇËÙ¶È»·¿ØÖÆ*/
-/* ½ÇËÙ¶ÈÄÚ»·¿ØÖÆÈÎÎñ */
+/*è§’é€Ÿåº¦ç¯æ§åˆ¶*/
+/* è§’é€Ÿåº¦å†…ç¯æ§åˆ¶ä»»åŠ¡ */
 void Att_1level_Ctrl(float dT_s)
 {
-	/* ?????????????????? */
+	/* æ ¹æ®é£è¡ŒçŠ¶æ€åˆ‡æ¢æ§åˆ¶å‚æ•° */
 	ctrl_parameter_change_task();
 	
-		/*Ä¿±ê½ÇËÙ¶È¸³Öµ*/
+		/*ç›®æ ‡è§’é€Ÿåº¦èµ‹å€¼*/
 		 for(u8 i = 0;i<3;i++)
 		{
 			att_1l_ct.exp_angular_velocity[i] = val_2[i].out;// val_2[i].out;//
 		}
 	
-		/*Ä¿±ê½ÇËÙ¶ÈÏŞ·ù*/
+		/*ç›®æ ‡è§’é€Ÿåº¦é™å¹…*/
 		att_1l_ct.exp_angular_velocity[ROL] = LIMIT(att_1l_ct.exp_angular_velocity[ROL],-MAX_ROLLING_SPEED,MAX_ROLLING_SPEED);
 		att_1l_ct.exp_angular_velocity[PIT] = LIMIT(att_1l_ct.exp_angular_velocity[PIT],-MAX_ROLLING_SPEED,MAX_ROLLING_SPEED);
-	/*·´À¡½ÇËÙ¶È¸³Öµ*/
+	/*åé¦ˆè§’é€Ÿåº¦èµ‹å€¼*/
 	att_1l_ct.fb_angular_velocity[ROL] = ( sensor.Gyro_deg[X] );
 	att_1l_ct.fb_angular_velocity[PIT] = (-sensor.Gyro_deg[Y] );
 	att_1l_ct.fb_angular_velocity[YAW] = (-sensor.Gyro_deg[Z] );
 	
-	/*PID¼ÆËã*/									 
+	/*PIDè®¡ç®—*/									 
  for(u8 i = 0;i<3;i++)
  {
-		PID_calculate( dT_s,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
-										0,				//Ç°À¡Öµ
-										att_1l_ct.exp_angular_velocity[i],				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
-										att_1l_ct.fb_angular_velocity[i],			//·´À¡Öµ£¨£©
-										&arg_1[i], //PID²ÎÊı½á¹¹Ìå
-										&val_1[i],	//PIDÊı¾İ½á¹¹Ìå
-                    200,//»ı·ÖÎó²îÏŞ·ù
+		PID_calculate( dT_s,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
+										0,				//å‰é¦ˆå€¼
+										att_1l_ct.exp_angular_velocity[i],				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
+										att_1l_ct.fb_angular_velocity[i],			//åé¦ˆå€¼ï¼ˆï¼‰
+										&arg_1[i], //PIDå‚æ•°ç»“æ„ä½“
+										&val_1[i],	//PIDæ•°æ®ç»“æ„ä½“
+                    200,//ç§¯åˆ†è¯¯å·®é™å¹…
 										CTRL_1_INTE_LIM *flag.taking_off
 										 )	; 
  
@@ -282,11 +282,11 @@ void Att_1level_Ctrl(float dT_s)
 	 ct_val[i] = (val_1[i].out);
  }
 										 
-	/*¸³Öµ£¬×îÖÕ±ÈÀıµ÷½Ú*/
+	/*èµ‹å€¼ï¼Œæœ€ç»ˆæ¯”ä¾‹è°ƒèŠ‚*/
 	mc.roll =                   FINAL_P *ct_val[ROL];
 	mc.pitch = X_PROPORTION_X_Y *FINAL_P *ct_val[PIT];
 	mc.yaw =                   FINAL_P *ct_val[YAW];
-	/*Êä³öÁ¿ÏŞ·ù*/
+	/*è¾“å‡ºé‡é™å¹…*/
 	mc.roll = LIMIT(mc.roll,-1000,1000);
 	mc.pitch = LIMIT(mc.pitch,-1000,1000);
 	mc.yaw = LIMIT(mc.yaw,-400,400);	

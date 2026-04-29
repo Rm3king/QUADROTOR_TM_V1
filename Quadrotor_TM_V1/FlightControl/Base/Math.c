@@ -1,6 +1,6 @@
 /*
- * Ä£¿é£ºÊýÑ§¹¤¾ß
- * Ö°Ôð£ºÌá¹©×ËÌ¬Óë¿ØÖÆ¼ÆËãÖÐÊ¹ÓÃµÄ»ù´¡ÊýÑ§º¯Êý¡£
+ * æ¨¡å—ï¼šæ•°å­¦å·¥å…·
+ * èŒè´£ï¼šæä¾›å§¿æ€ä¸ŽæŽ§åˆ¶è®¡ç®—ä¸­ä½¿ç”¨çš„åŸºç¡€æ•°å­¦å‡½æ•°ã€‚
  */
 #include "Math.h"
 const float fast_atan_table[257] = 
@@ -71,7 +71,7 @@ const float fast_atan_table[257] =
 	7.794811e-01, 7.814612e-01, 7.834335e-01, 7.853983e-01,
 	7.853983e-01
 };
-/* Çó¸¡µãÊý¾ø¶ÔÖµ */
+/* æ±‚æµ®ç‚¹æ•°ç»å¯¹å€¼ */
 float my_abs(float f)
 {
 	if (f >= 0.0f)
@@ -80,7 +80,7 @@ float my_abs(float f)
 	}
 	return -f;
 }
-/* ¿ìËÙ·´ÕýÇÐ½üËÆ */
+/* å¿«é€Ÿåæ­£åˆ‡è¿‘ä¼¼ */
 REAL fast_atan2(REAL y, REAL x) 
 {
 	REAL x_abs, y_abs, z;
@@ -165,12 +165,12 @@ float my_atan(float x, float y)
 {
 	return fast_atan2(y, x);
 }
-////¼ÆËã¸¡µãÊýÆ½·½
+////è®¡ç®—æµ®ç‚¹æ•°å¹³æ–¹
 //float my_pow(float a)
 //{
 //	return a*a;
 //}
-/* ¿ìËÙÆ½·½¸ùµ¹Êý */
+/* å¿«é€Ÿå¹³æ–¹æ ¹å€’æ•° */
 float my_sqrt_reciprocal(float number)
 {
 //	long i;
@@ -196,8 +196,8 @@ float my_sqrt_reciprocal(float number)
 	
 	return y;
 }
-//¿ìËÙÆ½·½¸ùËã·¨
-/* ¿ìËÙÆ½·½¸ù */
+//å¿«é€Ÿå¹³æ–¹æ ¹ç®—æ³•
+/* å¿«é€Ÿå¹³æ–¹æ ¹ */
 float my_sqrt(float number)
 {
 //	long i;
@@ -249,7 +249,7 @@ float my_cos(double rad)
 	}
 	return my_sin(rad)*_flag;
 }
-/* ËÀÇø´¦Àí */
+/* æ­»åŒºå¤„ç† */
 float my_deadzone(float x,float ref,float zoom)
 {
 	float t;
@@ -323,7 +323,7 @@ double To_180_degrees_db(double x)
 {
 	return (x>180?(x-360):(x<-180?(x+360):x));
 }
-/* ¶Ô¶þÎ¬ÏòÁ¿Ö´ÐÐ·ùÖµÏÞÖÆ */
+/* å¯¹äºŒç»´å‘é‡æ‰§è¡Œå¹…å€¼é™åˆ¶ */
 void length_limit(float *in1,float *in2,float limit,float out[2])
 {
 	float l = my_2_norm(*in1,*in2);
@@ -352,21 +352,21 @@ float fifo(u8 arr_num,u8 *cnt,float *arr,float in)
 |  | =  |          |   |  |
 |y2|    |sinx, cosx|   |y2|
 */
-/* ¶þÎ¬ÏòÁ¿Ðý×ª 90 ¶È */
-void rot_vec_2(float in[2],float sinx,float out[2]) //x = +-90¶ÈÐý×ª£¬È¡sin x
+/* äºŒç»´å‘é‡æ—‹è½¬ 90 åº¦ */
+void rot_vec_2(float in[2],float sinx,float out[2]) //x = +-90åº¦æ—‹è½¬ï¼Œå–sin x
 {
 	out[0] = in[0] *my_sqrt(1-my_pow(sinx)) - in[1] *sinx;
 	out[1] = in[1] *my_sqrt(1-my_pow(sinx)) + in[0] *sinx;
 }
 /*
-va x vb = |va||vb| *sinx *vn,vnÎª´¹Ö±ÓÚva,vbµÄµ¥Î»ÏòÁ¿
-¹éÒ»»¯¼ÆËã£¬È¡ va x vb = sinx;
+va x vb = |va||vb| *sinx *vn,vnä¸ºåž‚ç›´äºŽva,vbçš„å•ä½å‘é‡
+å½’ä¸€åŒ–è®¡ç®—ï¼Œå– va x vb = sinx;
 */
-float vec_2_cross_product(float in1[2],float in2[2]) //Õý¸ºÎªin1->in2 ¼Ð½ÇÄæÊ±Õë
+float vec_2_cross_product(float in1[2],float in2[2]) //æ­£è´Ÿä¸ºin1->in2 å¤¹è§’é€†æ—¶é’ˆ
 {
 	return (in1[0] *in2[1] - in1[1] *in2[0]);
 }
-float vec_2_dot_product(float in1[2],float in2[2]) //Õý¸ºÎªin1->in2 ¼Ð½Ç£¨¿Õ¼äÊµ¼Ê¼Ð½Ç£©
+float vec_2_dot_product(float in1[2],float in2[2]) //æ­£è´Ÿä¸ºin1->in2 å¤¹è§’ï¼ˆç©ºé—´å®žé™…å¤¹è§’ï¼‰
 {
 	return (in1[0]*in2[0] + in1[1]*in2[1]);
 }
@@ -375,13 +375,13 @@ A x B = (AyBz - AzBy)i + (AzBx - AxBz)j + (AxBy - AyBx)k
 			
 */
 	
-void vec_3_cross_product_err_sinx(float in1[3],float in2[3],float out[3]) //Êä³öxyzÎó²î¼Ð½Çx µÄsin(x)£¬ÓÒÊÖÂÝÐý
+void vec_3_cross_product_err_sinx(float in1[3],float in2[3],float out[3]) //è¾“å‡ºxyzè¯¯å·®å¤¹è§’x çš„sin(x)ï¼Œå³æ‰‹èžºæ—‹
 {
 	out[0] = (in1[1] * in2[2] - in1[2] * in2[1] ) ;
 	out[1] = (in1[2] * in2[0] - in1[0] * in2[2] ) ;
 	out[2] = (in1[0] * in2[1] - in1[1] * in2[0] ) ;
 }
-float vec_3_dot_product(float in1[3],float in2[3]) //Õý¸ºÎªin1->in2 ¼Ð½Ç£¨¿Õ¼äÊµ¼Ê¼Ð½Ç£©
+float vec_3_dot_product(float in1[3],float in2[3]) //æ­£è´Ÿä¸ºin1->in2 å¤¹è§’ï¼ˆç©ºé—´å®žé™…å¤¹è§’ï¼‰
 {
 	return (in1[0]*in2[0] + in1[1]*in2[1] + in1[2]*in2[2]);
 }

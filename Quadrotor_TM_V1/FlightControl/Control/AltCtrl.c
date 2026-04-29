@@ -10,13 +10,13 @@
 #include "LocCtrl.h"
 #include "Parameter.h"
 /*
- * ģ�����ƣ�AltCtrl
- * ģ��ְ��ִ���Զ��𽵡��߶��⻷�͸߶��ٶ��ڻ����ơ�
- * ʹ��Լ�����Զ���״̬����PID �ṹ�Ϳ���������屣�ֲ��䡣
+ * 模块名称：AltCtrl
+ * 模块职责：执行自动起降、高度外环和高度速度内环控制。
+ * 使用约束：自动起降状态机、PID 结构和控制参数阈保持不变。
  */
 static s16 s_auto_takeoff_speed_cmps;
 #define AUTO_TAKE_OFF_KP 2.0f
-/* �Զ����/�������̹��� */
+/* 自动起飞/降落流程管理 */
 void Auto_Take_Off_Land_Task(u8 dT_ms)
 {
 	static u16 take_off_ok_cnt;
@@ -40,23 +40,23 @@ void Auto_Take_Off_Land_Task(u8 dT_ms)
 	}
 	if(flag.auto_take_off_land ==AUTO_TAKE_OFF)
 	{
-		//�����������ٶ�
+		//限制最大起飞速度
 		s16 max_take_off_vel = LIMIT(g_fc_param.set.auto_take_off_speed,20,200);
 		//
 		take_off_ok_cnt += dT_ms;
 		s_auto_takeoff_speed_cmps = AUTO_TAKE_OFF_KP *(g_fc_param.set.auto_take_off_height - wcz_hei_fus.out);
-		//��������ٶ�
+		//计算起飞速度
 		s_auto_takeoff_speed_cmps = LIMIT(s_auto_takeoff_speed_cmps,0,max_take_off_vel);
 		
-		//�˳������������1������߶Ȼ�������ʱ�����5000���롣
+		//退出起飞条件1：超过高度环达标或时间满5000毫秒。
 		if(take_off_ok_cnt>=5000 || (g_fc_param.set.auto_take_off_height - loc_ctrl_2.exp[Z] <2))//(auto_ref_height>AUTO_TAKE_OFF_HEIGHT)
 		{
 			flag.auto_take_off_land = AUTO_TAKE_OFF_FINISH;
 			
 			
 		}
-		//�˳������������2��2000������ж��û����ڿ������š�
-		if(take_off_ok_cnt >2000 && ABS(fs.speed_set_h_norm[Z])>0.1f)// һ���Ѿ�taking_off,��������Ƹˣ��˳��������
+		//退出起飞条件2：2000毫秒后判断用户正在控制油门。
+		if(take_off_ok_cnt >2000 && ABS(fs.speed_set_h_norm[Z])>0.1f)// 已经taking_off，如果推了油门杆，退出自动起飞
 		{
 			flag.auto_take_off_land = AUTO_TAKE_OFF_FINISH;
 		}
@@ -75,13 +75,13 @@ void Auto_Take_Off_Land_Task(u8 dT_ms)
 	}
 	if(flag.auto_take_off_land == AUTO_LAND)
 	{
-		//�����Զ��½��ٶ�
+		//计算自动降落速度
 		s_auto_takeoff_speed_cmps = -(s16)LIMIT(g_fc_param.set.auto_landing_speed,20,200);
 	}
 }
 _PID_arg_st alt_arg_2;
 _PID_val_st alt_val_2;
-/*�߶Ȼ�PID������ʼ��*/
+/*高度环PID参数初始化*/
 void Alt_2level_PID_Init()
 {
 	alt_arg_2.kp = g_fc_param.set.pid_alt_2level[KP];
@@ -90,7 +90,7 @@ void Alt_2level_PID_Init()
 	alt_arg_2.kd_fb = g_fc_param.set.pid_alt_2level[KD];
 	alt_arg_2.k_ff = 0.0f;
 }
-/* �߶��⻷�������� */
+/* 高度外环控制任务 */
 void Alt_2level_Ctrl(float dT_s)
 {
 	Auto_Take_Off_Land_Task(1000*dT_s);
@@ -114,13 +114,13 @@ void Alt_2level_Ctrl(float dT_s)
 	}
 	if(flag.taking_off == 1)
 	{
-		PID_calculate( dT_s,            //���ڣ���λ���룩
-						0,				//ǰ��ֵ
-						loc_ctrl_2.exp[Z],				//����ֵ���趨ֵ��
-						loc_ctrl_2.fb[Z],			//����ֵ����
-						&alt_arg_2, //PID�����ṹ��
-						&alt_val_2,	//PID���ݽṹ��
-						100,//��������޷�
+		PID_calculate( dT_s,            //周期（单位：秒）
+						0,				//前馈值
+						loc_ctrl_2.exp[Z],				//期望值（设定值）
+						loc_ctrl_2.fb[Z],			//反馈值（测量）
+						&alt_arg_2, //PID参数结构体
+						&alt_val_2,	//PID数据结构体
+						100,//积分限幅
 						0
 						 );
 	}
@@ -135,7 +135,7 @@ void Alt_2level_Ctrl(float dT_s)
 }
 _PID_arg_st alt_arg_1;
 _PID_val_st alt_val_1;
-/*�߶��ٶȻ�PID������ʼ��*/
+/*高度速度环PID参数初始化*/
 void Alt_1level_PID_Init()
 {
 	alt_arg_1.kp = g_fc_param.set.pid_alt_1level[KP];
@@ -146,7 +146,7 @@ void Alt_1level_PID_Init()
 }
 static float err_i_comp;
 static float w_acc_z_lpf;
-/* �߶��ٶ��ڻ��������� */
+/* 高度速度内环控制任务 */
 void Alt_1level_Ctrl(float dT_s)
 {
 	u8 out_en;
@@ -154,19 +154,19 @@ void Alt_1level_Ctrl(float dT_s)
 	
 	flag.thr_mode = THR_AUTO;
 	
-	loc_ctrl_1.exp[Z] = 0.6f *fs.alt_ctrl_speed_set + alt_val_2.out;//�ٶ�ǰ��0.6f��ֱ�Ӹ��ٶ�
+	loc_ctrl_1.exp[Z] = 0.6f *fs.alt_ctrl_speed_set + alt_val_2.out;//速度前馈0.6f，直接给速度
 	
-	w_acc_z_lpf += 0.2f *(imu_data.w_acc[Z] - w_acc_z_lpf); //��ͨ�˲�
-	loc_ctrl_1.fb[Z] = wcz_spe_fus.out + g_fc_param.set.pid_alt_1level[KD] *w_acc_z_lpf;//΢�����У��±�PID����΢��ϵ��Ϊ0
+	w_acc_z_lpf += 0.2f *(imu_data.w_acc[Z] - w_acc_z_lpf); //低通滤波
+	loc_ctrl_1.fb[Z] = wcz_spe_fus.out + g_fc_param.set.pid_alt_1level[KD] *w_acc_z_lpf;//微分前移，下边PID的微分系数为0
 	
 	
-	PID_calculate( dT_s,            //���ڣ���λ���룩
-					0,				//ǰ��ֵ
-					loc_ctrl_1.exp[Z],				//����ֵ���趨ֵ��
-					loc_ctrl_1.fb[Z] ,			//����ֵ����
-					&alt_arg_1, //PID�����ṹ��
-					&alt_val_1,	//PID���ݽṹ��
-					100,//��������޷�
+	PID_calculate( dT_s,            //周期（单位：秒）
+					0,				//前馈值
+					loc_ctrl_1.exp[Z],				//期望值（设定值）
+					loc_ctrl_1.fb[Z] ,			//反馈值（测量）
+					&alt_arg_1, //PID参数结构体
+					&alt_val_1,	//PID数据结构体
+					100,//积分限幅
 					(THR_INTE_LIM *10 - err_i_comp )*out_en
 					 );
 	

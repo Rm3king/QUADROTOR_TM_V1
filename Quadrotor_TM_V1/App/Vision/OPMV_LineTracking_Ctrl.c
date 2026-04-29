@@ -6,9 +6,9 @@
 #include "Imu.h"
 #include "FlightCtrl.h"
 /*
- * Ä£¿éËµÃ÷¡£
- * OpenMV Ñ°Ïß¿ØÖÆÊµÏÖ¡£
- * ¸ºÔğ¸ù¾İÑ°ÏßÆ«²îÍê³É×ËÌ¬½âñî¡¢Îó²î¹À¼ÆÒÔ¼°ËÙ¶ÈºÍº½ÏòÊä³ö¼ÆËã¡£
+ * æ¨¡å—è¯´æ˜ã€‚
+ * OpenMV å¯»çº¿æ§åˆ¶å®ç°ã€‚
+ * è´Ÿè´£æ ¹æ®å¯»çº¿åå·®å®Œæˆå§¿æ€è§£è€¦ã€è¯¯å·®ä¼°è®¡ä»¥åŠé€Ÿåº¦å’Œèˆªå‘è¾“å‡ºè®¡ç®—ã€‚
  */
 static void ANO_LTracking_Decoupling(u8 *dT_ms, float rol_degs, float pit_degs);
 static void ANO_LTracking_Calcu(u8 *dT_ms, s32 relative_height_cm);
@@ -24,7 +24,7 @@ static u16 line_loss_hold_time;
 static float lt_decou_pos_pixel_lpf[2];
 static u8 step_pro_sta;
 
-/* ²ÎÊı±ê¶¨Öµ¡£ */
+/* å‚æ•°æ ‡å®šå€¼ã€‚ */
 #define LT_PIXELPDEG    2.4f
 #define LT_CMPPIXEL     0.01f
 #define LLH_TIME        1000
@@ -33,8 +33,8 @@ static u8 step_pro_sta;
 #define FORWARD_VEL     50
 
 /*
- * ¹¦ÄÜ£ºÖ´ĞĞÑ°ÏßÊı¾İÔ¤´¦Àí¡£
- * ËµÃ÷£ºÔÚ OpenMV Ñ°ÏßÄ£Ê½ÏÂÍê³É×ËÌ¬½âñîºÍÎó²î¹À¼Æ¡£
+ * åŠŸèƒ½ï¼šæ‰§è¡Œå¯»çº¿æ•°æ®é¢„å¤„ç†ã€‚
+ * è¯´æ˜ï¼šåœ¨ OpenMV å¯»çº¿æ¨¡å¼ä¸‹å®Œæˆå§¿æ€è§£è€¦å’Œè¯¯å·®ä¼°è®¡ã€‚
  */
 void ANO_LTracking_Task(u8 dT_ms)
 {
@@ -49,7 +49,7 @@ void ANO_LTracking_Task(u8 dT_ms)
     }
 }
 
-/* ¹¦ÄÜ£ºÖ´ĞĞÑ°Ïß×ËÌ¬½âñî¡£ */
+/* åŠŸèƒ½ï¼šæ‰§è¡Œå¯»çº¿å§¿æ€è§£è€¦ã€‚ */
 static void ANO_LTracking_Decoupling(u8 *dT_ms,float rol_degs,float pit_degs)
 {
     float dT_s = (*dT_ms) * 1e-3f;
@@ -75,7 +75,7 @@ static void ANO_LTracking_Decoupling(u8 *dT_ms,float rol_degs,float pit_degs)
 
     if(opmv.lt.sta != 0)
     {
-        /* µ±Ç°°æ±¾±£Áô×ËÌ¬²¹³¥¹Ø±Õ²ßÂÔ£¬½ö±£ÁôÏŞ·ù¿ò¼Ü¡£ */
+        /* å½“å‰ç‰ˆæœ¬ä¿ç•™å§¿æ€è¡¥å¿å…³é—­ç­–ç•¥ï¼Œä»…ä¿ç•™é™å¹…æ¡†æ¶ã€‚ */
         (void)rol_degs;
         (void)pit_degs;
         ano_opmv_lt_ctrl.r2pixel_val = 0;
@@ -94,7 +94,7 @@ static void ANO_LTracking_Decoupling(u8 *dT_ms,float rol_degs,float pit_degs)
     }
 }
 
-/* ¹¦ÄÜ£º¼ÆËãÑ°ÏßµØÃæÆ«²î¡£ */
+/* åŠŸèƒ½ï¼šè®¡ç®—å¯»çº¿åœ°é¢åå·®ã€‚ */
 static void ANO_LTracking_Calcu(u8 *dT_ms,s32 relative_height_cm)
 {
     static float relative_height_cm_valid;
@@ -111,8 +111,8 @@ static void ANO_LTracking_Calcu(u8 *dT_ms,s32 relative_height_cm)
 }
 
 /*
- * ¹¦ÄÜ£ºÖ´ĞĞÑ°Ïß·Ö²½Á÷³Ì¡£
- * ËµÃ÷£º±£³ÖÔ­ÓĞ×´Ì¬ÍÆ½ø¡¢È·ÈÏ´ÎÊıºÍ³ÖĞøÊ±¼ä²»±ä¡£
+ * åŠŸèƒ½ï¼šæ‰§è¡Œå¯»çº¿åˆ†æ­¥æµç¨‹ã€‚
+ * è¯´æ˜ï¼šä¿æŒåŸæœ‰çŠ¶æ€æ¨è¿›ã€ç¡®è®¤æ¬¡æ•°å’ŒæŒç»­æ—¶é—´ä¸å˜ã€‚
  */
 void ANO_LT_StepProcedure(u8 *dT_ms)
 {
@@ -285,8 +285,8 @@ void ANO_LT_StepProcedure(u8 *dT_ms)
 }
 
 /*
- * ¹¦ÄÜ£º¼ÆËãÑ°Ïß¿ØÖÆÊä³ö¡£
- * ËµÃ÷£º±£ÁôÔ­ÓĞºáÏò PD Óëº½ÏòĞŞÕıÂß¼­¡£
+ * åŠŸèƒ½ï¼šè®¡ç®—å¯»çº¿æ§åˆ¶è¾“å‡ºã€‚
+ * è¯´æ˜ï¼šä¿ç•™åŸæœ‰æ¨ªå‘ PD ä¸èˆªå‘ä¿®æ­£é€»è¾‘ã€‚
  */
 void ANO_LTracking_Ctrl(u8 *dT_ms,u8 en)
 {

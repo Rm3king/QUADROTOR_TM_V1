@@ -1,18 +1,18 @@
 /*
- * Ä£¿é£ºPID¿ØÖÆ¹¤¾ß
- * Ö°Ôğ£ºÌá¹©Í¨ÓÃ PID ¼ÆËãÓë»ı·ÖÏŞ·ù´¦Àí
- * ËµÃ÷£º±£³ÖÔ­ÓĞ PID ¹«Ê½ºÍÊä³ö¶¨Òå²»±ä¡£
+ * æ¨¡å—ï¼šPIDæ§åˆ¶å·¥å…·
+ * èŒè´£ï¼šæä¾›é€šç”¨ PID è®¡ç®—ä¸ç§¯åˆ†é™å¹…å¤„ç†
+ * è¯´æ˜ï¼šä¿æŒåŸæœ‰ PID å…¬å¼å’Œè¾“å‡ºå®šä¹‰ä¸å˜ã€‚
  */
 #include "Pid.h"
 #include "Math.h"
 #include "Filter.h"
-float PID_calculate( float dT_s,            //ÖÜÆÚ£¨µ¥Î»£ºÃë£©
-										float in_ff,				//Ç°À¡Öµ
-										float expect,				//ÆÚÍûÖµ£¨Éè¶¨Öµ£©
-										float feedback,			//·´À¡Öµ£¨£©
-										_PID_arg_st *pid_arg, //PID²ÎÊı½á¹¹Ìå
-										_PID_val_st *pid_val,	//PIDÊı¾İ½á¹¹Ìå
-										float inte_d_lim,//»ı·ÖÎó²îÏŞ·ù
+float PID_calculate( float dT_s,            //å‘¨æœŸï¼ˆå•ä½ï¼šç§’ï¼‰
+										float in_ff,				//å‰é¦ˆå€¼
+										float expect,				//æœŸæœ›å€¼ï¼ˆè®¾å®šå€¼ï¼‰
+										float feedback,			//åé¦ˆå€¼ï¼ˆï¼‰
+										_PID_arg_st *pid_arg, //PIDå‚æ•°ç»“æ„ä½“
+										_PID_val_st *pid_val,	//PIDæ•°æ®ç»“æ„ä½“
+										float inte_d_lim,//ç§¯åˆ†è¯¯å·®é™å¹…
 										float inte_lim
 										 )	
 {

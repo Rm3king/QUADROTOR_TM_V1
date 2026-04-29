@@ -1,7 +1,7 @@
 /*
- * Ä£¿éÃû³Æ£ºMagProcess
- * Ä£¿éÖ°Ôğ£º´¦Àí´ÅÁ¦¼ÆĞ£×¼Á÷³Ì¡¢ÔËĞĞÊ±²¹³¥ºÍ´Å³¡Ç¿¶ÈÓĞĞ§ĞÔ¼ì²é¡£
- * Ê¹ÓÃÔ¼Êø£ºĞ£×¼²½Öè¡¢LED Ö¸Ê¾ºÍ²ÎÊı±£´æ´¥·¢Âß¼­±£³Ö²»±ä¡£
+ * æ¨¡å—åç§°ï¼šMagProcess
+ * æ¨¡å—èŒè´£ï¼šå¤„ç†ç£åŠ›è®¡æ ¡å‡†æµç¨‹ã€è¿è¡Œæ—¶è¡¥å¿å’Œç£åœºå¼ºåº¦æœ‰æ•ˆæ€§æ£€æŸ¥ã€‚
+ * ä½¿ç”¨çº¦æŸï¼šæ ¡å‡†æ­¥éª¤ã€LED æŒ‡ç¤ºå’Œå‚æ•°ä¿å­˜è§¦å‘é€»è¾‘ä¿æŒä¸å˜ã€‚
  */
 #include "MagProcess.h"
 #include "LED.h"
@@ -59,12 +59,12 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 		save.mag_gain[i] = LIMIT(save.mag_gain[i],0.05f,100);
 		mag.val[i] = (mag_in[i] - save.mag_offset[i]) *save.mag_gain[i];
 	}
-	/* ??????? */
+	/* æ ¡å‡†æµç¨‹ */
 	if(mag.mag_CALIBRATE!= 0 && flag.unlock_sta == 0)
 	{	
 		switch(s_mag_cal_step)
 		{
-			case 0://µÚÒ»²½£¬Ë®Æ½Ğı×ª
+			case 0://ç¬¬ä¸€æ­¥ï¼Œæ°´å¹³æ—‹è½¬
 				MagCalUpdateXY(mag_in);			
 			
 				if(z_vec_z<0.985f)//+-10deg	
@@ -76,7 +76,7 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 				else
 				{	
 					LED_STA.calMag = 1;
-					s_mag_cal_angle_deg[0] += dT_ms *1e-3f *(gyro_deg_z); //½Ç¶È»ı·Ö£¬Ğı×ª360¶È
+					s_mag_cal_angle_deg[0] += dT_ms *1e-3f *(gyro_deg_z); //è§’åº¦ç§¯åˆ†ï¼Œæ—‹è½¬360åº¦
 					if(ABS(s_mag_cal_angle_deg[0])>360)
 					{
 						s_mag_cal_angle_deg[0] = 0;
@@ -92,7 +92,7 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 				s_mag_cal_step = 0;
 			break;
 			
-			case 2://µÚ¶ş²½£¬ÊúÖ±Ğı×ª£¬»úÍ·³¯ÏÂ
+			case 2://ç¬¬äºŒæ­¥ï¼Œç«–ç›´æ—‹è½¬ï¼Œæœºå¤´æœä¸‹
 				LED_STA.calMag = 2;
 				if(z_vec_z<0.1f)//5.7deg
 				{
@@ -113,7 +113,7 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 				else
 				{
 					LED_STA.calMag = 3;
-					s_mag_cal_angle_deg[1] += dT_ms *1e-3f *(gyro_deg_x);	//½Ç¶È»ı·Ö£¬Ğı×ª360¶È
+					s_mag_cal_angle_deg[1] += dT_ms *1e-3f *(gyro_deg_x);	//è§’åº¦ç§¯åˆ†ï¼Œæ—‹è½¬360åº¦
 					if(ABS(s_mag_cal_angle_deg[1])>360)
 					{
 						s_mag_cal_angle_deg[1] = 0;
@@ -122,7 +122,7 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 				}			
 			break;
 			
-			case 4://error_2£¬ÖØĞÂ¿ªÊ¼ÊúÖ±Ğı×ª
+			case 4://error_2ï¼Œé‡æ–°å¼€å§‹ç«–ç›´æ—‹è½¬
 				MagCalReset(1);
 				s_mag_cal_angle_deg[1] = 0;
 				s_mag_cal_step = 2;				
@@ -131,8 +131,8 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 			case 5:
 				for(u8 i = 0;i<3;i++)
 				{
-					save.mag_offset[i] = 0.5f *(s_mag_max_raw[i] + s_mag_min_raw[i]);		//ÖĞÖµĞ£×¼
-					save.mag_gain[i] = safe_div(200.0f ,(0.5f *(s_mag_max_raw[i] - s_mag_min_raw[i])),0);		//·ùÖµĞ£×¼
+					save.mag_offset[i] = 0.5f *(s_mag_max_raw[i] + s_mag_min_raw[i]);		//ä¸­å€¼æ ¡å‡†
+					save.mag_gain[i] = safe_div(200.0f ,(0.5f *(s_mag_max_raw[i] - s_mag_min_raw[i])),0);		//å¹…å€¼æ ¡å‡†
 				}
 				
 				MagCalReset(3);		
@@ -141,7 +141,7 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 				mag.mag_CALIBRATE = 0;			
 				LED_STA.calMag = 0;
 				
-				data_save();//±£´æÊı¾İ
+				data_save();//ä¿å­˜æ•°æ®
 			break;
 			
 			default:break;	
@@ -150,13 +150,13 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 		
 		if(s_mag_cal_step == 0 || s_mag_cal_step == 3)
 		{
-			//³¤Ê±¼ä³ö´í£¬ÍË³öĞ£×¼Âß¼­
+			//é•¿æ—¶é—´å‡ºé”™ï¼Œé€€å‡ºæ ¡å‡†é€»è¾‘
 			if(s_mag_cal_timeout_ms<15000)
 			{
 				s_mag_cal_timeout_ms+= dT_ms;
 				
 			}
-			else /* ????????????? */
+			else /* æ ¡å‡†æ•°æ®å¼‚å¸¸ï¼Œæç¤ºé”™è¯¯ */
 			{
 				LED_STA.errOneTime = 1;
 				s_mag_cal_timeout_ms = 0;
@@ -174,6 +174,6 @@ void Mag_Data_Deal_Task(u8 dT_ms,s16 mag_in[],float z_vec_z,float gyro_deg_x,flo
 		s_mag_cal_step = 0;
 		field_strength = my_3_norm(mag.val[X], mag.val[Y], mag.val[Z]);
 		(void)field_strength;
-		/* Ô¤Áô´Å³¡Ç¿¶ÈÓĞĞ§ĞÔÅĞ¶¨À©Õ¹µã¡£ */
+		/* é¢„ç•™ç£åœºå¼ºåº¦æœ‰æ•ˆæ€§åˆ¤å®šæ‰©å±•ç‚¹ã€‚ */
 	}
 }

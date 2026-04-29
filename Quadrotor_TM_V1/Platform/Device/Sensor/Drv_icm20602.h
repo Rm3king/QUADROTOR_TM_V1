@@ -2,8 +2,8 @@
 #define _DRV_ICM20602_H_
 #include "sysconfig.h"
 /*
- * ģ�����ƣ�Drv_icm20602
- * ģ��ְ���ṩ ICM20602 �������ļĴ������塢��ʼ�������ݶ�ȡ�ӿڡ�
+ * 模块名称：Drv_icm20602
+ * 模块职责：提供 ICM20602 传感器的寄存器定义、初始化和数据读取接口。
  */
 #define MPU_WHOAMI_20602		0x12
 #define MPUREG_XG_OFFS_TC                       0x00

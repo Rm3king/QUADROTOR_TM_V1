@@ -5,26 +5,26 @@
 #include "ProgramCtrl_User.h"
 #include "FlightCtrl.h"
 
-/* OpenMV ¿ØÖÆÆôÓÃµÄ×îµÍÏà¶Ô¸ß¶È£¬µ¥Î» cm¡£ */
+/* OpenMV æ§åˆ¶å¯ç”¨çš„æœ€ä½ç›¸å¯¹é«˜åº¦ï¼Œå•ä½ cmã€‚ */
 #define RELATIVE_HEIGHT_CM   (jsdata.valid_of_alt_cm)
 
-/* OpenMV ¿ØÖÆ×´Ì¬¡£ */
+/* OpenMV æ§åˆ¶çŠ¶æ€ã€‚ */
 _opmv_ct_sta_st opmv_ct_sta;
 
 /*
- * ¹¦ÄÜ£ºOpenMV ¿ØÖÆ×ÜÈë¿Ú¡£
- * ËµÃ÷£º¸ù¾İ·ÉĞĞ×´Ì¬Ñ¡ÔñÉ«¿é¸ú×Ù»òÑ°Ïß¿ØÖÆ£¬²¢ÔÚÍË³öÊ±ÇåÁãÊä³ö¡£
+ * åŠŸèƒ½ï¼šOpenMV æ§åˆ¶æ€»å…¥å£ã€‚
+ * è¯´æ˜ï¼šæ ¹æ®é£è¡ŒçŠ¶æ€é€‰æ‹©è‰²å—è·Ÿè¸ªæˆ–å¯»çº¿æ§åˆ¶ï¼Œå¹¶åœ¨é€€å‡ºæ—¶æ¸…é›¶è¾“å‡ºã€‚
  */
 void ANO_OPMV_Ctrl_Task(u8 dT_ms)
 {
     if(RELATIVE_HEIGHT_CM > 40)
     {
-        /* ³¬¹ı 40cm ºóÈÏÎª¸ß¶ÈÌõ¼şÂú×ã¡£ */
+        /* è¶…è¿‡ 40cm åè®¤ä¸ºé«˜åº¦æ¡ä»¶æ»¡è¶³ã€‚ */
         opmv_ct_sta.height_flag = 1;
     }
     if(flag.unlock_sta == 0)
     {
-        /* Î´½âËøÊ±Ç¿ÖÆ¸´Î»¸ß¶ÈÌõ¼ş¡£ */
+        /* æœªè§£é”æ—¶å¼ºåˆ¶å¤ä½é«˜åº¦æ¡ä»¶ã€‚ */
         opmv_ct_sta.height_flag = 0;
     }
 
@@ -42,14 +42,14 @@ void ANO_OPMV_Ctrl_Task(u8 dT_ms)
 
     if(opmv.mode_sta == 1)
     {
-        /* É«¿é¸ú×ÙÄ£Ê½¡£ */
+        /* è‰²å—è·Ÿè¸ªæ¨¡å¼ã€‚ */
         opmv_ct_sta.reset_flag = 0;
         ANO_CBTracking_Ctrl(&dT_ms, opmv_ct_sta.en);
         Program_Ctrl_User_Set_HXYcmps(ano_opmv_cbt_ctrl.exp_velocity_h_cmps[0], ano_opmv_cbt_ctrl.exp_velocity_h_cmps[1]);
     }
     else if(opmv.mode_sta == 2)
     {
-        /* Ñ°ÏßÄ£Ê½¡£ */
+        /* å¯»çº¿æ¨¡å¼ã€‚ */
         opmv_ct_sta.reset_flag = 0;
         ANO_LTracking_Ctrl(&dT_ms, opmv_ct_sta.en);
         Program_Ctrl_User_Set_HXYcmps(ano_opmv_lt_ctrl.exp_velocity_h_cmps[0], ano_opmv_lt_ctrl.exp_velocity_h_cmps[1]);
@@ -57,7 +57,7 @@ void ANO_OPMV_Ctrl_Task(u8 dT_ms)
     }
     else
     {
-        /* ÎŞÓĞĞ§ÊÓ¾õÄ£Ê½Ê±£¬½öÖ´ĞĞÒ»´ÎÊä³öÇåÁã¡£ */
+        /* æ— æœ‰æ•ˆè§†è§‰æ¨¡å¼æ—¶ï¼Œä»…æ‰§è¡Œä¸€æ¬¡è¾“å‡ºæ¸…é›¶ã€‚ */
         if(opmv_ct_sta.reset_flag == 0)
         {
             opmv_ct_sta.reset_flag = 1;

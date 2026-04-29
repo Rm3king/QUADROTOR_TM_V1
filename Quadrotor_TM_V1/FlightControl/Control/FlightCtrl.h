@@ -4,7 +4,7 @@
 #include "Filter.h"
 #include "Math.h"
 
-/* ·ÉĞĞ¶¯×÷½Å±¾±àºÅ */
+/* é£è¡ŒåŠ¨ä½œè„šæœ¬ç¼–å· */
 enum
 {
     null = 0,
@@ -27,7 +27,7 @@ enum
     pit_rol_pn_2,
 };
 
-/* ·ÉĞĞ×´Ì¬¿ØÖÆÁ¿ */
+/* é£è¡ŒçŠ¶æ€æ§åˆ¶é‡ */
 typedef struct
 {
     s16 alt_ctrl_speed_set;
@@ -38,7 +38,7 @@ typedef struct
 } _flight_state_st;
 extern _flight_state_st fs;
 
-/* ¹âÁ÷Óë¸ß¶ÈÍ¬²½ÅĞ¶¨ÊäÈë */
+/* å…‰æµä¸é«˜åº¦åŒæ­¥åˆ¤å®šè¾“å…¥ */
 typedef struct
 {
     u8 of_qua;

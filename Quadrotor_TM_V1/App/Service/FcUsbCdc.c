@@ -9,9 +9,9 @@
 #include "usb_serial_structs.h"
 extern void USBIntRegister(uint32_t ui32Base, void (*pfnHandler)(void));
 /*
- * Ä£¿éËµÃ÷¡£
- * USB CDC Éè±¸Í¨ĞÅ½Ó¿Ú¡£
- * ¸ºÔğ³õÊ¼»¯ USB CDC Éè±¸Õ»£¬²¢Ìá¹©·¢ËÍ¡¢½ÓÊÕÓë»º³åÇø²éÑ¯½Ó¿Ú¡£
+ * æ¨¡å—è¯´æ˜ã€‚
+ * USB CDC è®¾å¤‡é€šä¿¡æ¥å£ã€‚
+ * è´Ÿè´£åˆå§‹åŒ– USB CDC è®¾å¤‡æ ˆï¼Œå¹¶æä¾›å‘é€ã€æ¥æ”¶ä¸ç¼“å†²åŒºæŸ¥è¯¢æ¥å£ã€‚
  */
 static tLineCoding usb_linecoding =
 {
@@ -21,12 +21,12 @@ static tLineCoding usb_linecoding =
     8,
 };
 
-/* USB Ã¶¾ÙÍê³É±êÖ¾¡£ */
+/* USB æšä¸¾å®Œæˆæ ‡å¿—ã€‚ */
 static volatile bool g_bUSBConfigured = false;
 
 /*
- * ¹¦ÄÜ£º´¦Àí CDC ¿ØÖÆÊÂ¼ş¡£
- * ËµÃ÷£ºÎ¬»¤Á¬½Ó×´Ì¬£¬²¢´¦Àí´®¿Ú²ÎÊı¶ÁĞ´ÇëÇó¡£
+ * åŠŸèƒ½ï¼šå¤„ç† CDC æ§åˆ¶äº‹ä»¶ã€‚
+ * è¯´æ˜ï¼šç»´æŠ¤è¿æ¥çŠ¶æ€ï¼Œå¹¶å¤„ç†ä¸²å£å‚æ•°è¯»å†™è¯·æ±‚ã€‚
  */
 uint32_t ControlHandler(void *pvCBData, uint32_t ui32Event,
                         uint32_t ui32MsgValue, void *pvMsgData)
@@ -73,8 +73,8 @@ uint32_t ControlHandler(void *pvCBData, uint32_t ui32Event,
 }
 
 /*
- * ¹¦ÄÜ£º´¦Àí CDC ·¢ËÍÊÂ¼ş¡£
- * ËµÃ÷£ºµ±Ç°½ö±£ÁôÊÂ¼şÕ¼Î»£¬²»¸Ä±äÔ­Ê¼´¦ÀíÁ÷³Ì¡£
+ * åŠŸèƒ½ï¼šå¤„ç† CDC å‘é€äº‹ä»¶ã€‚
+ * è¯´æ˜ï¼šå½“å‰ä»…ä¿ç•™äº‹ä»¶å ä½ï¼Œä¸æ”¹å˜åŸå§‹å¤„ç†æµç¨‹ã€‚
  */
 uint32_t TxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
                    void *pvMsgData)
@@ -100,8 +100,8 @@ uint32_t TxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
 }
 
 /*
- * ¹¦ÄÜ£º´¦Àí CDC ½ÓÊÕÊÂ¼ş¡£
- * ËµÃ÷£ºµ±Ç°ÓÉ USBBuffer Í³Ò»¹ÜÀíÊı¾İ»º³å£¬ÕâÀï±£Áô»Øµ÷Èë¿Ú¡£
+ * åŠŸèƒ½ï¼šå¤„ç† CDC æ¥æ”¶äº‹ä»¶ã€‚
+ * è¯´æ˜ï¼šå½“å‰ç”± USBBuffer ç»Ÿä¸€ç®¡ç†æ•°æ®ç¼“å†²ï¼Œè¿™é‡Œä¿ç•™å›è°ƒå…¥å£ã€‚
  */
 uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
                    void *pvMsgData)
@@ -134,8 +134,8 @@ uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
 }
 
 /*
- * ¹¦ÄÜ£º³õÊ¼»¯ USB CDC Éè±¸¡£
- * ËµÃ÷£ºÍê³É USB Òı½Å¡¢»º³åÇøºÍÉè±¸Õ»³õÊ¼»¯¡£
+ * åŠŸèƒ½ï¼šåˆå§‹åŒ– USB CDC è®¾å¤‡ã€‚
+ * è¯´æ˜ï¼šå®Œæˆ USB å¼•è„šã€ç¼“å†²åŒºå’Œè®¾å¤‡æ ˆåˆå§‹åŒ–ã€‚
  */
 void UsbCdcInit(void)
 {
@@ -150,7 +150,7 @@ void UsbCdcInit(void)
     ROM_IntPrioritySet(INT_USB0, USER_INT7);
 }
 
-/* ¹¦ÄÜ£º·¢ËÍ USB CDC Êı¾İ¡£ */
+/* åŠŸèƒ½ï¼šå‘é€ USB CDC æ•°æ®ã€‚ */
 void UsbCdcSend(const uint8_t *data, uint16_t length)
 {
     if(g_bUSBConfigured)
@@ -159,7 +159,7 @@ void UsbCdcSend(const uint8_t *data, uint16_t length)
     }
 }
 
-/* ¹¦ÄÜ£º¶ÁÈ¡ USB CDC Êı¾İ¡£ */
+/* åŠŸèƒ½ï¼šè¯»å– USB CDC æ•°æ®ã€‚ */
 uint16_t UsbCdcRead(uint8_t *data, uint16_t length)
 {
     if(g_bUSBConfigured)
@@ -169,7 +169,7 @@ uint16_t UsbCdcRead(uint8_t *data, uint16_t length)
     return 0;
 }
 
-/* ¹¦ÄÜ£º²éÑ¯ USB CDC ½ÓÊÕ»º³åÇø¿É¶Á×Ö½ÚÊı¡£ */
+/* åŠŸèƒ½ï¼šæŸ¥è¯¢ USB CDC æ¥æ”¶ç¼“å†²åŒºå¯è¯»å­—èŠ‚æ•°ã€‚ */
 uint16_t UsbCdcDataAvailable(void)
 {
     return USBBufferDataAvailable(&g_sRxBuffer);

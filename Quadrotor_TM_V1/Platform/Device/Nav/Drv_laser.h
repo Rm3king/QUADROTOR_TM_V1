@@ -3,8 +3,8 @@
 #include "sysconfig.h"
 
 /*
- * ģ�����ƣ�Drv_laser
- * ģ��ְ���ṩ������ģ��ĳ�ʼ�����ֽڽ��սӿڡ�
+ * 模块名称：Drv_laser
+ * 模块职责：提供激光测距模块的初始化与字节接收接口。
  */
 
 extern u8 LASER_LINKOK;

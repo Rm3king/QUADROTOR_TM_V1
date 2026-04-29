@@ -1,7 +1,7 @@
 /*
- * Ä£¿éÃû³Æ£ºRC
- * Ä£¿éÖ°Ôğ£ºÍê³ÉÒ£¿ØÍ¨µÀ½âÂë¡¢½âËøÅĞ¶¨¡¢Ê§¿Ø±£»¤ºÍÒ¡¸Ë¹¦ÄÜ´¥·¢¡£
- * Ê¹ÓÃÔ¼Êø£º±£³ÖÍ¨µÀÓ³Éä¡¢½âËøÌõ¼şºÍÊ§¿Ø±£»¤Á÷³Ì²»±ä¡£
+ * æ¨¡å—åç§°ï¼šRC
+ * æ¨¡å—èŒè´£ï¼šå®Œæˆé¥æ§é€šé“è§£ç ã€è§£é”åˆ¤å®šã€å¤±æ§ä¿æŠ¤å’Œæ‘‡æ†åŠŸèƒ½è§¦å‘ã€‚
+ * ä½¿ç”¨çº¦æŸï¼šä¿æŒé€šé“æ˜ å°„ã€è§£é”æ¡ä»¶å’Œå¤±æ§ä¿æŠ¤æµç¨‹ä¸å˜ã€‚
  */
 #include "sysconfig.h"
 #include "Parameter.h"
@@ -14,14 +14,14 @@
 #include "DT.h"
 #include "Sensor_Basic.h"
 #include "LED.h"
-/* Ò¡¸Ë´¥·¢ãĞÖµ¡£Ò¡¸Ë·¶Î§Ô¼Îª +/-500£¬³¬¹ı 300 ÊÓÎªÓĞĞ§´¥·¢¡£ */
+/* æ‘‡æ†è§¦å‘é˜ˆå€¼ã€‚æ‘‡æ†èŒƒå›´çº¦ä¸º +/-500ï¼Œè¶…è¿‡ 300 è§†ä¸ºæœ‰æ•ˆè§¦å‘ã€‚ */
 #define UN_YAW_VALUE  300
 #define UN_THR_VALUE  300
 #define UN_PIT_VALUE  300
 #define UN_ROL_VALUE  300
-/* µ±Ç°½ÓÊÕ»úÊäÈëÄ£Ê½¡£ */
+/* å½“å‰æ¥æ”¶æœºè¾“å…¥æ¨¡å¼ã€‚ */
 static u8 s_rc_input_mode;
-/* Ò£¿ØÊäÈë³õÊ¼»¯ */
+/* é¥æ§è¾“å…¥åˆå§‹åŒ– */
 void Remote_Control_Init()
 {
 	s_rc_input_mode = g_fc_param.set.pwmInMode;
@@ -34,17 +34,17 @@ void Remote_Control_Init()
 		Drv_RcPpm_Init();
 	}
 }
-/* Ò£¿ØÍ¨µÀ¿´ÃÅ¹·¼ÆÊı¡£ */
+/* é¥æ§é€šé“çœ‹é—¨ç‹—è®¡æ•°ã€‚ */
 static u16 s_channel_watchdog_cnt[10];
-/* ¶ÔÍâ¹²ÏíµÄÒ£¿ØÊäÈë×´Ì¬¡£ */
+/* å¯¹å¤–å…±äº«çš„é¥æ§è¾“å…¥çŠ¶æ€ã€‚ */
 u8 chn_en_bit = 0;
-/* Î¹Í¨µÀ¿´ÃÅ¹· */
+/* å–‚é€šé“çœ‹é—¨ç‹— */
 void ch_watch_dog_feed(u8 ch_n)
 {
 	ch_n = LIMIT(ch_n,0,7);
 	s_channel_watchdog_cnt[ch_n] = 0;
 }
-static void RC_ChannelWatchdogTask(u8 dT_ms) // Èç¹ûÊÇ PPM/SBUS Ä£Ê½£¬Ò²Ö»¼ì²âÇ° 8 Í¨µÀ
+static void RC_ChannelWatchdogTask(u8 dT_ms) // å¦‚æœæ˜¯ PPM/SBUS æ¨¡å¼ï¼Œä¹Ÿåªæ£€æµ‹å‰ 8 é€šé“
 {
 	for(u8 i = 0;i<8;i++)
 	{
@@ -61,7 +61,7 @@ static void RC_ChannelWatchdogTask(u8 dT_ms) // Èç¹ûÊÇ PPM/SBUS Ä£Ê½£¬Ò²Ö»¼ì²âÇ°
 }
 u16 signal_intensity;
 s16 CH_N[CH_NUM] = {0,0,0,0};
-/* ÎÄ¼şÄÚ²¿µÄ½âËøÓëÒ¡¸Ë¹¦ÄÜ×´Ì¬¡£ */
+/* æ–‡ä»¶å†…éƒ¨çš„è§£é”ä¸æ‘‡æ†åŠŸèƒ½çŠ¶æ€ã€‚ */
 static _stick_f_lp_st s_unlock_hold_cnt;
 static u8 s_unlock_gesture_active;
 static u16 s_unlock_hold_time_ms = 200;
@@ -78,36 +78,36 @@ static void RC_StickFunctionTask(u8 dT_ms);
 static void RC_UnlockTask(u8 dT_ms);
 static void RC_UpdateUnlockErrorState(void)
 {
-	if( flag.power_state <=2 && g_param_state.save_trig == 0)//Ö»ÓĞµç³ØµçÑ¹·Ç×îµÍ²¢ÇÒÃ»ÓĞ²Ù×÷flashÊ±£¬²ÅÔÊĞí½øĞĞ½âËø
+	if( flag.power_state <=2 && g_param_state.save_trig == 0)//åªæœ‰ç”µæ± ç”µå‹éæœ€ä½å¹¶ä¸”æ²¡æœ‰æ“ä½œflashæ—¶ï¼Œæ‰å…è®¸è¿›è¡Œè§£é”
 	{
 		if(sens_hd_check.acc_ok && sens_hd_check.gyro_ok)
 		{
 			if(sens_hd_check.baro_ok)
 			{
-				if(flag.sensor_imu_ok  )//imu´«¸ĞÆ÷Õı³£Ê±£¬²ÅÔÊĞí½âËø
+				if(flag.sensor_imu_ok  )//imuä¼ æ„Ÿå™¨æ­£å¸¸æ—¶ï¼Œæ‰å…è®¸è§£é”
 				{
-					flag.unlock_err = 0;	//ÔÊĞí½âËø±êÖ¾Î»
+					flag.unlock_err = 0;	//å…è®¸è§£é”æ ‡å¿—ä½
 				}
 				else
 				{
-					flag.unlock_err = 1;//imuÒì³££¬²»ÔÊĞí½âËø
+					flag.unlock_err = 1;//imuå¼‚å¸¸ï¼Œä¸å…è®¸è§£é”
 				}
 			}
 			else
 			{
 				LED_STA.errBaro = 1;
-				flag.unlock_err = 2;//ÆøÑ¹¼ÆÒì³££¬²»ÔÊĞí½âËø¡£
+				flag.unlock_err = 2;//æ°”å‹è®¡å¼‚å¸¸ï¼Œä¸å…è®¸è§£é”ã€‚
 			}
 		}
 		else
 		{
 			LED_STA.errMpu = 1;
-			flag.unlock_err = 3;//¹ßĞÔ´«¸ĞÆ÷Òì³££¬²»ÔÊĞí½âËø¡£
+			flag.unlock_err = 3;//æƒ¯æ€§ä¼ æ„Ÿå™¨å¼‚å¸¸ï¼Œä¸å…è®¸è§£é”ã€‚
 		}
 	}
 	else
 	{
-		flag.unlock_err = 4;//µç³ØµçÑ¹Òì³££¬²»ÔÊĞí½âËø
+		flag.unlock_err = 4;//ç”µæ± ç”µå‹å¼‚å¸¸ï¼Œä¸å…è®¸è§£é”
 	}
 }
 static void RC_SyncUnlockCommand(void)
@@ -200,14 +200,14 @@ static void RC_UpdateThrottleLowState(void)
 {
 	if(CH_N[CH_THR]>-350)
 	{
-		flag.thr_low = 0;//ÓÍÃÅ·ÇµÍ
+		flag.thr_low = 0;//æ²¹é—¨éä½
 	}
 	else
 	{
-		flag.thr_low = 1;//ÓÍÃÅÀ­µÍ
+		flag.thr_low = 1;//æ²¹é—¨æ‹‰ä½
 	}
 }
-/* ½âËøÓëÉÏËø×´Ì¬¸üĞÂ */
+/* è§£é”ä¸ä¸Šé”çŠ¶æ€æ›´æ–° */
 static void RC_UnlockTask(u8 dT_ms)
 {
 	RC_UpdateUnlockErrorState();
@@ -215,55 +215,55 @@ static void RC_UnlockTask(u8 dT_ms)
 	RC_UpdateLockGesture(dT_ms);
 	RC_UpdateThrottleLowState();
 }
-void RC_duty_task(u8 dT_ms) //½¨Òé2msµ÷ÓÃÒ»´Î
+void RC_duty_task(u8 dT_ms) //å»ºè®®2msè°ƒç”¨ä¸€æ¬¡
 {
 	if(flag.start_ok)	
 	{
-		/* ????????????? */
+		/* PPM/PWM é€šé“å€¼è¯»å– */
 		if(s_rc_input_mode == PPM || s_rc_input_mode == PWM)
 		{
 			for(u8 i=0;i<CH_NUM;i++)
 			{
-				if(chn_en_bit & (1<<i))//(Rc_Ppm_In[i]!=0)//¸ÃÍ¨µÀÓĞÖµ
+				if(chn_en_bit & (1<<i))//(Rc_Ppm_In[i]!=0)//è¯¥é€šé“æœ‰å€¼
 				{
-					//CH_N[]+1500ÎªÉÏÎ»»úÏÔÊ¾Í¨µÀÖµ
-					CH_N[i] = ((s16)RC_PPM.Captures[i] - 1500); //1000 -- 2000us,´¦Àí³É´óÔ¼+-500Ò¡¸ËÁ¿
+					//CH_N[]+1500ä¸ºä¸Šä½æœºæ˜¾ç¤ºé€šé“å€¼
+					CH_N[i] = ((s16)RC_PPM.Captures[i] - 1500); //1000 -- 2000us,å¤„ç†æˆå¤§çº¦+-500æ‘‡æ†é‡
 				}
 				else
 				{
 					CH_N[i] = 0;
 				}
-				CH_N[i] = LIMIT(CH_N[i],-500,500);//ÏŞÖÆµ½+¡ª500
+				CH_N[i] = LIMIT(CH_N[i],-500,500);//é™åˆ¶åˆ°+â€”500
 			}		
 		}
 		else//sbus
 		{
 			for(u8 i=0;i<CH_NUM;i++)
 			{
-				if(chn_en_bit & (1<<i))//¸ÃÍ¨µÀÓĞÖµ
+				if(chn_en_bit & (1<<i))//è¯¥é€šé“æœ‰å€¼
 				{
-					//CH_N[]+1500ÎªÉÏÎ»»úÏÔÊ¾Í¨µÀÖµ
-					CH_N[i] = 0.65f *((s16)Rc_Sbus_In[i] - 1024); //248 --1024 --1800,´¦Àí³É´óÔ¼+-500Ò¡¸ËÁ¿
+					//CH_N[]+1500ä¸ºä¸Šä½æœºæ˜¾ç¤ºé€šé“å€¼
+					CH_N[i] = 0.65f *((s16)Rc_Sbus_In[i] - 1024); //248 --1024 --1800,å¤„ç†æˆå¤§çº¦+-500æ‘‡æ†é‡
 				}
 				else
 				{
 					CH_N[i] = 0;
 				}
-				CH_N[i] = LIMIT(CH_N[i],-500,500);//ÏŞÖÆµ½+¡ª500
+				CH_N[i] = LIMIT(CH_N[i],-500,500);//é™åˆ¶åˆ°+â€”500
 			}					
 		}
-		/* ?????????????????????? */
-		//½âËø¼à²â	
+		/* é€šé“å€¼å¤„ç†å®Œæ¯•ï¼Œè¿›å…¥è§£é”ç›‘æµ‹ */
+		//è§£é”ç›‘æµ‹	
 		RC_UnlockTask(dT_ms);
-		//Ò¡¸Ë´¥·¢¹¦ÄÜ¼à²â
+		//æ‘‡æ†è§¦å‘åŠŸèƒ½ç›‘æµ‹
 		RC_StickFunctionTask(dT_ms);	
-		//Í¨µÀ¿´ÃÅ¹·
+		//é€šé“çœ‹é—¨ç‹—
 		RC_ChannelWatchdogTask(dT_ms);
-		//Ê§¿Ø±£»¤¼ì²é
+		//å¤±æ§ä¿æŠ¤æ£€æŸ¥
 		fail_safe_check(dT_ms);//3ms
 	}
 }
-/* Ö´ĞĞÊ§¿Ø±£»¤Êä³ö¸²¸Ç */
+/* æ‰§è¡Œå¤±æ§ä¿æŠ¤è¾“å‡ºè¦†ç›– */
 static void RC_FailSafeApply(void)
 {
 	for(u8 i = 0;i<4;i++)
@@ -278,13 +278,13 @@ static void RC_FailSafeApply(void)
 	CH_N[CH_PIT] = 0;
 	CH_N[CH_YAW] = 0;
 	
-	//ÇĞ¼Ç²»ÄÜ¸ø CH_N[AUX1]¸³Öµ£¬·ñÔò¿ÉÄÜµ¼ÖÂËÀÑ­»·¡££¨¸ù¾İAUX1ÌØÊâÖµÅĞ¶Ï½ÓÊÕ»úfailsafeĞÅºÅ£©
+	//åˆ‡è®°ä¸èƒ½ç»™ CH_N[AUX1]èµ‹å€¼ï¼Œå¦åˆ™å¯èƒ½å¯¼è‡´æ­»å¾ªç¯ã€‚ï¼ˆæ ¹æ®AUX1ç‰¹æ®Šå€¼åˆ¤æ–­æ¥æ”¶æœºfailsafeä¿¡å·ï¼‰
 	
 	if(flag.unlock_sta)
 	{
 		if(switchs.gps_on ==0)
 		{
-			flag.auto_take_off_land = AUTO_LAND; //Èç¹û½âËø£¬×Ô¶¯½µÂä±ê¼ÇÖÃÎ»
+			flag.auto_take_off_land = AUTO_LAND; //å¦‚æœè§£é”ï¼Œè‡ªåŠ¨é™è½æ ‡è®°ç½®ä½
 		}
 		else
 		{
@@ -293,16 +293,16 @@ static void RC_FailSafeApply(void)
 		
 	}
 }
-void fail_safe_check(u8 dT_ms) //dTÃëµ÷ÓÃÒ»´Î
+void fail_safe_check(u8 dT_ms) //dTç§’è°ƒç”¨ä¸€æ¬¡
 {
 	static u16 cnt;
 	static s8 cnt2;
 	
 	cnt += dT_ms;
-	if(cnt >= 500) //500*dT Ãë
+	if(cnt >= 500) //500*dT ç§’
 	{
 		cnt=0;
-		if((chn_en_bit & 0x0F) != 0x0F || flag.chn_failsafe ) //Ç°4Í¨µÀÓĞÈÎÒâÒ»Í¨µÀÎŞĞÅºÅ»òÕßÊÜµ½½ÓÊÕ»úÊ§¿Ø±£»¤ĞÅºÅ
+		if((chn_en_bit & 0x0F) != 0x0F || flag.chn_failsafe ) //å‰4é€šé“æœ‰ä»»æ„ä¸€é€šé“æ— ä¿¡å·æˆ–è€…å—åˆ°æ¥æ”¶æœºå¤±æ§ä¿æŠ¤ä¿¡å·
 		{
 			cnt2 ++;
 		}
@@ -315,14 +315,14 @@ void fail_safe_check(u8 dT_ms) //dTÃëµ÷ÓÃÒ»´Î
 		{
 			cnt2 = 0;
 			
-			flag.rc_loss = 1; //ÈÏÎª¶ªÊ§Ò£¿ØĞÅºÅ
+			flag.rc_loss = 1; //è®¤ä¸ºä¸¢å¤±é¥æ§ä¿¡å·
 			
 			LED_STA.noRc = 1;
 			
 			RC_FailSafeApply();
 				
 		}
-		else if(cnt2<=-2) //ÈÏÎªĞÅºÅÕı³£
+		else if(cnt2<=-2) //è®¤ä¸ºä¿¡å·æ­£å¸¸
 		{
 			cnt2 = 0;
 			
@@ -332,22 +332,22 @@ void fail_safe_check(u8 dT_ms) //dTÃëµ÷ÓÃÒ»´Î
 				LED_STA.noRc = 0;
 				
 					if(flag.taking_off)
-					flag.auto_take_off_land = AUTO_TAKE_OFF_FINISH; //½â³ıÏÂ½µ
+					flag.auto_take_off_land = AUTO_TAKE_OFF_FINISH; //è§£é™¤ä¸‹é™
 			}
 			
 		}
 		
-		signal_intensity=0; //ÀÛ¼Æ½ÓÊÕ´ÎÊı
+		signal_intensity=0; //ç´¯è®¡æ¥æ”¶æ¬¡æ•°
 	}
 	
 	
 }
-/* Ò¡¸Ë×éºÏ´¥·¢ÅĞ¶¨ */
+/* æ‘‡æ†ç»„åˆè§¦å‘åˆ¤å®š */
 static void RC_StickFunctionCheck(u8 dT_ms,_stick_f_c_st *sv,u8 times_n,u16 reset_time_ms,u8 en,u8 trig_val,u8 *trig)
 {
 	if(en)
 	{
-		sv->s_cnt = 0; //Çå³ı¼ÆÊ±
+		sv->s_cnt = 0; //æ¸…é™¤è®¡æ—¶
 		if(sv->s_state==0)
 		{
 			if(sv->s_now_times!=0)
@@ -363,50 +363,50 @@ static void RC_StickFunctionCheck(u8 dT_ms,_stick_f_c_st *sv,u8 times_n,u16 rese
 		sv->s_cnt += dT_ms;
 		if(sv->s_cnt>reset_time_ms)
 		{
-			sv->s_now_times = 1; //Çå³ı¼ÇÂ¼´ÎÊı
+			sv->s_now_times = 1; //æ¸…é™¤è®°å½•æ¬¡æ•°
 		}
 	}
 	if(sv->s_now_times> times_n)
 	{
-		*trig = trig_val;            //´¥·¢¹¦ÄÜ±ê¼Ç
+		*trig = trig_val;            //è§¦å‘åŠŸèƒ½æ ‡è®°
 		sv->s_now_times = 0;
 	}
 }
-/* Ò¡¸Ë³¤°´´¥·¢ÅĞ¶¨ */
+/* æ‘‡æ†é•¿æŒ‰è§¦å‘åˆ¤å®š */
 static void RC_StickFunctionCheckLongPress(u8 dT_ms,u16 *time_cnt,u16 longpress_time_ms,u8 en,u8 trig_val,u8 *trig)
 {
-	//dT_ms£ºµ÷ÓÃ¼ä¸ôÊ±¼ä
-	//time_cnt£º»ı·ÖÊ±¼ä
-	//longpress_time_ms£ºãĞÖµÊ±¼ä£¬³¬¹ıÕâ¸öÊ±¼äÔòÎªÂú×ãÌõ¼ş
-	//en£ºÒ¡¸Ë×´Ì¬ÊÇ·ñÂú×ã
-	//trig_val£ºÂú×ãºóµÄ´¥·¢Öµ
-	//trig£ºÖ¸ÏòĞèÒª´¥·¢µÄ¼Ä´æÆ÷
-	if(en)//Èç¹ûÂú×ãÒ¡¸ËÌõ¼ş£¬Ôò½øĞĞÊ±¼ä»ı·Ö
+	//dT_msï¼šè°ƒç”¨é—´éš”æ—¶é—´
+	//time_cntï¼šç§¯åˆ†æ—¶é—´
+	//longpress_time_msï¼šé˜ˆå€¼æ—¶é—´ï¼Œè¶…è¿‡è¿™ä¸ªæ—¶é—´åˆ™ä¸ºæ»¡è¶³æ¡ä»¶
+	//enï¼šæ‘‡æ†çŠ¶æ€æ˜¯å¦æ»¡è¶³
+	//trig_valï¼šæ»¡è¶³åçš„è§¦å‘å€¼
+	//trigï¼šæŒ‡å‘éœ€è¦è§¦å‘çš„å¯„å­˜å™¨
+	if(en)//å¦‚æœæ»¡è¶³æ‘‡æ†æ¡ä»¶ï¼Œåˆ™è¿›è¡Œæ—¶é—´ç§¯åˆ†
 	{
 		if(*time_cnt!=0)
 		{
 			*time_cnt+=dT_ms;
 		}
 	}
-	else//²»Âú×ãÌõ¼ş£¬»ı·Ö»Ö¸´1
+	else//ä¸æ»¡è¶³æ¡ä»¶ï¼Œç§¯åˆ†æ¢å¤1
 	{
 		*time_cnt=1;
 	}
-	//Ê±¼ä»ı·ÖÂú×ãÊ±¼äãĞÖµ£¬Ôò´¥·¢±ê¼Ç
+	//æ—¶é—´ç§¯åˆ†æ»¡è¶³æ—¶é—´é˜ˆå€¼ï¼Œåˆ™è§¦å‘æ ‡è®°
 	if(*time_cnt>=longpress_time_ms)
 	{
-		*trig = trig_val;            //´¥·¢¹¦ÄÜ±ê¼Ç
+		*trig = trig_val;            //è§¦å‘åŠŸèƒ½æ ‡è®°
 		*time_cnt = 0;
 	}
 }
-/* Ò¡¸Ë×éºÏ¹¦ÄÜ´¦Àí */
+/* æ‘‡æ†ç»„åˆåŠŸèƒ½å¤„ç† */
 static void RC_StickFunctionTask(u8 dT_ms)
 {
-	/* ???????????????? */
-	//Î´½âËø²ÅÔÊĞí¼ì²âÒ¡¸Ë¹¦ÄÜ
+	/* æ‘‡æ†åŠŸèƒ½æ£€æµ‹ï¼ˆä»…æœªè§£é”æ—¶ï¼‰ */
+	//æœªè§£é”æ‰å…è®¸æ£€æµ‹æ‘‡æ†åŠŸèƒ½
 	if(flag.unlock_sta == 0)
 	{
-		//ÓÍÃÅµÍ£¬Ôò¼ÌĞø
+		//æ²¹é—¨ä½ï¼Œåˆ™ç»§ç»­
 		if(flag.thr_low)
 		{
 			if(CH_N[CH_PIT]<-350 && CH_N[CH_ROL]>350 && CH_N[CH_THR]<-350 && CH_N[CH_YAW]>350)
@@ -428,12 +428,12 @@ static void RC_StickFunctionTask(u8 dT_ms)
 			}
 		}
 		
-		//´¥·¢ÍÓÂİÒÇĞ£×¼
+		//è§¦å‘é™€èºä»ªæ ¡å‡†
 		RC_StickFunctionCheckLongPress(dT_ms,&s_cali_gyro_hold_cnt,1000,s_stick_fun_gyro_cali,1,&sensor.gyr_CALIBRATE);
-		//´¥·¢¼ÓËÙ¶È¼ÆĞ£×¼
+		//è§¦å‘åŠ é€Ÿåº¦è®¡æ ¡å‡†
 		RC_StickFunctionCheckLongPress(dT_ms,&s_cali_acc_hold_cnt,1000,s_stick_fun_acc_cali,1,&sensor.acc_CALIBRATE);
 		
-		//´¥·¢ÂŞÅÌĞ£×¼
+		//è§¦å‘ç½—ç›˜æ ¡å‡†
 		RC_StickFunctionCheck(dT_ms,&s_cali_mag_state,5,1000,s_stick_fun_mag_cali,1,&mag.mag_CALIBRATE);
 		
 	}

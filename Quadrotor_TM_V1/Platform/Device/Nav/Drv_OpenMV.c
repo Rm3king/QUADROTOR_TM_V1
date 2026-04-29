@@ -1,9 +1,9 @@
 #include "Drv_OpenMV.h"
 #include "DT.h"
 /*
- * Ä£¿éËµÃ÷¡£
- * OpenMV Êı¾İ½ÓÊÕÓë½âÎöÇı¶¯¡£
- * ¸ºÔğ°´Ğ­Òé×é°ü OpenMV ´®¿ÚÊı¾İ£¬½âÎöÉ«¿é¸ú×ÙÓëÑ°Ïß½á¹û£¬²¢Î¬»¤ÀëÏß¼ì²â×´Ì¬¡£
+ * æ¨¡å—è¯´æ˜ã€‚
+ * OpenMV æ•°æ®æ¥æ”¶ä¸è§£æé©±åŠ¨ã€‚
+ * è´Ÿè´£æŒ‰åè®®ç»„åŒ… OpenMV ä¸²å£æ•°æ®ï¼Œè§£æè‰²å—è·Ÿè¸ªä¸å¯»çº¿ç»“æœï¼Œå¹¶ç»´æŠ¤ç¦»çº¿æ£€æµ‹çŠ¶æ€ã€‚
  */
 static void OpenMV_Data_Analysis(u8 *buf_data, u8 len);
 static void OpenMV_Check_Reset(void);
@@ -16,8 +16,8 @@ u8 openmv_buf[OPENMV_FRAME_MAX_LEN];
 _openmv_data_st opmv;
 
 /*
- * ¹¦ÄÜ£º°´×Ö½Ú½ÓÊÕ OpenMV Êı¾İ¡£
- * ËµÃ÷£º¸ù¾İÖ¡Í·¡¢¹¦ÄÜ×ÖºÍ³¤¶ÈÖğ²½×é°ü£¬Ğ£ÑéÍ¨¹ıºóÔÙ½øÈë½âÎö¡£
+ * åŠŸèƒ½ï¼šæŒ‰å­—èŠ‚æ¥æ”¶ OpenMV æ•°æ®ã€‚
+ * è¯´æ˜ï¼šæ ¹æ®å¸§å¤´ã€åŠŸèƒ½å­—å’Œé•¿åº¦é€æ­¥ç»„åŒ…ï¼Œæ ¡éªŒé€šè¿‡åå†è¿›å…¥è§£æã€‚
  */
 void OpenMV_Byte_Get(u8 bytedata)
 {
@@ -101,8 +101,8 @@ void OpenMV_Byte_Get(u8 bytedata)
 }
 
 /*
- * ¹¦ÄÜ£º½âÎö OpenMV Êı¾İÖ¡¡£
- * ËµÃ÷£ºÖ§³ÖÉ«¿é¸ú×ÙÖ¡ºÍÑ°ÏßÖ¡Á½ÖÖÀàĞÍ£¬²¢ÖÃÎ»¶ÔÓ¦µÄ·¢ËÍ±ê¼Ç¡£
+ * åŠŸèƒ½ï¼šè§£æ OpenMV æ•°æ®å¸§ã€‚
+ * è¯´æ˜ï¼šæ”¯æŒè‰²å—è·Ÿè¸ªå¸§å’Œå¯»çº¿å¸§ä¸¤ç§ç±»å‹ï¼Œå¹¶ç½®ä½å¯¹åº”çš„å‘é€æ ‡è®°ã€‚
  */
 static void OpenMV_Data_Analysis(u8 *buf_data, u8 len)
 {
@@ -132,7 +132,7 @@ static void OpenMV_Data_Analysis(u8 *buf_data, u8 len)
     OpenMV_Check_Reset();
 }
 
-/* ¹¦ÄÜ£ºOpenMV ÀëÏß¼ì²â¡£ */
+/* åŠŸèƒ½ï¼šOpenMV ç¦»çº¿æ£€æµ‹ã€‚ */
 void OpenMV_Offline_Check(u8 dT_ms)
 {
     if(offline_check_time < OPMV_OFFLINE_TIME_MS)
@@ -146,7 +146,7 @@ void OpenMV_Offline_Check(u8 dT_ms)
     }
 }
 
-/* ¹¦ÄÜ£ºË¢ĞÂ OpenMV ÔÚÏß×´Ì¬¡£ */
+/* åŠŸèƒ½ï¼šåˆ·æ–° OpenMV åœ¨çº¿çŠ¶æ€ã€‚ */
 static void OpenMV_Check_Reset(void)
 {
     offline_check_time = 0;

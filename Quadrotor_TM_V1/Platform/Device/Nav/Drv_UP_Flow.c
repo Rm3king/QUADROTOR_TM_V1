@@ -169,7 +169,7 @@ const static uint8_t Sensor_cfg[]={
 };
 
 #define CIRCLE_P(n,a,b) ((a) + ((n)-(a))%((b)-(a)))
-#define OF_BUFFER_NUM 19  // ¹âÁ÷Êı¾İ»º³åÇø³¤¶È
+#define OF_BUFFER_NUM 19  // å…‰æµæ•°æ®ç¼“å†²åŒºé•¿åº¦
 
 uint8_t of_init_cnt;
 uint8_t of_buf_update_cnt;
@@ -258,7 +258,7 @@ u8 Drv_OFInit(void)
 	
 	if(of_init_cnt == 10)
 	{
-		// Öğ×Ö½Ú½ÓÊÕ¹âÁ÷´®¿ÚÊı¾İ
+		// é€å­—èŠ‚æ¥æ”¶å…‰æµä¸²å£æ•°æ®
 //		while(1)
 //		{
 //				for(u8 i = 0;i<2;i++)
@@ -310,7 +310,7 @@ void OFGetByte(uint8_t data)
 
 		if(in_p == head_p)
 		{
-			if(  //tag ??§¿??
+			if(  //tag ??Ğ­??
 						 (com_getdata[CIRCLE_P(head_p   ,0,OF_BUFFER_NUM)] == 0xDF)
 					&& (com_getdata[CIRCLE_P(head_p+1 ,0,OF_BUFFER_NUM)] == 0x15)
 					&& (com_getdata[CIRCLE_P(head_p+2,0,OF_BUFFER_NUM)] == 0x00)

@@ -3,8 +3,8 @@
 #include "sysconfig.h"
 
 /*
- * ģ�����ƣ�Drv_Adc
- * ģ��ְ���ṩ��ѹ������ص� ADC ��ʼ���봥���ӿڡ�
+ * 模块名称：Drv_Adc
+ * 模块职责：提供电压采样相关的 ADC 初始化与触发接口。
  */
 
 extern float Voltage;

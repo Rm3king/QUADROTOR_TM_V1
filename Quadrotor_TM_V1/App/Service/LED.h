@@ -2,14 +2,14 @@
 #define __LED_H__
 
 /*
- * Ä£¿éÃû³Æ£ºLED
- * Ä£¿éÖ°Ôğ£º¶¨Òå LED ×´Ì¬Ö¸Ê¾Ïà¹ØµÄ¹«¹²Êı¾İ½á¹¹¡¢Î»ÑÚÂëÓëÈÎÎñÈë¿Ú¡£
- * Ê¹ÓÃÔ¼Êø£º±¾Í·ÎÄ¼ş½ö±©Â¶µ÷¶ÈÆ÷Êµ¼ÊÊ¹ÓÃµÄ¹«¹²½Ó¿Ú¡£
+ * æ¨¡å—åç§°ï¼šLED
+ * æ¨¡å—èŒè´£ï¼šå®šä¹‰ LED çŠ¶æ€æŒ‡ç¤ºç›¸å…³çš„å…¬å…±æ•°æ®ç»“æ„ã€ä½æ©ç ä¸ä»»åŠ¡å…¥å£ã€‚
+ * ä½¿ç”¨çº¦æŸï¼šæœ¬å¤´æ–‡ä»¶ä»…æš´éœ²è°ƒåº¦å™¨å®é™…ä½¿ç”¨çš„å…¬å…±æ¥å£ã€‚
  */
 #include "sysconfig.h"
 
 
-/* LED ±àºÅ¶¨Òå¡£ */
+/* LED ç¼–å·å®šä¹‰ã€‚ */
 enum
 {
 	X_led = 0,
@@ -20,40 +20,40 @@ enum
 };
 
 #define BIT_NULLLED 0x00		
-#define BIT_XLED 0x01		//·É¿ØLED
-#define BIT_BLED 0x02		//À¶É«
-#define BIT_RLED 0x04		//ºìÉ«
-#define BIT_GLED 0x08		//ÂÌÉ«
-#define BIT_WLED 0x0e		//°×É«
-#define BIT_PLED 0x06		//×ÏÉ«
-#define BIT_YLED 0x0c		//»ÆÉ«
+#define BIT_XLED 0x01		//é£æ§LED
+#define BIT_BLED 0x02		//è“è‰²
+#define BIT_RLED 0x04		//çº¢è‰²
+#define BIT_GLED 0x08		//ç»¿è‰²
+#define BIT_WLED 0x0e		//ç™½è‰²
+#define BIT_PLED 0x06		//ç´«è‰²
+#define BIT_YLED 0x0c		//é»„è‰²
 
 typedef struct 
 {
 	u8 allOk;
-	u8 lowVt;//µÍµçÑ¹
+	u8 lowVt;//ä½ç”µå‹
 	u8 rst_imu;
 	u8 calGyr;
 	u8 calAcc;
 	u8 calMag;
-	u8 calHz;	//Ğ£×¼Ë®Æ½Ãæ
+	u8 calHz;	//æ ¡å‡†æ°´å¹³é¢
 	u8 errMpu;
 	u8 errMag;
 	u8 errBaro;
-	u8 errOneTime;	//´íÎóÌáÊ¾
-	u8 noRc;	//Ê§¿Ø
-	u8 staOf;	//¹âÁ÷×´Ì¬
-	u8 staGps;	//GPS×´Ì¬
-	u8 saving;	//²ÎÊı±£´æÖĞ
+	u8 errOneTime;	//é”™è¯¯æç¤º
+	u8 noRc;	//å¤±æ§
+	u8 staOf;	//å…‰æµçŠ¶æ€
+	u8 staGps;	//GPSçŠ¶æ€
+	u8 saving;	//å‚æ•°ä¿å­˜ä¸­
 }_led_sta;
 
 
 
 
-/* ¶ÔÍâ×´Ì¬Êı¾İ¡£ */
+/* å¯¹å¤–çŠ¶æ€æ•°æ®ã€‚ */
 extern _led_sta LED_STA;
 
-/* ¶ÔÍâÈÎÎñ½Ó¿Ú¡£ */
+/* å¯¹å¤–ä»»åŠ¡æ¥å£ã€‚ */
 void LED_1ms_DRV(void );
 void LED_Task2(u8 dT_ms);
 
