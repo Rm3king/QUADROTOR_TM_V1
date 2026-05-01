@@ -1,13 +1,16 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
+
   <SchemaVersion>2.1</SchemaVersion>
+
   <Header>### uVision Project, (C) Keil Software</Header>
+
   <Targets>
     <Target>
       <TargetName>Quadrotor_TM</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCompiler_506</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -16,28 +19,28 @@
           <PackID>Keil.TM4C_DFP.1.1.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x008000) IROM(0x00000000,0x040000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
-          <FlashUtilSpec />
-          <StartupFile />
+          <FlashUtilSpec></FlashUtilSpec>
+          <StartupFile></StartupFile>
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0TM4C123_256 -FS00 -FL040000 -FP0($$Device:TM4C123GH6PM$Flash\TM4C123_256.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:TM4C123GH6PM$Device\Include\TM4C123\TM4C123.h</RegisterFile>
-          <MemoryEnv />
-          <Cmp />
-          <Asm />
-          <Linker />
-          <OHString />
-          <InfinionOptionDll />
-          <SLE66CMisc />
-          <SLE66AMisc />
-          <SLE66LinkerMisc />
+          <MemoryEnv></MemoryEnv>
+          <Cmp></Cmp>
+          <Asm></Asm>
+          <Linker></Linker>
+          <OHString></OHString>
+          <InfinionOptionDll></InfinionOptionDll>
+          <SLE66CMisc></SLE66CMisc>
+          <SLE66AMisc></SLE66AMisc>
+          <SLE66LinkerMisc></SLE66LinkerMisc>
           <SFDFile>$$Device:TM4C123GH6PM$SVD\TM4C123\TM4C123GH6PM.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath />
-          <IncludePath />
-          <LibPath />
-          <RegisterFilePath />
-          <DBRegisterFilePath />
+          <BinPath></BinPath>
+          <IncludePath></IncludePath>
+          <LibPath></LibPath>
+          <RegisterFilePath></RegisterFilePath>
+          <DBRegisterFilePath></DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -59,8 +62,8 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -69,8 +72,8 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopB1X>0</nStopB1X>
@@ -79,15 +82,15 @@
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString />
+          <SVCSIdString></SVCSIdString>
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -101,8 +104,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument />
-          <IncludeLibraryModules />
+          <CustomArgument></CustomArgument>
+          <IncludeLibraryModules></IncludeLibraryModules>
           <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
@@ -136,10 +139,10 @@
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4 />
-          <pFcarmOut />
-          <pFcarmGrp />
-          <pFcArmRoot />
+          <Flash4></Flash4>
+          <pFcarmOut></pFcarmOut>
+          <pFcarmGrp></pFcarmGrp>
+          <pFcArmRoot></pFcArmRoot>
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -172,7 +175,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M4"</AdsCpuType>
-            <RvctDeviceName />
+            <RvctDeviceName></RvctDeviceName>
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -307,7 +310,7 @@
                 <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector />
+            <RvctStartVector></RvctStartVector>
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -334,10 +337,10 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls />
+              <MiscControls></MiscControls>
               <Define>TARGET_IS_TM4C123_RB1 PART_TM4C123GH6PM</Define>
-              <Undefine />
-              <IncludePath>.\TiDriver\inc;.\TiDriver\inc\driver_inc;.\TiDriver\inc\driver_hw;.\TiDriver\inc\driver_usb;.\TiDriver\inc\driver_usb\device;.\App\Core;.\App\Service;.\App\Mission;.\App\Vision;.\Platform\Bsp;.\Platform\Peripheral;.\Platform\Device\Nav;.\Platform\Device\Sensor;.\Platform\Device\Misc;.\FlightControl\Base;.\FlightControl\Control</IncludePath>
+              <Undefine></Undefine>
+              <IncludePath>.\TiDriver\inc;.\TiDriver\inc\driver_inc;.\TiDriver\inc\driver_hw;.\TiDriver\inc\driver_usb;.\TiDriver\inc\driver_usb\device;.\Application\Core;.\Application\Service;.\Application\Mission;.\Application\Vision;.\Driver\BSP;.\Driver\Peripheral;.\Driver\Sensor;.\Driver\ExtDevice;.\Algorithm\Common;.\Algorithm\Estimation;.\Algorithm\Control</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -352,10 +355,10 @@
             <useXO>0</useXO>
             <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
-              <MiscControls />
-              <Define />
-              <Undefine />
-              <IncludePath />
+              <MiscControls></MiscControls>
+              <Define></Define>
+              <Undefine></Undefine>
+              <IncludePath></IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -367,174 +370,174 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <pXoBase />
-            <ScatterFile />
-            <IncludeLibs />
-            <IncludeLibsPath />
+            <pXoBase></pXoBase>
+            <ScatterFile></ScatterFile>
+            <IncludeLibs></IncludeLibs>
+            <IncludeLibsPath></IncludeLibsPath>
             <Misc>--entry Reset_Handler</Misc>
-            <LinkerInputFile />
-            <DisabledWarnings />
+            <LinkerInputFile></LinkerInputFile>
+            <DisabledWarnings></DisabledWarnings>
           </LDads>
         </TargetArmAds>
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>App_Core</GroupName>
+          <GroupName>Application_Core</GroupName>
           <Files>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Core\main.c</FilePath>
+              <FilePath>.\Application\Core\main.c</FilePath>
             </File>
             <File>
               <FileName>sysconfig.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Core\sysconfig.h</FilePath>
+              <FilePath>.\Application\Core\sysconfig.h</FilePath>
             </File>
             <File>
               <FileName>Scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Core\Scheduler.c</FilePath>
+              <FilePath>.\Application\Core\Scheduler.c</FilePath>
             </File>
             <File>
               <FileName>Scheduler.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Core\Scheduler.h</FilePath>
+              <FilePath>.\Application\Core\Scheduler.h</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>App_Service</GroupName>
+          <GroupName>Application_Service</GroupName>
           <Files>
             <File>
               <FileName>Parameter.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Service\Parameter.c</FilePath>
+              <FilePath>.\Application\Service\Parameter.c</FilePath>
             </File>
             <File>
               <FileName>Parameter.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Service\Parameter.h</FilePath>
+              <FilePath>.\Application\Service\Parameter.h</FilePath>
             </File>
             <File>
               <FileName>DT.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Service\DT.c</FilePath>
+              <FilePath>.\Application\Service\DT.c</FilePath>
             </File>
             <File>
               <FileName>DT.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Service\DT.h</FilePath>
+              <FilePath>.\Application\Service\DT.h</FilePath>
             </File>
             <File>
               <FileName>RC.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Service\RC.c</FilePath>
+              <FilePath>.\Application\Service\RC.c</FilePath>
             </File>
             <File>
               <FileName>RC.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Service\RC.h</FilePath>
+              <FilePath>.\Application\Service\RC.h</FilePath>
             </File>
             <File>
               <FileName>LED.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Service\LED.c</FilePath>
+              <FilePath>.\Application\Service\LED.c</FilePath>
             </File>
             <File>
               <FileName>LED.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Service\LED.h</FilePath>
+              <FilePath>.\Application\Service\LED.h</FilePath>
             </File>
             <File>
               <FileName>FcUsbCdc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Service\FcUsbCdc.c</FilePath>
+              <FilePath>.\Application\Service\FcUsbCdc.c</FilePath>
             </File>
             <File>
               <FileName>FcUsbCdc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Service\FcUsbCdc.h</FilePath>
+              <FilePath>.\Application\Service\FcUsbCdc.h</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>App_Mission</GroupName>
+          <GroupName>Application_Mission</GroupName>
           <Files>
             <File>
               <FileName>FlyCtrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Mission\FlyCtrl.c</FilePath>
+              <FilePath>.\Application\Mission\FlyCtrl.c</FilePath>
             </File>
             <File>
               <FileName>FlyCtrl.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Mission\FlyCtrl.h</FilePath>
+              <FilePath>.\Application\Mission\FlyCtrl.h</FilePath>
             </File>
             <File>
               <FileName>ProgramCtrl_User.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Mission\ProgramCtrl_User.c</FilePath>
+              <FilePath>.\Application\Mission\ProgramCtrl_User.c</FilePath>
             </File>
             <File>
               <FileName>ProgramCtrl_User.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Mission\ProgramCtrl_User.h</FilePath>
+              <FilePath>.\Application\Mission\ProgramCtrl_User.h</FilePath>
             </File>
             <File>
               <FileName>User_control.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Mission\User_control.c</FilePath>
+              <FilePath>.\Application\Mission\User_control.c</FilePath>
             </File>
             <File>
               <FileName>User_control.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Mission\User_control.h</FilePath>
+              <FilePath>.\Application\Mission\User_control.h</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>App_Vision</GroupName>
+          <GroupName>Application_Vision</GroupName>
           <Files>
             <File>
               <FileName>OF_DecoFusion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Vision\OF_DecoFusion.c</FilePath>
+              <FilePath>.\Application\Vision\OF_DecoFusion.c</FilePath>
             </File>
             <File>
               <FileName>OF_DecoFusion.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Vision\OF_DecoFusion.h</FilePath>
+              <FilePath>.\Application\Vision\OF_DecoFusion.h</FilePath>
             </File>
             <File>
               <FileName>OPMV_CBTracking_Ctrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Vision\OPMV_CBTracking_Ctrl.c</FilePath>
+              <FilePath>.\Application\Vision\OPMV_CBTracking_Ctrl.c</FilePath>
             </File>
             <File>
               <FileName>OPMV_CBTracking_Ctrl.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Vision\OPMV_CBTracking_Ctrl.h</FilePath>
+              <FilePath>.\Application\Vision\OPMV_CBTracking_Ctrl.h</FilePath>
             </File>
             <File>
               <FileName>OPMV_LineTracking_Ctrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Vision\OPMV_LineTracking_Ctrl.c</FilePath>
+              <FilePath>.\Application\Vision\OPMV_LineTracking_Ctrl.c</FilePath>
             </File>
             <File>
               <FileName>OPMV_LineTracking_Ctrl.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Vision\OPMV_LineTracking_Ctrl.h</FilePath>
+              <FilePath>.\Application\Vision\OPMV_LineTracking_Ctrl.h</FilePath>
             </File>
             <File>
               <FileName>OPMV_Ctrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\Vision\OPMV_Ctrl.c</FilePath>
+              <FilePath>.\Application\Vision\OPMV_Ctrl.c</FilePath>
             </File>
             <File>
               <FileName>OPMV_Ctrl.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\App\Vision\OPMV_Ctrl.h</FilePath>
+              <FilePath>.\Application\Vision\OPMV_Ctrl.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -574,393 +577,395 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Platform_Bsp</GroupName>
+          <GroupName>Driver_BSP</GroupName>
           <Files>
             <File>
               <FileName>Drv_Bsp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Bsp\Drv_Bsp.c</FilePath>
+              <FilePath>.\Driver\BSP\Drv_Bsp.c</FilePath>
             </File>
             <File>
               <FileName>Drv_Bsp.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Bsp\Drv_Bsp.h</FilePath>
+              <FilePath>.\Driver\BSP\Drv_Bsp.h</FilePath>
             </File>
             <File>
               <FileName>Drv_Adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Bsp\Drv_Adc.c</FilePath>
+              <FilePath>.\Driver\BSP\Drv_Adc.c</FilePath>
             </File>
             <File>
               <FileName>Drv_Adc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Bsp\Drv_Adc.h</FilePath>
+              <FilePath>.\Driver\BSP\Drv_Adc.h</FilePath>
             </File>
             <File>
               <FileName>Drv_Led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Bsp\Drv_Led.c</FilePath>
+              <FilePath>.\Driver\BSP\Drv_Led.c</FilePath>
             </File>
             <File>
               <FileName>Drv_Led.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Bsp\Drv_Led.h</FilePath>
+              <FilePath>.\Driver\BSP\Drv_Led.h</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Platform_Peripheral</GroupName>
+          <GroupName>Driver_Peripheral</GroupName>
           <Files>
             <File>
               <FileName>Drv_Paramter.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Peripheral\Drv_Paramter.c</FilePath>
+              <FilePath>.\Driver\Peripheral\Drv_Paramter.c</FilePath>
             </File>
             <File>
               <FileName>Drv_Paramter.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Peripheral\Drv_Paramter.h</FilePath>
+              <FilePath>.\Driver\Peripheral\Drv_Paramter.h</FilePath>
             </File>
             <File>
               <FileName>Drv_RcIn.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Peripheral\Drv_RcIn.c</FilePath>
+              <FilePath>.\Driver\Peripheral\Drv_RcIn.c</FilePath>
             </File>
             <File>
               <FileName>Drv_RcIn.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Peripheral\Drv_RcIn.h</FilePath>
+              <FilePath>.\Driver\Peripheral\Drv_RcIn.h</FilePath>
             </File>
             <File>
               <FileName>Drv_PwmOut.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Peripheral\Drv_PwmOut.c</FilePath>
+              <FilePath>.\Driver\Peripheral\Drv_PwmOut.c</FilePath>
             </File>
             <File>
               <FileName>Drv_PwmOut.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Peripheral\Drv_PwmOut.h</FilePath>
+              <FilePath>.\Driver\Peripheral\Drv_PwmOut.h</FilePath>
             </File>
             <File>
               <FileName>Drv_Spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Peripheral\Drv_Spi.c</FilePath>
+              <FilePath>.\Driver\Peripheral\Drv_Spi.c</FilePath>
             </File>
             <File>
               <FileName>Drv_Spi.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Peripheral\Drv_Spi.h</FilePath>
+              <FilePath>.\Driver\Peripheral\Drv_Spi.h</FilePath>
             </File>
             <File>
               <FileName>Drv_Uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Peripheral\Drv_Uart.c</FilePath>
+              <FilePath>.\Driver\Peripheral\Drv_Uart.c</FilePath>
             </File>
             <File>
               <FileName>Drv_Uart.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Peripheral\Drv_Uart.h</FilePath>
+              <FilePath>.\Driver\Peripheral\Drv_Uart.h</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Platform_Device_Sensor</GroupName>
+          <GroupName>Driver_Sensor</GroupName>
           <Files>
             <File>
               <FileName>Drv_icm20602.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Device\Sensor\Drv_icm20602.c</FilePath>
+              <FilePath>.\Driver\Sensor\Drv_icm20602.c</FilePath>
             </File>
             <File>
               <FileName>Drv_icm20602.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Device\Sensor\Drv_icm20602.h</FilePath>
+              <FilePath>.\Driver\Sensor\Drv_icm20602.h</FilePath>
             </File>
             <File>
               <FileName>Drv_ak8975.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Device\Sensor\Drv_ak8975.c</FilePath>
+              <FilePath>.\Driver\Sensor\Drv_ak8975.c</FilePath>
             </File>
             <File>
               <FileName>Drv_ak8975.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Device\Sensor\Drv_ak8975.h</FilePath>
+              <FilePath>.\Driver\Sensor\Drv_ak8975.h</FilePath>
             </File>
             <File>
               <FileName>Drv_spl06.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Device\Sensor\Drv_spl06.c</FilePath>
+              <FilePath>.\Driver\Sensor\Drv_spl06.c</FilePath>
             </File>
             <File>
               <FileName>Drv_spl06.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Device\Sensor\Drv_spl06.h</FilePath>
+              <FilePath>.\Driver\Sensor\Drv_spl06.h</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Platform_Device_Nav</GroupName>
-          <Files>
-            <File>
-              <FileName>Drv_gps.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Platform\Device\Nav\Drv_gps.c</FilePath>
-            </File>
-            <File>
-              <FileName>Drv_gps.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Platform\Device\Nav\Drv_gps.h</FilePath>
-            </File>
-            <File>
-              <FileName>OF.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Platform\Device\Nav\OF.c</FilePath>
-            </File>
-            <File>
-              <FileName>OF.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Platform\Device\Nav\OF.h</FilePath>
-            </File>
-            <File>
-              <FileName>UWB.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Platform\Device\Nav\UWB.c</FilePath>
-            </File>
-            <File>
-              <FileName>UWB.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Platform\Device\Nav\UWB.h</FilePath>
-            </File>
-            <File>
-              <FileName>Drv_OpenMV.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Platform\Device\Nav\Drv_OpenMV.c</FilePath>
-            </File>
-            <File>
-              <FileName>Drv_OpenMV.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Platform\Device\Nav\Drv_OpenMV.h</FilePath>
-            </File>
-            <File>
-              <FileName>Drv_UP_Flow.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Platform\Device\Nav\Drv_UP_Flow.c</FilePath>
-            </File>
-            <File>
-              <FileName>Drv_UP_Flow.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Platform\Device\Nav\Drv_UP_Flow.h</FilePath>
-            </File>
-            <File>
-              <FileName>Drv_laser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Platform\Device\Nav\Drv_laser.c</FilePath>
-            </File>
-            <File>
-              <FileName>Drv_laser.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Platform\Device\Nav\Drv_laser.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Platform_Device_Misc</GroupName>
-          <Files>
             <File>
               <FileName>Drv_heating.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Platform\Device\Misc\Drv_heating.c</FilePath>
+              <FilePath>.\Driver\Sensor\Drv_heating.c</FilePath>
             </File>
             <File>
               <FileName>Drv_heating.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Platform\Device\Misc\Drv_heating.h</FilePath>
+              <FilePath>.\Driver\Sensor\Drv_heating.h</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>FlightControl_Base</GroupName>
+          <GroupName>Driver_ExtDevice</GroupName>
+          <Files>
+            <File>
+              <FileName>Drv_gps.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Driver\ExtDevice\Drv_gps.c</FilePath>
+            </File>
+            <File>
+              <FileName>Drv_gps.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Driver\ExtDevice\Drv_gps.h</FilePath>
+            </File>
+            <File>
+              <FileName>OF.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Driver\ExtDevice\OF.c</FilePath>
+            </File>
+            <File>
+              <FileName>OF.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Driver\ExtDevice\OF.h</FilePath>
+            </File>
+            <File>
+              <FileName>UWB.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Driver\ExtDevice\UWB.c</FilePath>
+            </File>
+            <File>
+              <FileName>UWB.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Driver\ExtDevice\UWB.h</FilePath>
+            </File>
+            <File>
+              <FileName>Drv_OpenMV.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Driver\ExtDevice\Drv_OpenMV.c</FilePath>
+            </File>
+            <File>
+              <FileName>Drv_OpenMV.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Driver\ExtDevice\Drv_OpenMV.h</FilePath>
+            </File>
+            <File>
+              <FileName>Drv_UP_Flow.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Driver\ExtDevice\Drv_UP_Flow.c</FilePath>
+            </File>
+            <File>
+              <FileName>Drv_UP_Flow.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Driver\ExtDevice\Drv_UP_Flow.h</FilePath>
+            </File>
+            <File>
+              <FileName>Drv_laser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Driver\ExtDevice\Drv_laser.c</FilePath>
+            </File>
+            <File>
+              <FileName>Drv_laser.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Driver\ExtDevice\Drv_laser.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Algorithm_Common</GroupName>
           <Files>
             <File>
               <FileName>FcData.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\FlightControl\Base\FcData.c</FilePath>
+              <FilePath>.\Algorithm\Common\FcData.c</FilePath>
             </File>
             <File>
               <FileName>FcData.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\FlightControl\Base\FcData.h</FilePath>
+              <FilePath>.\Algorithm\Common\FcData.h</FilePath>
+            </File>
+            <File>
+              <FileName>config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Algorithm\Common\config.h</FilePath>
             </File>
             <File>
               <FileName>Filter.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\FlightControl\Base\Filter.c</FilePath>
+              <FilePath>.\Algorithm\Common\Filter.c</FilePath>
             </File>
             <File>
               <FileName>Filter.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\FlightControl\Base\Filter.h</FilePath>
+              <FilePath>.\Algorithm\Common\Filter.h</FilePath>
             </File>
             <File>
               <FileName>Math.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\FlightControl\Base\Math.c</FilePath>
+              <FilePath>.\Algorithm\Common\Math.c</FilePath>
             </File>
             <File>
               <FileName>Math.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\FlightControl\Base\Math.h</FilePath>
+              <FilePath>.\Algorithm\Common\Math.h</FilePath>
             </File>
             <File>
               <FileName>Pid.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\FlightControl\Base\Pid.c</FilePath>
+              <FilePath>.\Algorithm\Common\Pid.c</FilePath>
             </File>
             <File>
               <FileName>Pid.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\FlightControl\Base\Pid.h</FilePath>
-            </File>
-            <File>
-              <FileName>Imu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\FlightControl\Base\Imu.c</FilePath>
-            </File>
-            <File>
-              <FileName>Imu.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\FlightControl\Base\Imu.h</FilePath>
-            </File>
-            <File>
-              <FileName>Sensor_Basic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\FlightControl\Base\Sensor_Basic.c</FilePath>
-            </File>
-            <File>
-              <FileName>Sensor_Basic.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\FlightControl\Base\Sensor_Basic.h</FilePath>
-            </File>
-            <File>
-              <FileName>MotionCal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\FlightControl\Base\MotionCal.c</FilePath>
-            </File>
-            <File>
-              <FileName>MotionCal.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\FlightControl\Base\MotionCal.h</FilePath>
-            </File>
-            <File>
-              <FileName>Navigate.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\FlightControl\Base\Navigate.c</FilePath>
-            </File>
-            <File>
-              <FileName>Navigate.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\FlightControl\Base\Navigate.h</FilePath>
+              <FilePath>.\Algorithm\Common\Pid.h</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>FlightControl_Control</GroupName>
+          <GroupName>Algorithm_Estimation</GroupName>
           <Files>
             <File>
-              <FileName>config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\FlightControl\Control\config.h</FilePath>
-            </File>
-            <File>
-              <FileName>AltCtrl.c</FileName>
+              <FileName>Imu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\FlightControl\Control\AltCtrl.c</FilePath>
+              <FilePath>.\Algorithm\Estimation\Imu.c</FilePath>
             </File>
             <File>
-              <FileName>AltCtrl.h</FileName>
+              <FileName>Imu.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\FlightControl\Control\AltCtrl.h</FilePath>
+              <FilePath>.\Algorithm\Estimation\Imu.h</FilePath>
             </File>
             <File>
-              <FileName>AttCtrl.c</FileName>
+              <FileName>Sensor_Basic.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\FlightControl\Control\AttCtrl.c</FilePath>
+              <FilePath>.\Algorithm\Estimation\Sensor_Basic.c</FilePath>
             </File>
             <File>
-              <FileName>AttCtrl.h</FileName>
+              <FileName>Sensor_Basic.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\FlightControl\Control\AttCtrl.h</FilePath>
+              <FilePath>.\Algorithm\Estimation\Sensor_Basic.h</FilePath>
             </File>
             <File>
-              <FileName>FlightCtrl.c</FileName>
+              <FileName>MotionCal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\FlightControl\Control\FlightCtrl.c</FilePath>
+              <FilePath>.\Algorithm\Estimation\MotionCal.c</FilePath>
             </File>
             <File>
-              <FileName>FlightCtrl.h</FileName>
+              <FileName>MotionCal.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\FlightControl\Control\FlightCtrl.h</FilePath>
+              <FilePath>.\Algorithm\Estimation\MotionCal.h</FilePath>
             </File>
             <File>
-              <FileName>FlightDataCal.c</FileName>
+              <FileName>Navigate.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\FlightControl\Control\FlightDataCal.c</FilePath>
+              <FilePath>.\Algorithm\Estimation\Navigate.c</FilePath>
             </File>
             <File>
-              <FileName>FlightDataCal.h</FileName>
+              <FileName>Navigate.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\FlightControl\Control\FlightDataCal.h</FilePath>
-            </File>
-            <File>
-              <FileName>LocCtrl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\FlightControl\Control\LocCtrl.c</FilePath>
-            </File>
-            <File>
-              <FileName>LocCtrl.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\FlightControl\Control\LocCtrl.h</FilePath>
+              <FilePath>.\Algorithm\Estimation\Navigate.h</FilePath>
             </File>
             <File>
               <FileName>MagProcess.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\FlightControl\Control\MagProcess.c</FilePath>
+              <FilePath>.\Algorithm\Estimation\MagProcess.c</FilePath>
             </File>
             <File>
               <FileName>MagProcess.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\FlightControl\Control\MagProcess.h</FilePath>
+              <FilePath>.\Algorithm\Estimation\MagProcess.h</FilePath>
+            </File>
+            <File>
+              <FileName>FlightDataCal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Algorithm\Estimation\FlightDataCal.c</FilePath>
+            </File>
+            <File>
+              <FileName>FlightDataCal.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Algorithm\Estimation\FlightDataCal.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Algorithm_Control</GroupName>
+          <Files>
+            <File>
+              <FileName>AltCtrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Algorithm\Control\AltCtrl.c</FilePath>
+            </File>
+            <File>
+              <FileName>AltCtrl.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Algorithm\Control\AltCtrl.h</FilePath>
+            </File>
+            <File>
+              <FileName>AttCtrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Algorithm\Control\AttCtrl.c</FilePath>
+            </File>
+            <File>
+              <FileName>AttCtrl.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Algorithm\Control\AttCtrl.h</FilePath>
+            </File>
+            <File>
+              <FileName>FlightCtrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Algorithm\Control\FlightCtrl.c</FilePath>
+            </File>
+            <File>
+              <FileName>FlightCtrl.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Algorithm\Control\FlightCtrl.h</FilePath>
+            </File>
+            <File>
+              <FileName>LocCtrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Algorithm\Control\LocCtrl.c</FilePath>
+            </File>
+            <File>
+              <FileName>LocCtrl.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Algorithm\Control\LocCtrl.h</FilePath>
             </File>
             <File>
               <FileName>MotorCtrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\FlightControl\Control\MotorCtrl.c</FilePath>
+              <FilePath>.\Algorithm\Control\MotorCtrl.c</FilePath>
             </File>
             <File>
               <FileName>MotorCtrl.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\FlightControl\Control\MotorCtrl.h</FilePath>
+              <FilePath>.\Algorithm\Control\MotorCtrl.h</FilePath>
             </File>
             <File>
               <FileName>Power.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\FlightControl\Control\Power.c</FilePath>
+              <FilePath>.\Algorithm\Control\Power.c</FilePath>
             </File>
             <File>
               <FileName>Power.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\FlightControl\Control\Power.h</FilePath>
+              <FilePath>.\Algorithm\Control\Power.h</FilePath>
             </File>
           </Files>
         </Group>
       </Groups>
     </Target>
   </Targets>
+
   <RTE>
-    <apis />
-    <components />
-    <files />
+    <apis/>
+    <components/>
+    <files/>
   </RTE>
+
   <LayerInfo>
     <Layers>
       <Layer>
@@ -969,4 +974,5 @@
       </Layer>
     </Layers>
   </LayerInfo>
+
 </Project>

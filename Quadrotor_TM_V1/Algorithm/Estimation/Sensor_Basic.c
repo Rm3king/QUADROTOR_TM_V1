@@ -1,0 +1,340 @@
+/*
+ * 文件名称: Sensor_Basic.c
+ * 所属模块: Algorithm / Estimation
+ *
+ * 功能描述:
+ *   传感器基础处理模块，将 IMU 驱动的原始数据转换为可用的物理量：
+ *   1) Sensor_Data_Prepare() -- 原始数据转物理量 + 零偏减除 + 低通滤波
+ *   2) Gyro_Cali_Task()      -- 陀螺仪零偏自动校准（静止检测 + 均值计算）
+ *   3) Acc_Cali_Task()       -- 加速度计水平校准（记录静置时的参考值）
+ *   4) Center_Pos_Set()      -- 重心偏移补偿设置
+ *
+ * 数据流:
+ *   Drv_icm20602 原始寄存器值
+ *     -> 乘以量程系数转为 dps / g
+ *     -> 减去零偏 (cali_gyro/cali_acc)
+ *     -> 低通滤波
+ *     -> sensor.Gyro_deg[] / sensor.Acc_cmss[]
+ *     -> Imu.c 姿态解算
+ *
+ * 架构位置:
+ *   由 Scheduler 按 2ms 周期调用 Sensor_Data_Prepare()。
+ *   校准任务由 DT.c 收到上位机命令后触发。
+ *
+ * 教学提示:
+ *   - 陀螺仪零偏会随温度漂移，每次上电需要重新校准（保持静止 2 秒）
+ *   - 加速度计校准记录的是水平放置时的重力方向，用于倾斜补偿
+ *   - 低通滤波截止频率需要在噪声抑制和响应延迟之间取平衡
+ */
+#include "Sensor_Basic.h"
+#include "Math.h"
+#include "Drv_Paramter.h"
+#include "LED.h"
+#define X_POS_OFFSET_CM    (0)
+#define Y_POS_OFFSET_CM    (0)
+#define Z_POS_OFFSET_CM    (0)
+#define LED_STA_CALI_ACC   (LED_STA.calAcc)
+#define LED_STA_CALI_GYR   (LED_STA.calGyr)
+/* 传感器基础状态初始化。 */
+void Sensor_Basic_Init(void)
+{
+	/*设置重心相对传感器的偏移量*/
+	Center_Pos_Set();
+	
+	sensor.acc_z_auto_CALIBRATE = 1; //开机自动对准Z轴
+	sensor.gyr_CALIBRATE = 2;//开机自动校准陀螺仪
+}
+_center_pos_st center_pos;
+_sensor_st sensor;
+s32 sensor_val[6];
+s32 sensor_val_rot[6];
+s32 sensor_val_ref[6];
+s32 sum_temp[7]={0,0,0,0,0,0,0};
+s32 acc_auto_sum_temp[3];
+s16 acc_z_auto[4];
+u16 acc_sum_cnt = 0,gyro_sum_cnt = 0,acc_z_auto_cnt;
+s16 g_old[VEC_XYZ];
+float g_d_sum[VEC_XYZ] = {500,500,500};
+/* Z轴加速度静态修正 */
+static void Sensor_AutoCalibrateAccZ(void)
+{
+	if(sensor.acc_z_auto_CALIBRATE)
+	{
+		//
+		LED_STA_CALI_ACC = 1;
+		
+		acc_z_auto_cnt++;
+		
+		acc_auto_sum_temp[0] += sensor_val_ref[A_X];
+		acc_auto_sum_temp[1] += sensor_val_ref[A_Y];
+		acc_auto_sum_temp[2] += sensor_val_rot[A_Z];
+		
+		if(acc_z_auto_cnt>=OFFSET_AV_NUM)
+		{
+			//
+			LED_STA_CALI_ACC = 0;
+			
+			sensor.acc_z_auto_CALIBRATE = 0;
+			acc_z_auto_cnt = 0;
+			for(u8 i = 0;i<3;i++)
+			{			
+				acc_z_auto[i] = acc_auto_sum_temp[i]/OFFSET_AV_NUM;
+				
+				acc_auto_sum_temp[i] = 0;
+			}
+			
+			acc_z_auto[3] = my_sqrt( GRAVITY_ACC_PN16G*GRAVITY_ACC_PN16G - (my_pow(acc_z_auto[0]) + my_pow(acc_z_auto[1])) );
+			
+			save.acc_offset[Z] = acc_z_auto[2] - acc_z_auto[3];
+			
+		}
+		
+	}
+}
+/* 静止状态检测 */
+static void MotionlessCheck(u8 dT_ms)
+{
+	u8 t = 0;
+	for(u8 i = 0;i<3;i++)
+	{
+		g_d_sum[i] += 3*ABS(sensor.Gyro_Original[i] - g_old[i]) ;
+		
+		g_d_sum[i] -= dT_ms ;	
+		
+		g_d_sum[i] = LIMIT(g_d_sum[i],0,200);
+		
+		if( g_d_sum[i] > 10)
+		{
+			t++;
+		}
+		
+		g_old[i] = sensor.Gyro_Original[i];
+	}
+	if(t>=2)
+	{
+		flag.motionless = 0;	
+	}
+	else
+	{
+		flag.motionless = 1;
+	}
+}
+/* MPU6050 零偏校准 */
+static void Sensor_UpdateOffsets(void)
+{
+	static u8 off_cnt;
+	
+	if(sensor.gyr_CALIBRATE || sensor.acc_CALIBRATE || sensor.acc_z_auto_CALIBRATE)
+	{	
+		/* 校准时必须静止且温度就绪 */
+		if(flag.motionless == 0 || sensor_val[A_Z]<(GRAVITY_ACC_PN16G/2) || (flag.mems_temperature_ok == 0))
+		{
+				gyro_sum_cnt = 0;
+				acc_sum_cnt=0;
+				acc_z_auto_cnt = 0;
+				
+				for(u8 j=0;j<3;j++)
+				{
+					acc_auto_sum_temp[j] = sum_temp[G_X+j] = sum_temp[A_X+j] = 0;
+				}
+				sum_temp[TEM] = 0;
+		}
+		
+		
+		off_cnt++;			
+		if(off_cnt>=10)
+		{	
+			off_cnt=0;
+			
+			
+			if(sensor.gyr_CALIBRATE)
+			{
+				//
+				LED_STA_CALI_GYR = 1;
+				
+				gyro_sum_cnt++;
+				
+				for(u8 i = 0;i<3;i++)
+				{
+					sum_temp[G_X+i] += sensor.Gyro_Original[i];
+				}
+				if( gyro_sum_cnt >= OFFSET_AV_NUM )
+				{
+					//
+					LED_STA_CALI_GYR = 0;
+					
+					for(u8 i = 0;i<3;i++)
+					{
+						save.gyro_offset[i] = (float)sum_temp[G_X+i]/OFFSET_AV_NUM;
+						
+						sum_temp[G_X + i] = 0;
+					}
+					gyro_sum_cnt =0;
+					if(sensor.gyr_CALIBRATE == 1)
+					{
+						if(sensor.acc_CALIBRATE == 0)
+						{
+							data_save();
+						}
+					}
+					sensor.gyr_CALIBRATE = 0;
+				}
+			}
+			
+			if(sensor.acc_CALIBRATE == 1)
+			{
+				//
+				LED_STA_CALI_ACC = 1;
+				acc_sum_cnt++;
+				
+				sum_temp[A_X] += sensor_val_rot[A_X];
+				sum_temp[A_Y] += sensor_val_rot[A_Y];
+				sum_temp[A_Z] += sensor_val_rot[A_Z] - GRAVITY_ACC_PN16G;// - 65535/16;   // +-8G
+				sum_temp[TEM] += sensor.Tempreature;
+				if( acc_sum_cnt >= OFFSET_AV_NUM )
+				{
+					//
+					LED_STA_CALI_ACC = 0;
+					
+					for(u8 i=0 ;i<3;i++)
+					{
+						save.acc_offset[i] = sum_temp[A_X+i]/OFFSET_AV_NUM;
+						
+						sum_temp[A_X + i] = 0;
+					}
+					acc_sum_cnt =0;
+					sensor.acc_CALIBRATE = 0;
+					data_save();
+				}	
+			}
+		}
+	}
+}
+	
+float wh_matrix[VEC_XYZ][VEC_XYZ] = 
+{
+	{1,0,0},
+	{0,1,0},
+	{0,0,1}
+};
+/* 机体中心点补偿更新 */
+void Center_Pos_Set()
+{
+	center_pos.center_pos_cm[X] = X_POS_OFFSET_CM;//+0.0f;
+	center_pos.center_pos_cm[Y] = Y_POS_OFFSET_CM;//-0.0f;
+	center_pos.center_pos_cm[Z] = Z_POS_OFFSET_CM;//+0.0f;
+}
+static float gyr_f[5][VEC_XYZ],acc_f[5][VEC_XYZ];
+/* 传感器数据预处理 */
+void Sensor_Data_Prepare(u8 dT_ms)
+{	
+	float hz = 0 ;
+	if(dT_ms != 0) hz = 1000/dT_ms;
+	
+	
+	/*静止检测*/
+	MotionlessCheck(dT_ms);
+			
+	Sensor_UpdateOffsets(); //校准函数
+	/*得出校准后的数据*/
+	for(u8 i=0;i<3;i++)
+	{ 
+		
+		sensor_val[A_X+i] = sensor.Acc_Original[i] ;
+		sensor_val[G_X+i] = sensor.Gyro_Original[i] - save.gyro_offset[i] ;
+	}
+	
+	/*可将整个传感器坐标进行旋转*/
+//	for(u8 j=0;j<3;j++)
+//	{
+//		float t = 0;
+//		
+//		for(u8 i=0;i<3;i++)
+//		{
+//			
+//			t += sensor_val[A_X + i] *wh_matrix[j][i]; 
+//		}
+//		
+//		sensor_val_rot[A_X + j] = t;
+//	}
+//	for(u8 j=0;j<3;j++)
+//	{
+//		float t = 0;
+//		
+//		for(u8 i=0;i<3;i++)
+//		{
+//			
+//			t += sensor_val[G_X + i] *wh_matrix[j][i]; 
+//		}
+//		
+//		sensor_val_rot[G_X + j] = t;
+//	}	
+	/*赋值*/
+	for(u8 i = 0;i<6;i++)
+	{
+		sensor_val_rot[i] = sensor_val[i];
+	}
+	/*数据坐标转90度*/
+	sensor_val_ref[G_X] =  sensor_val_rot[G_Y] ;
+	sensor_val_ref[G_Y] = -sensor_val_rot[G_X] ;
+	sensor_val_ref[G_Z] =  sensor_val_rot[G_Z];
+	
+	sensor_val_ref[A_X] =  (sensor_val_rot[A_Y] - save.acc_offset[Y] ) ;
+	sensor_val_ref[A_Y] = -(sensor_val_rot[A_X] - save.acc_offset[X] ) ;
+	sensor_val_ref[A_Z] =  (sensor_val_rot[A_Z] - save.acc_offset[Z] ) ;
+	
+	/*单独校准z轴模长*/
+	Sensor_AutoCalibrateAccZ();
+	
+	/*软件低通滤波*/
+	for(u8 i=0;i<3;i++)
+	{	
+		//
+		gyr_f[4][X +i] = (sensor_val_ref[G_X + i] );
+		acc_f[4][X +i] = (sensor_val_ref[A_X + i] );
+		//
+		for(u8 j=4;j>0;j--)
+		{
+			//
+			gyr_f[j-1][X +i] += GYR_ACC_FILTER *(gyr_f[j][X +i] - gyr_f[j-1][X +i]);
+			acc_f[j-1][X +i] += GYR_ACC_FILTER *(acc_f[j][X +i] - acc_f[j-1][X +i]);
+		}
+		
+				
+	}
+	
+			/*旋转加速度补偿*/
+/* 传感器基础状态初始化。 */
+	for(u8 i=0;i<3;i++)
+	{	
+		center_pos.gyro_rad_old[i] = center_pos.gyro_rad[i];
+		center_pos.gyro_rad[i] =  gyr_f[0][X + i] *RANGE_PN2000_TO_RAD;//0.001065f;
+		center_pos.gyro_rad_acc[i] = hz *(center_pos.gyro_rad[i] - center_pos.gyro_rad_old[i]);
+	}
+	
+	center_pos.linear_acc[X] = +center_pos.gyro_rad_acc[Z] *center_pos.center_pos_cm[Y] - center_pos.gyro_rad_acc[Y] *center_pos.center_pos_cm[Z];
+	center_pos.linear_acc[Y] = -center_pos.gyro_rad_acc[Z] *center_pos.center_pos_cm[X] + center_pos.gyro_rad_acc[X] *center_pos.center_pos_cm[Z];
+	center_pos.linear_acc[Z] = +center_pos.gyro_rad_acc[Y] *center_pos.center_pos_cm[X] - center_pos.gyro_rad_acc[X] *center_pos.center_pos_cm[Y];
+	
+	/*赋值*/
+	for(u8 i=0;i<3;i++)
+	{
+		
+		sensor.Gyro[X+i] = gyr_f[0][i];
+		
+		sensor.Acc[X+i] = acc_f[0][i] - center_pos.linear_acc[i] / RANGE_PN16G_TO_CMSS;
+	}
+	
+	/*转换单位*/
+		for(u8 i =0 ;i<3;i++)
+		{
+			/*陀螺仪转换到度每秒，量程+-2000度*/
+			sensor.Gyro_deg[i] = sensor.Gyro[i] *0.061036f ;//  /65535 * 4000; +-2000度 0.061
+			/*陀螺仪转换到弧度度每秒，量程+-2000度*/
+			sensor.Gyro_rad[i] = sensor.Gyro_deg[i] *0.01745f;//sensor.Gyro[i] *RANGE_PN2000_TO_RAD ;//  0.001065264436f //微调值 0.0010652f
+		
+			/*加速度计转换到厘米每平方秒，量程+-8G*/
+			sensor.Acc_cmss[i] = (sensor.Acc[i] *RANGE_PN16G_TO_CMSS );//   /65535 * 16*981; +-8G
+		
+		}
+}
